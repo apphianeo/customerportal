@@ -98,7 +98,7 @@ export default function Sidebar({
         <div className="flex items-center justify-center h-[60px] shrink-0">
           <button
             onClick={onToggleCollapse}
-            className="flex items-center justify-center text-[#64748b] hover:text-[#1e3a8a] transition-colors"
+            className="flex items-center justify-center text-[#64748b] hover:text-primary transition-colors"
             aria-label="Expand sidebar"
           >
             <MenuUnfoldOutlined style={{ fontSize: 18 }} />
@@ -109,7 +109,7 @@ export default function Sidebar({
           <UoiLogo />
           <button
             onClick={onToggleCollapse}
-            className="text-[#64748b] hover:text-[#1e3a8a] transition-colors ml-auto"
+            className="text-[#64748b] hover:text-primary transition-colors ml-auto"
             aria-label="Collapse sidebar"
           >
             <MenuFoldOutlined style={{ fontSize: 18 }} />
@@ -190,14 +190,14 @@ function NavItem({
         'relative overflow-hidden flex items-center w-full cursor-pointer border-0 p-0',
         'rounded-[8px] py-[10px]',
         isActive
-          ? 'bg-gradient-to-r from-primary/10 to-regal/10 text-[#1e3a8a]'
+          ? 'bg-gradient-to-r from-primary/10 to-regal/10 text-primary'
           : 'bg-transparent text-[#64748b] hover:bg-grey-tag transition-colors',
         collapsed ? 'px-[16px]' : 'px-[16px]',
       ].join(' ')}
     >
       {/* Active indicator bar — absolute, ignores padding */}
       {isActive && (
-        <span className="absolute left-0 top-0 bottom-0 w-[4px] self-stretch bg-[#1e3a8a] rounded-tl-[8px] rounded-bl-[8px]" />
+        <span className="absolute left-0 top-0 bottom-0 w-[4px] self-stretch bg-gradient-to-b from-primary to-regal rounded-tl-[8px] rounded-bl-[8px]" />
       )}
 
       {/* Icon */}
