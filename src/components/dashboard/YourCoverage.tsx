@@ -165,7 +165,7 @@ export default function YourCoverage() {
                 key="all"
                 onClick={() => setActiveFilter('all')}
                 className={[
-                  'flex items-center justify-center px-[12px] py-[8px] rounded-[24px]',
+                  'flex items-center justify-center px-[20px] py-[8px] rounded-[24px]',
                   'shrink-0 whitespace-nowrap border-0 cursor-pointer transition-colors',
                   isActive ? 'bg-primary text-white font-medium' : 'bg-white border border-[rgba(0,0,0,0.09)] text-[#6e6e6e]',
                 ].join(' ')}
