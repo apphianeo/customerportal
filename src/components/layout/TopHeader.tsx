@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
 import uoiLogo from '../../assets/uoi-logo.svg'
+import iconLogout from '../../assets/icon-logout.svg'
 import {
   SearchOutlined,
   BellOutlined,
   DownOutlined,
-  UserOutlined,
   CloseOutlined,
 } from '@ant-design/icons'
 
@@ -114,7 +114,7 @@ export default function TopHeader({
               className="flex items-center gap-1 cursor-pointer bg-transparent border-0 p-0"
               aria-label="User menu"
             >
-              <div className="flex items-center justify-center size-8 rounded-lg bg-bg-info">
+              <div className="flex items-center justify-center size-8 rounded-[12px] bg-bg-info">
                 <span className="text-sm font-medium text-text-primary leading-none">
                   {userInitials}
                 </span>
@@ -130,29 +130,31 @@ export default function TopHeader({
 
             {/* Dropdown */}
             {userMenuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.1)] border border-border-default z-50 overflow-hidden">
-                <div className="px-4 py-3 border-b border-border-default">
-                  <p className="text-sm font-medium text-text-primary">{userName}</p>
-                  <p className="text-xs text-text-tertiary mt-0.5">Customer</p>
-                </div>
-                <ul className="list-none m-0 p-1">
-                  {[
-                    { label: 'My Profile',      icon: <UserOutlined /> },
-                    { label: 'Account Settings', icon: null },
-                  ].map(({ label, icon }) => (
-                    <li key={label}>
-                      <button className="flex items-center gap-2 w-full px-3 py-2 text-sm text-text-secondary hover:bg-grey-tag rounded-md transition-colors border-0 bg-transparent cursor-pointer">
-                        {icon && <span className="text-text-tertiary">{icon}</span>}
-                        {label}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-                <div className="border-t border-border-default p-1">
-                  <button className="flex items-center gap-2 w-full px-3 py-2 text-sm text-error hover:bg-grey-tag rounded-md transition-colors border-0 bg-transparent cursor-pointer">
-                    Sign Out
-                  </button>
-                </div>
+              <div className="absolute right-0 top-full mt-2 w-[240px] bg-white rounded-[8px] drop-shadow-[0px_1px_4px_rgba(0,0,0,0.1)] z-50 p-[12px] flex flex-col gap-[8px]">
+                {/* Manage Account */}
+                <button className="flex items-center w-full px-[12px] py-[10px] rounded-[8px] border-0 bg-white hover:bg-[#fafafa] transition-colors cursor-pointer text-left">
+                  <span className="text-base text-[rgba(0,0,0,0.87)] leading-[1.5] flex-1 min-w-0">
+                    Manage Account
+                  </span>
+                </button>
+
+                {/* Privacy Policy */}
+                <button className="flex items-center w-full px-[12px] py-[10px] rounded-[8px] border-0 bg-white hover:bg-[#fafafa] transition-colors cursor-pointer text-left">
+                  <span className="text-base text-[rgba(0,0,0,0.87)] leading-[1.5] flex-1 min-w-0">
+                    Privacy Policy
+                  </span>
+                </button>
+
+                {/* Divider */}
+                <div className="h-px w-full bg-border-default shrink-0" />
+
+                {/* Log Out */}
+                <button className="flex items-center gap-[10px] w-full px-[12px] py-[10px] rounded-[8px] border-0 bg-white hover:bg-[#fafafa] transition-colors cursor-pointer text-left">
+                  <img src={iconLogout} alt="" aria-hidden="true" className="size-[24px] shrink-0" style={{ filter: 'invert(13%) sepia(97%) saturate(3582%) hue-rotate(344deg) brightness(90%) contrast(97%)' }} />
+                  <span className="text-base font-medium text-[#991b1b] leading-[1.5] flex-1 min-w-0">
+                    Log Out
+                  </span>
+                </button>
               </div>
             )}
           </div>
