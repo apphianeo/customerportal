@@ -1,15 +1,67 @@
 import { useState } from 'react'
-import {
-  RightOutlined,
-  ArrowRightOutlined,
-  CarOutlined,
-  CompassOutlined,
-  UserOutlined,
-  HomeOutlined,
-  MedicineBoxOutlined,
-  SafetyCertificateOutlined,
-  InfoCircleOutlined,
-} from '@ant-design/icons'
+import { RightOutlined, ArrowRightOutlined, InfoCircleOutlined } from '@ant-design/icons'
+import iconMotor      from '../../assets/icon-motor.svg'
+import iconTravel     from '../../assets/icon-travel.svg'
+import iconHelperBody from '../../assets/icon-helper-body.svg'
+import iconHelperHead from '../../assets/icon-helper-head.svg'
+import iconHome       from '../../assets/icon-home.svg'
+import iconHospital   from '../../assets/icon-hospital.svg'
+import iconAccident1  from '../../assets/icon-accident-1.svg'
+import iconAccident2  from '../../assets/icon-accident-2.svg'
+
+/* ─── Filter icons ───────────────────────────────────────── */
+function MotorIcon() {
+  return (
+    <div className="flex items-center justify-center shrink-0 size-[20px]">
+      <img src={iconMotor} alt="" aria-hidden="true" style={{ width: 15, height: 13.333 }} />
+    </div>
+  )
+}
+function TravelIcon() {
+  return (
+    <div className="flex items-center justify-center shrink-0 size-[20px]">
+      <img src={iconTravel} alt="" aria-hidden="true" style={{ width: 15, height: 14.979 }} />
+    </div>
+  )
+}
+function HelperIcon() {
+  return (
+    <div className="overflow-hidden relative shrink-0 size-[20px]">
+      <div className="absolute" style={{ inset: '55.96% 8.34% 12.49% 12.5%' }}>
+        <img src={iconHelperBody} alt="" aria-hidden="true" className="absolute inset-0 size-full max-w-none" />
+      </div>
+      <div className="absolute" style={{ inset: '8.33% 30.2% 32.29% 34.35%' }}>
+        <img src={iconHelperHead} alt="" aria-hidden="true" className="absolute inset-0 size-full max-w-none" />
+      </div>
+    </div>
+  )
+}
+function HomeIcon() {
+  return (
+    <div className="flex items-center justify-center shrink-0 size-[20px]">
+      <img src={iconHome} alt="" aria-hidden="true" style={{ width: 13.333, height: 15 }} />
+    </div>
+  )
+}
+function HospitalIcon() {
+  return (
+    <div className="flex items-center justify-center shrink-0 size-[20px]">
+      <img src={iconHospital} alt="" aria-hidden="true" style={{ width: 15, height: 15 }} />
+    </div>
+  )
+}
+function AccidentIcon() {
+  return (
+    <div className="relative shrink-0 size-[20px]">
+      <div className="absolute" style={{ width: 5.183, height: 6.492, left: 'calc(50% - 5.74px)', top: 'calc(50% + 4.91px)', transform: 'translate(-50%, -50%)' }}>
+        <img src={iconAccident1} alt="" aria-hidden="true" className="absolute inset-0 size-full max-w-none" />
+      </div>
+      <div className="absolute" style={{ width: 11.833, height: 15, left: 5.42, top: 2.08 }}>
+        <img src={iconAccident2} alt="" aria-hidden="true" className="absolute inset-0 size-full max-w-none" />
+      </div>
+    </div>
+  )
+}
 
 /* ─── Types ─────────────────────────────────────────────── */
 type PolicyStatus = 'in-force' | 'renewal-due' | 'expired'
@@ -65,12 +117,12 @@ type FilterOption = {
 
 const FILTERS: FilterOption[] = [
   { key: 'all',      label: 'All' },
-  { key: 'motor',    label: 'Motor',              icon: <CarOutlined /> },
-  { key: 'travel',   label: 'Travel',             icon: <CompassOutlined /> },
-  { key: 'helper',   label: 'Helper',             icon: <UserOutlined /> },
-  { key: 'home',     label: 'Home',               icon: <HomeOutlined /> },
-  { key: 'hospital', label: 'Hospital Protection',icon: <MedicineBoxOutlined /> },
-  { key: 'accident', label: 'Personal Accident',  icon: <SafetyCertificateOutlined /> },
+  { key: 'motor',    label: 'Motor',               icon: <MotorIcon /> },
+  { key: 'travel',   label: 'Travel',              icon: <TravelIcon /> },
+  { key: 'helper',   label: 'Helper',              icon: <HelperIcon /> },
+  { key: 'home',     label: 'Home',                icon: <HomeIcon /> },
+  { key: 'hospital', label: 'Hospital Protection', icon: <HospitalIcon /> },
+  { key: 'accident', label: 'Personal Accident',   icon: <AccidentIcon /> },
 ]
 
 /* ─── Main section ───────────────────────────────────────── */
@@ -100,46 +152,56 @@ export default function YourCoverage() {
       </div>
 
       {/* ── Filter pills — scrollable on mobile ── */}
-      <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
+      <div className="flex gap-[12px] overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
         {FILTERS.map(({ key, label, icon }) => {
           const count = countFor(key)
           const isActive = activeFilter === key
-          const isEmpty = count === 0
+          const isEmpty = count === 0 && key !== 'all'
+
+          /* "All" pill — no icon, user-specified 12px h-padding */
+          if (key === 'all') {
+            return (
+              <button
+                key="all"
+                onClick={() => setActiveFilter('all')}
+                className={[
+                  'flex items-center justify-center px-[12px] py-[8px] rounded-[24px]',
+                  'shrink-0 whitespace-nowrap border-0 cursor-pointer transition-colors',
+                  isActive ? 'bg-primary text-white font-medium' : 'bg-white border border-[rgba(0,0,0,0.09)] text-[#6e6e6e]',
+                ].join(' ')}
+              >
+                <span className="text-sm leading-[1.5]">{label}</span>
+              </button>
+            )
+          }
 
           return (
             <button
               key={key}
               onClick={() => !isEmpty && setActiveFilter(key)}
               disabled={isEmpty}
+              style={isActive ? { '--fill-0': '#ffffff' } as React.CSSProperties : undefined}
               className={[
-                'flex items-center gap-2 px-3 py-2 rounded-pill text-sm whitespace-nowrap',
-                'border transition-colors shrink-0',
-                // Active
+                'flex items-center gap-[8px] px-[12px] py-[8px] rounded-[24px]',
+                'shrink-0 whitespace-nowrap border transition-colors',
                 isActive
-                  ? 'bg-primary text-white border-primary font-medium'
-                  // Empty / disabled
+                  ? 'bg-primary border-primary cursor-pointer'
                   : isEmpty
-                    ? 'bg-bg-disabled-field text-text-disabled border-border-default cursor-not-allowed'
-                    // Normal
-                    : 'bg-white text-text-secondary border-border-default hover:border-primary hover:text-primary cursor-pointer',
+                    ? 'bg-[#f5f5f5] border-[rgba(0,0,0,0.09)] cursor-not-allowed'
+                    : 'bg-white border-[rgba(0,0,0,0.09)] hover:border-primary cursor-pointer',
               ].join(' ')}
             >
-              {/* icon — only non-All pills */}
-              {icon && (
-                <span className={[
-                  'text-[14px] leading-none',
-                  isActive ? 'text-white' : isEmpty ? 'text-text-disabled' : 'text-text-secondary',
-                ].join(' ')}>
-                  {icon}
+              {icon}
+              <span className={[
+                'flex items-center gap-[4px] text-sm leading-[1.5]',
+              ].join(' ')}>
+                <span className={isActive ? 'text-white font-medium' : isEmpty ? 'text-[#9e9e9e]' : 'text-[#6e6e6e]'}>
+                  {label}
                 </span>
-              )}
-              <span>{label}</span>
-              {/* count badge — not shown for "All" active (already in heading) */}
-              {key !== 'all' && (
-                <span className={isActive ? 'text-white/80' : 'text-text-tertiary'}>
+                <span className={isActive ? 'text-white/80' : isEmpty ? 'text-[#9e9e9e]' : 'text-[#8d8d8d]'}>
                   ({count})
                 </span>
-              )}
+              </span>
             </button>
           )
         })}
