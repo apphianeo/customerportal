@@ -180,12 +180,11 @@ export default function YourCoverage() {
               key={key}
               onClick={() => !isEmpty && setActiveFilter(key)}
               disabled={isEmpty}
-              style={isActive ? { '--fill-0': '#ffffff' } as React.CSSProperties : undefined}
               className={[
                 'flex items-center gap-[8px] px-[12px] py-[8px] rounded-[24px]',
                 'shrink-0 whitespace-nowrap border transition-colors',
                 isActive
-                  ? 'bg-primary border-primary cursor-pointer'
+                  ? 'bg-primary border-primary cursor-pointer [&_img]:brightness-0 [&_img]:invert'
                   : isEmpty
                     ? 'bg-[#f5f5f5] border-[rgba(0,0,0,0.09)] cursor-not-allowed'
                     : 'bg-white border-[rgba(0,0,0,0.09)] hover:border-primary cursor-pointer',
