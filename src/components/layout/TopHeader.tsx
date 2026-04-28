@@ -15,7 +15,7 @@ type Props = {
 }
 
 export default function TopHeader({
-  userName = 'Chris Wong',
+  userName: _userName = 'Chris Wong',
   userInitials = 'CW',
   notificationCount = 1,
 }: Props) {
