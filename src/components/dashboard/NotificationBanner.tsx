@@ -13,12 +13,14 @@ export default function NotificationBanner({ title, description, ctaLabel, onCta
   if (dismissed) return null
 
   return (
-    <div className="flex items-stretch shadow-card rounded-lg overflow-hidden">
+    <div className="flex items-center drop-shadow-[0px_1px_2px_rgba(0,0,0,0.05)]">
       {/* Left accent bar */}
-      <div className="w-2 shrink-0 bg-caution" />
+      <div className="self-stretch flex items-stretch shrink-0">
+        <div className="w-[8px] bg-caution rounded-bl-[8px] rounded-tl-[8px]" />
+      </div>
 
       {/* Content */}
-      <div className="flex-1 bg-white border border-white px-4 py-3">
+      <div className="flex-1 bg-white border border-solid border-white px-4 py-3 rounded-br-[8px] rounded-tr-[8px] min-w-0">
         <div className="flex gap-3 items-start">
           {/* Warning icon — padded top to align with first text line */}
           <span className="pt-px shrink-0 text-caution" style={{ fontSize: 16 }}>

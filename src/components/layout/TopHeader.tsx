@@ -186,13 +186,12 @@ function NotificationBell({ count }: { count: number }) {
 /* ─── UOI Logo (mobile header) ──────────────────────────── */
 function UoiLogo() {
   return (
-    <div className="flex flex-col leading-none">
-      <span className="font-bold text-lg tracking-tight" style={{ color: '#C0272D' }}>
-        ■■ UOI
-      </span>
-      <span className="text-[8px] text-text-tertiary tracking-wide">
-        Member of the UOB Group
-      </span>
-    </div>
+    <img
+      src="/src/assets/uoi-logo.png"
+      alt="UOI"
+      width={72}
+      height={37}
+      className="object-contain shrink-0"
+    />
   )
 }

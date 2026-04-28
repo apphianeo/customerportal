@@ -142,7 +142,7 @@ function NavItem({
             collapsed ? 'justify-center px-3' : 'pl-2.5 pr-3',
           ].join(' ')}
         >
-          <span className="text-primary text-[18px] shrink-0">{icon}</span>
+          <span className="text-primary text-[20px] shrink-0">{icon}</span>
           {!collapsed && (
             <span className="text-primary text-sm font-medium leading-relaxed">{label}</span>
           )}
@@ -161,7 +161,7 @@ function NavItem({
         collapsed ? 'justify-center px-3' : 'px-3',
       ].join(' ')}
     >
-      <span className="text-[18px] shrink-0">{icon}</span>
+      <span className="text-[20px] shrink-0">{icon}</span>
       {!collapsed && (
         <span className="text-sm leading-relaxed text-left">{label}</span>
       )}
@@ -172,17 +172,13 @@ function NavItem({
 /* ─── UOI Logo ─────────────────────────────────────────── */
 function UoiLogo() {
   return (
-    <div className="flex flex-col leading-none">
-      <span
-        className="font-bold text-[22px] tracking-tight"
-        style={{ color: '#C0272D' }}
-      >
-        <span style={{ color: '#C0272D' }}>■■</span> UOI
-      </span>
-      <span className="text-[9px] text-text-tertiary tracking-wide mt-0.5">
-        Member of the UOB Group
-      </span>
-    </div>
+    <img
+      src="/src/assets/uoi-logo.png"
+      alt="UOI"
+      width={100}
+      height={51}
+      className="object-contain shrink-0"
+    />
   )
 }
 
