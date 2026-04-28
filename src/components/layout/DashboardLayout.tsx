@@ -3,17 +3,22 @@ import Sidebar, { type NavKey } from './Sidebar'
 import MobileBottomNav from './MobileBottomNav'
 import TopHeader from './TopHeader'
 import FooterShort from './FooterShort'
+import DashboardPage from '../../pages/DashboardPage'
+import PoliciesPage from '../../pages/PoliciesPage'
 
-type Props = {
-  children: React.ReactNode
-}
-
-export default function DashboardLayout({ children }: Props) {
+export default function DashboardLayout() {
   const [activeNav, setActiveNav] = useState<NavKey>('dashboard')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
+  function renderPage() {
+    switch (activeNav) {
+      case 'policies': return <PoliciesPage />
+      default:         return <DashboardPage />
+    }
+  }
+
   return (
-    <div className="flex min-h-screen bg-bg-page">
+    <div className="flex h-screen overflow-hidden bg-bg-page">
       {/* ── Desktop Sidebar ── */}
       <Sidebar
         activeKey={activeNav}
@@ -23,13 +28,10 @@ export default function DashboardLayout({ children }: Props) {
       />
 
       {/* ── Main column ── */}
-      <div className="flex flex-col flex-1 min-w-0">
-        {/* Top header */}
+      <div className="flex flex-col flex-1 min-w-0 h-full">
         <TopHeader />
-
-        {/* Scrollable page content */}
-        <main className="flex-1 pb-24 lg:pb-0 overflow-y-auto">
-          {children}
+        <main className="flex-1 overflow-y-auto pb-24 lg:pb-0">
+          {renderPage()}
           <FooterShort />
         </main>
       </div>

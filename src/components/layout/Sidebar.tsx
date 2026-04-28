@@ -110,7 +110,7 @@ export default function Sidebar({
   return (
     <aside
       className={[
-        'hidden lg:flex flex-col sticky top-0 h-screen overflow-y-auto',
+        'hidden lg:flex flex-col h-full overflow-y-auto',
         'bg-white border-r border-border-default shadow-card z-20',
         'transition-all duration-200 px-[16px] py-[24px]',
         collapsed ? 'w-[80px]' : 'w-[240px]',
