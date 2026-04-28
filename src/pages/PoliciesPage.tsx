@@ -247,7 +247,7 @@ function PolicyCard({ policy }: { policy: PolicyData }) {
 /* ─── Not Yet Covered card ───────────────────────────────── */
 type RecommendationItem = {
   image: string
-  iconSrc: string
+  icon: React.ReactNode
   title: string
   price: string
   description: string
@@ -256,21 +256,38 @@ type RecommendationItem = {
 const RECOMMENDATIONS: RecommendationItem[] = [
   {
     image: recHome,
-    iconSrc: iconHome,
+    icon: (
+      <div className="flex items-center justify-center size-[20px]">
+        <img src={iconHome} alt="" aria-hidden="true" style={{ width: 13.333, height: 15 }} />
+      </div>
+    ),
     title: 'Home Insurance',
     price: 'From $X/year',
     description: 'Protect your home and loved ones from unforeseen events.',
   },
   {
     image: recAccident,
-    iconSrc: iconAccident1,
+    icon: (
+      <div className="relative size-[20px]">
+        <div className="absolute" style={{ width: 5.183, height: 6.492, left: 'calc(50% - 5.74px)', top: 'calc(50% + 4.91px)', transform: 'translate(-50%, -50%)' }}>
+          <img src={iconAccident1} alt="" aria-hidden="true" className="absolute inset-0 size-full max-w-none" />
+        </div>
+        <div className="absolute" style={{ width: 11.833, height: 15, left: 5.42, top: 2.08 }}>
+          <img src={iconAccident2} alt="" aria-hidden="true" className="absolute inset-0 size-full max-w-none" />
+        </div>
+      </div>
+    ),
     title: 'Personal Accident',
     price: 'From $X/year',
     description: 'Get coverage for accidents and have peace of mind.',
   },
   {
     image: recHospital,
-    iconSrc: iconHospital,
+    icon: (
+      <div className="flex items-center justify-center size-[20px]">
+        <img src={iconHospital} alt="" aria-hidden="true" style={{ width: 15, height: 15 }} />
+      </div>
+    ),
     title: 'Hospital Protection',
     price: 'From $X/year',
     description: 'Cover day-to-day hospital expenses when you need it most.',
@@ -289,7 +306,7 @@ function RecommendationCard({ item }: { item: RecommendationItem }) {
             <div className="flex items-center gap-[12px] min-w-0">
               <div className="flex items-center justify-center size-[32px] rounded-[8px] shrink-0"
                 style={{ background: 'linear-gradient(90deg, rgba(0,94,184,0.1) 0.618%, rgba(92,85,235,0.1) 100%)' }}>
-                <img src={item.iconSrc} alt="" aria-hidden="true" className="size-[20px] object-contain" />
+                {item.icon}
               </div>
               <span className="text-[16px] font-medium text-[#212121] leading-[1.5] whitespace-nowrap">{item.title}</span>
             </div>
