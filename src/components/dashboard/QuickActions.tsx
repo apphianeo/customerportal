@@ -1,5 +1,4 @@
-// Icon gradient matches Figma: primary/10 → regal/10
-const ICON_GRADIENT = 'linear-gradient(90deg, rgba(0,94,184,0.1) 0.618%, rgba(92,85,235,0.1) 100%)'
+const ICON_GRADIENT = 'linear-gradient(90deg, rgba(0, 94, 184, 0.10) 0.62%, rgba(92, 85, 235, 0.10) 100%), #FFF'
 
 type QuickAction = {
   key: string
@@ -48,8 +47,8 @@ function QuickActionCard({ emoji, title, description, onClick }: QuickAction) {
     >
       {/* Icon container */}
       <span
-        className="size-8 rounded-lg flex items-center justify-center shrink-0 text-base"
-        style={{ background: ICON_GRADIENT }}
+        className="size-8 flex items-center justify-center shrink-0 text-base"
+        style={{ background: ICON_GRADIENT, borderRadius: '8px' }}
       >
         {emoji}
       </span>
