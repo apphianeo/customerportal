@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  /* ─── Brand ─────────────────────────────────────────── */
+  --color-primary:         #005EB8;
+  --color-regal:           #5C55EB;
+  --color-accent:          #F09252;
+
+  /* ─── Backgrounds ───────────────────────────────────── */
+  --color-bg-page:         #F6F8FC;
+  --color-bg-white:        #FFFFFF;
+  --color-bg-info:         #EFF6FF;
+  --color-bg-success:      #ECFDF5;
+  --color-bg-caution:      #FFF8EC;
+  --color-bg-disabled:     #E0E0E0;
+  --color-bg-disabled-field: #F5F5F5;
+
+  /* ─── Text ───────────────────────────────────────────── */
+  --color-text-primary:    #212121;
+  --color-text-secondary:  #6E6E6E;
+  --color-text-tertiary:   #8D8D8D;
+  --color-text-link:       #0D6EFD;
+  --color-text-disabled:   #9E9E9E;
+  --color-text-on-primary: #FFFFFF;
+
+  /* ─── Status ─────────────────────────────────────────── */
+  --color-success:         #065F46;
+  --color-caution:         #FFA826;
+  --color-error:           #991B1B;
+
+  /* ─── Neutrals ───────────────────────────────────────── */
+  --color-grey-tag:        #F2F2F2;
+  --color-muted:           #C9CED6;
+  --color-mid-grey:        #A8A6A7;
+  --color-border-split:    rgba(0, 0, 0, 0.06);
+  --color-border-default:  rgba(0, 0, 0, 0.09);
+  --color-line:            #000000;
+
+  /* ─── Typography — Font Family ───────────────────────── */
+  --font-sans: 'Noto Sans', sans-serif;
+
+  /* ─── Typography — Font Sizes ────────────────────────── */
+  --font-size-display:     3.375rem;   /* 54px desktop */
+  --font-size-display-mob: 2.25rem;    /* 36px mobile  */
+  --font-size-h1:          2rem;       /* 32px desktop */
+  --font-size-h1-mob:      1.75rem;    /* 28px mobile  */
+  --font-size-h2:          1.25rem;    /* 20px desktop */
+  --font-size-h2-mob:      1.125rem;   /* 18px mobile  */
+  --font-size-h3:          1.125rem;   /* 18px desktop */
+  --font-size-h3-mob:      1rem;       /* 16px mobile  */
+  --font-size-body:        1rem;       /* 16px desktop */
+  --font-size-body-mob:    0.875rem;   /* 14px mobile  */
+  --font-size-small:       0.875rem;   /* 14px desktop */
+  --font-size-small-mob:   0.75rem;    /* 12px mobile  */
+  --font-size-caption:     0.75rem;    /* 12px desktop */
+  --font-size-caption-mob: 0.625rem;   /* 10px mobile  */
+
+  /* ─── Typography — Line Heights ──────────────────────── */
+  --line-height-tight:     1.2;
+  --line-height-normal:    1.4;
+  --line-height-relaxed:   1.5;
+
+  /* ─── Spacing ─────────────────────────────────────────── */
+  --spacing-0_75: 0.75rem;   /* 12px */
+  --spacing-1:    1rem;      /* 16px */
+
+  /* ─── Border Radius ───────────────────────────────────── */
+  --radius-sm:   0.5rem;   /* 8px  */
+  --radius-md:   0.75rem;  /* 12px */
+  --radius-lg:   1rem;     /* 16px */
+  --radius-pill: 1.5rem;   /* 24px */
+
+  /* ─── Shadows ─────────────────────────────────────────── */
+  --shadow-card: 0px 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Custom utilities */
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+/* Reset boilerplate */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background-color: var(--color-bg-page);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  width: 100%;
+  min-height: 100svh;
+}
