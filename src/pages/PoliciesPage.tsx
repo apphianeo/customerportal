@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import { ShoppingCartOutlined, RightOutlined, ArrowRightOutlined } from '@ant-design/icons'
+import recHome     from '../assets/rec-home.png'
+import recAccident from '../assets/rec-accident.png'
+import recHospital from '../assets/rec-hospital.png'
 import iconMotor      from '../assets/icon-motor.svg'
 import iconTravel     from '../assets/icon-travel.svg'
 import iconHelperBody from '../assets/icon-helper-body.svg'
@@ -252,21 +255,21 @@ type RecommendationItem = {
 
 const RECOMMENDATIONS: RecommendationItem[] = [
   {
-    image: 'http://localhost:3845/assets/d9e03d6151d55d089f298aad4d6c8ac26cf2371f.png',
+    image: recHome,
     iconSrc: iconHome,
     title: 'Home Insurance',
     price: 'From $X/year',
     description: 'Protect your home and loved ones from unforeseen events.',
   },
   {
-    image: 'http://localhost:3845/assets/6ab45c22ef6056bc71c62d7937378f3cbbbfb659.png',
+    image: recAccident,
     iconSrc: iconAccident1,
     title: 'Personal Accident',
     price: 'From $X/year',
     description: 'Get coverage for accidents and have peace of mind.',
   },
   {
-    image: 'http://localhost:3845/assets/ff997b9c6b788814ee795706d14875df2d9dd9f6.png',
+    image: recHospital,
     iconSrc: iconHospital,
     title: 'Hospital Protection',
     price: 'From $X/year',
