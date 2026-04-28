@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import uoiLogo from '../../assets/uoi-logo.svg'
 import {
   HomeOutlined,
   HomeFilled,
@@ -173,7 +174,7 @@ function NavItem({
 function UoiLogo() {
   return (
     <img
-      src="/src/assets/uoi-logo.png"
+      src={uoiLogo}
       alt="UOI"
       width={100}
       height={51}

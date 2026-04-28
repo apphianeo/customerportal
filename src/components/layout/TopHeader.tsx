@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import uoiLogo from '../../assets/uoi-logo.svg'
 import {
   SearchOutlined,
   BellOutlined,
@@ -187,7 +188,7 @@ function NotificationBell({ count }: { count: number }) {
 function UoiLogo() {
   return (
     <img
-      src="/src/assets/uoi-logo.png"
+      src={uoiLogo}
       alt="UOI"
       width={72}
       height={37}
