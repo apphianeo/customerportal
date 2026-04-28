@@ -11,6 +11,7 @@ import iconHome       from '../assets/icon-home.svg'
 import iconHospital   from '../assets/icon-hospital.svg'
 import iconAccident1  from '../assets/icon-accident-1.svg'
 import iconAccident2  from '../assets/icon-accident-2.svg'
+// icon-home, icon-hospital, icon-accident-* are still used by filter pills
 
 /* ─── Types ─────────────────────────────────────────────── */
 type PolicyStatus = 'in-force' | 'renewal-due' | 'expired'
@@ -253,13 +254,25 @@ type RecommendationItem = {
   description: string
 }
 
+function RecGradDef() {
+  return (
+    <defs>
+      <linearGradient id="rec-grad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0.618%" stopColor="#005eb8" />
+        <stop offset="100%" stopColor="#5c55eb" />
+      </linearGradient>
+    </defs>
+  )
+}
+
 const RECOMMENDATIONS: RecommendationItem[] = [
   {
     image: recHome,
     icon: (
-      <div className="flex items-center justify-center size-[20px]">
-        <img src={iconHome} alt="" aria-hidden="true" style={{ width: 13.333, height: 15 }} />
-      </div>
+      <svg viewBox="0 0 13.3333 15" fill="none" className="size-[20px]" aria-hidden="true">
+        <RecGradDef />
+        <path d="M5.41667 11.6667H7.91667V9.58333H10V7.08333H7.91667V5H5.41667V7.08333H3.33333V9.58333H5.41667V11.6667ZM0 15V5L6.66667 0L13.3333 5V15H0Z" fill="url(#rec-grad)" />
+      </svg>
     ),
     title: 'Home Insurance',
     price: 'From $X/year',
@@ -268,14 +281,10 @@ const RECOMMENDATIONS: RecommendationItem[] = [
   {
     image: recAccident,
     icon: (
-      <div className="relative size-[20px]">
-        <div className="absolute" style={{ width: 5.183, height: 6.492, left: 'calc(50% - 5.74px)', top: 'calc(50% + 4.91px)', transform: 'translate(-50%, -50%)' }}>
-          <img src={iconAccident1} alt="" aria-hidden="true" className="absolute inset-0 size-full max-w-none" />
-        </div>
-        <div className="absolute" style={{ width: 11.833, height: 15, left: 5.42, top: 2.08 }}>
-          <img src={iconAccident2} alt="" aria-hidden="true" className="absolute inset-0 size-full max-w-none" />
-        </div>
-      </div>
+      <svg viewBox="0 0 11.833 15" fill="none" className="size-[20px]" aria-hidden="true">
+        <RecGradDef />
+        <path d="M4.33301 8.4375C5.36406 8.43688 6.38007 8.55775 7.37988 8.80078C8.37975 9.04387 9.36438 9.4076 10.333 9.89062C10.7859 10.1249 11.1492 10.4649 11.4229 10.9102C11.6966 11.3558 11.8336 11.8444 11.833 12.375V15H0V14.9668C0.704008 14.4571 1 14.1652 1 13.2783V9.82812C1 9.61246 0.957607 9.52538 0.794922 9.46484C0.590949 9.39278 0.316196 9.2908 0.0117188 9.17969C0.433677 9.03187 0.858459 8.90424 1.28613 8.80078C2.28594 8.55896 3.30196 8.43816 4.33301 8.4375ZM4.33301 0C5.36414 0 6.24712 0.367351 6.98145 1.10156C7.71582 1.83594 8.08301 2.71875 8.08301 3.75C8.08301 4.78125 7.71582 5.66406 6.98145 6.39844C6.24712 7.13265 5.36414 7.5 4.33301 7.5C3.30197 7.49988 2.41883 7.1327 1.68457 6.39844C0.950358 5.66411 0.583008 4.78114 0.583008 3.75C0.583008 2.71886 0.950358 1.83589 1.68457 1.10156C2.41883 0.367303 3.30197 0.00011605 4.33301 0Z" fill="url(#rec-grad)" />
+      </svg>
     ),
     title: 'Personal Accident',
     price: 'From $X/year',
@@ -284,9 +293,10 @@ const RECOMMENDATIONS: RecommendationItem[] = [
   {
     image: recHospital,
     icon: (
-      <div className="flex items-center justify-center size-[20px]">
-        <img src={iconHospital} alt="" aria-hidden="true" style={{ width: 15, height: 15 }} />
-      </div>
+      <svg viewBox="0 0 15 15" fill="none" className="size-[20px]" aria-hidden="true">
+        <RecGradDef />
+        <path d="M14.2857 3.57143H12.1429V0.714286C12.1429 0.285714 11.8571 0 11.4286 0H3.57143C3.14286 0 2.85714 0.285714 2.85714 0.714286V3.57143H0.714286C0.285714 3.57143 0 3.85714 0 4.28571V14.2857C0 14.7143 0.285714 15 0.714286 15H14.2857C14.7143 15 15 14.7143 15 14.2857V4.28571C15 3.85714 14.7143 3.57143 14.2857 3.57143ZM4.28571 12.1429H3.57143C3.14286 12.1429 2.85714 11.8571 2.85714 11.4286C2.85714 11 3.14286 10.7143 3.57143 10.7143H4.28571C4.71429 10.7143 5 11 5 11.4286C5 11.8571 4.71429 12.1429 4.28571 12.1429ZM4.28571 9.28571H3.57143C3.14286 9.28571 2.85714 9 2.85714 8.57143C2.85714 8.14286 3.14286 7.85714 3.57143 7.85714H4.28571C4.71429 7.85714 5 8.14286 5 8.57143C5 9 4.71429 9.28571 4.28571 9.28571ZM7.85714 12.1429H7.14286C6.71429 12.1429 6.42857 11.8571 6.42857 11.4286C6.42857 11 6.71429 10.7143 7.14286 10.7143H7.85714C8.28571 10.7143 8.57143 11 8.57143 11.4286C8.57143 11.8571 8.28571 12.1429 7.85714 12.1429ZM7.85714 9.28571H7.14286C6.71429 9.28571 6.42857 9 6.42857 8.57143C6.42857 8.14286 6.71429 7.85714 7.14286 7.85714H7.85714C8.28571 7.85714 8.57143 8.14286 8.57143 8.57143C8.57143 9 8.28571 9.28571 7.85714 9.28571ZM8.57143 5.35714H8.21429V5.71429C8.21429 6.14286 7.92857 6.42857 7.5 6.42857C7.07143 6.42857 6.78571 6.14286 6.78571 5.71429V5.35714H6.42857C6 5.35714 5.71429 5.07143 5.71429 4.64286C5.71429 4.21429 6 3.92857 6.42857 3.92857H6.78571V3.57143C6.78571 3.14286 7.07143 2.85714 7.5 2.85714C7.92857 2.85714 8.21429 3.14286 8.21429 3.57143V3.92857H8.57143C9 3.92857 9.28571 4.21429 9.28571 4.64286C9.28571 5.07143 9 5.35714 8.57143 5.35714ZM11.4286 12.1429H10.7143C10.2857 12.1429 10 11.8571 10 11.4286C10 11 10.2857 10.7143 10.7143 10.7143H11.4286C11.8571 10.7143 12.1429 11 12.1429 11.4286C12.1429 11.8571 11.8571 12.1429 11.4286 12.1429ZM11.4286 9.28571H10.7143C10.2857 9.28571 10 9 10 8.57143C10 8.14286 10.2857 7.85714 10.7143 7.85714H11.4286C11.8571 7.85714 12.1429 8.14286 12.1429 8.57143C12.1429 9 11.8571 9.28571 11.4286 9.28571Z" fill="url(#rec-grad)" />
+      </svg>
     ),
     title: 'Hospital Protection',
     price: 'From $X/year',
