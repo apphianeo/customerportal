@@ -166,7 +166,7 @@ function PolicyCard({ policy }: { policy: PolicyDetail }) {
   return (
     <button className="flex items-center gap-1 w-full bg-white rounded-xl p-4 shadow-card text-left cursor-pointer border-0 hover:shadow-md transition-shadow">
       {/* Details */}
-      <div className="flex flex-col gap-1 flex-1 min-w-0">
+      <div className="flex flex-col gap-[4px] flex-1 min-w-0">
         {/* Name + status tag */}
         <div className="flex items-center gap-2 flex-wrap">
           <span className="text-base font-medium text-text-primary leading-relaxed">
