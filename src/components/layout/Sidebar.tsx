@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import uoiLogo from '../../assets/uoi-logo.svg'
+import shieldSvg from '../../assets/shield.svg'
 import { ShoppingCartOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
 
 export type NavKey = 'dashboard' | 'policies' | 'claims' | 'rewards' | 'account' | 'help'
@@ -248,8 +249,7 @@ function PromoCard() {
 
   return (
     <div className="relative rounded-[8px] px-[12px] py-[16px] bg-gradient-to-r from-primary to-regal overflow-hidden shadow-[0px_1px_4px_0px_rgba(0,0,0,0.05)]">
-      <span className="absolute -top-4 -right-4 w-16 h-16 rounded-full bg-white/10 pointer-events-none" />
-      <span className="absolute -bottom-6 -right-2 w-20 h-20 rounded-full bg-white/10 pointer-events-none" />
+      <img src={shieldSvg} alt="" aria-hidden="true" className="absolute -right-3 top-0 h-full w-auto pointer-events-none select-none" />
 
       <div className="relative flex flex-col gap-[8px]">
         <span className="self-start bg-white/20 rounded-full px-[10px] py-[3px] text-[11px] text-white font-medium">
