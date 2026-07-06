@@ -1,8 +1,10 @@
+import { ShoppingCartOutlined, MessageOutlined } from '@ant-design/icons'
+
 const ICON_GRADIENT = 'linear-gradient(90deg, rgba(0, 94, 184, 0.10) 0.62%, rgba(92, 85, 235, 0.10) 100%), #FFF'
 
 type QuickAction = {
   key: string
-  emoji: string
+  icon: React.ReactNode
   title: string
   description: string
   onClick?: () => void
@@ -10,20 +12,14 @@ type QuickAction = {
 
 const ACTIONS: QuickAction[] = [
   {
-    key: 'claim',
-    emoji: '🧾',
-    title: 'Submit Claim',
-    description: 'Prepare documents for claims',
-  },
-  {
     key: 'buy',
-    emoji: '🛒',
+    icon: <ShoppingCartOutlined />,
     title: 'Buy New Policy',
     description: 'Explore a wide range of policies',
   },
   {
     key: 'help',
-    emoji: '💬',
+    icon: <MessageOutlined />,
     title: 'Help & Support',
     description: 'Learn more about our FAQs',
   },
@@ -31,7 +27,7 @@ const ACTIONS: QuickAction[] = [
 
 export default function QuickActions() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-5">
       {ACTIONS.map(({ key, ...action }) => (
         <QuickActionCard key={key} {...action} />
       ))}
@@ -39,7 +35,7 @@ export default function QuickActions() {
   )
 }
 
-function QuickActionCard({ emoji, title, description, onClick }: QuickAction) {
+function QuickActionCard({ icon, title, description, onClick }: QuickAction) {
   return (
     <button
       onClick={onClick}
@@ -47,10 +43,10 @@ function QuickActionCard({ emoji, title, description, onClick }: QuickAction) {
     >
       {/* Icon container */}
       <span
-        className="size-8 flex items-center justify-center shrink-0 text-base"
+        className="size-8 flex items-center justify-center shrink-0 text-primary text-lg"
         style={{ background: ICON_GRADIENT, borderRadius: '8px' }}
       >
-        {emoji}
+        {icon}
       </span>
 
       {/* Text */}
