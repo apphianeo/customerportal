@@ -13,7 +13,7 @@ export default function DashboardLayout() {
   function renderPage() {
     switch (activeNav) {
       case 'policies': return <PoliciesPage />
-      default:         return <DashboardPage />
+      default:         return <DashboardPage onNavigateToPolicies={() => setActiveNav('policies')} />
     }
   }
 

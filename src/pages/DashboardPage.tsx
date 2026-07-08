@@ -10,7 +10,11 @@ function getGreeting() {
   return 'Good evening'
 }
 
-export default function DashboardPage() {
+type Props = {
+  onNavigateToPolicies?: () => void
+}
+
+export default function DashboardPage({ onNavigateToPolicies }: Props) {
   return (
     <div className="bg-bg-page min-h-full">
       {/* Max-width content area — centred, matches Figma's 980px body */}
@@ -33,7 +37,7 @@ export default function DashboardPage() {
         </div>
 
         {/* ── Your Coverage ── */}
-        <YourCoverage />
+        <YourCoverage onViewPolicies={onNavigateToPolicies} />
 
         {/* ── Rewards ── */}
         <div className="h-px bg-border-default opacity-50" />
