@@ -185,8 +185,8 @@ export default function YourCoverage({ onViewPolicies }: Props) {
                 onClick={() => setActiveFilter('all')}
                 className={[
                   'flex items-center justify-center px-[20px] py-[8px] rounded-[24px]',
-                  'shrink-0 whitespace-nowrap border-0 cursor-pointer transition-colors',
-                  isActive ? 'bg-primary text-white font-medium' : 'bg-white border border-[rgba(0,0,0,0.09)] text-[#6e6e6e]',
+                  'shrink-0 whitespace-nowrap cursor-pointer transition-colors',
+                  isActive ? 'bg-primary text-white font-medium border-0' : 'bg-white border border-[rgba(0,0,0,0.09)] text-[#6e6e6e]',
                 ].join(' ')}
               >
                 <span className="text-sm leading-[1.5]">{label}</span>
@@ -266,7 +266,7 @@ function PolicyCard({ policy, onClick }: { policy: PolicyDetail; onClick?: () =>
             <span key={i} className="flex items-center gap-2">
               {i > 0 && <span className="text-text-secondary text-xs">•</span>}
               {detail.startsWith('Area') ? (
-                <span className="flex items-center gap-1">
+                <span className="flex items-center">
                   <span className="text-sm text-text-secondary leading-relaxed">{detail}</span>
                   <Tooltip
                     title={AREA_1_COUNTRIES}
@@ -284,7 +284,7 @@ function PolicyCard({ policy, onClick }: { policy: PolicyDetail; onClick?: () =>
                       },
                     }}
                   >
-                    <span className="cursor-help flex items-center">
+                    <span className="cursor-help flex items-center" style={{ marginLeft: 4 }}>
                       <InfoIcon />
                     </span>
                   </Tooltip>

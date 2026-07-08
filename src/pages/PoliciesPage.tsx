@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { ShoppingCartOutlined, RightOutlined, ArrowRightOutlined, DownOutlined } from '@ant-design/icons'
+import { useState, useRef, useEffect } from 'react'
+import { ShoppingCartOutlined, RightOutlined, ArrowRightOutlined, DownOutlined, UpOutlined } from '@ant-design/icons'
+import recHome     from '../assets/rec-home.png'
 import recAccident from '../assets/rec-accident.png'
 import recHospital from '../assets/rec-hospital.png'
 import iconMotor      from '../assets/icon-motor.svg'
@@ -149,17 +150,41 @@ function AccidentIcon() {
   )
 }
 
-/* ─── Home insurance icon (gradient, icon-card recommendation) ─ */
+/* ─── Recommendation icons (gradient, "Not yet covered" cards) ─ */
+function RecGradDef({ id }: { id: string }) {
+  return (
+    <defs>
+      <linearGradient id={id} x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0.618%" stopColor="#005eb8" />
+        <stop offset="100%" stopColor="#5c55eb" />
+      </linearGradient>
+    </defs>
+  )
+}
+
 function HomeInsuranceIcon() {
   return (
     <svg viewBox="0 0 13.3333 15" fill="none" className="size-[20px]" aria-hidden="true">
-      <defs>
-        <linearGradient id="rec-home-grad" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0.618%" stopColor="#005eb8" />
-          <stop offset="100%" stopColor="#5c55eb" />
-        </linearGradient>
-      </defs>
+      <RecGradDef id="rec-home-grad" />
       <path d="M5.41667 11.6667H7.91667V9.58333H10V7.08333H7.91667V5H5.41667V7.08333H3.33333V9.58333H5.41667V11.6667ZM0 15V5L6.66667 0L13.3333 5V15H0Z" fill="url(#rec-home-grad)" />
+    </svg>
+  )
+}
+
+function PersonalAccidentIcon() {
+  return (
+    <svg viewBox="0 0 11.833 15" fill="none" className="size-[20px]" aria-hidden="true">
+      <RecGradDef id="rec-accident-grad" />
+      <path d="M4.33301 8.4375C5.36406 8.43688 6.38007 8.55775 7.37988 8.80078C8.37975 9.04387 9.36438 9.4076 10.333 9.89062C10.7859 10.1249 11.1492 10.4649 11.4229 10.9102C11.6966 11.3558 11.8336 11.8444 11.833 12.375V15H0V14.9668C0.704008 14.4571 1 14.1652 1 13.2783V9.82812C1 9.61246 0.957607 9.52538 0.794922 9.46484C0.590949 9.39278 0.316196 9.2908 0.0117188 9.17969C0.433677 9.03187 0.858459 8.90424 1.28613 8.80078C2.28594 8.55896 3.30196 8.43816 4.33301 8.4375ZM4.33301 0C5.36414 0 6.24712 0.367351 6.98145 1.10156C7.71582 1.83594 8.08301 2.71875 8.08301 3.75C8.08301 4.78125 7.71582 5.66406 6.98145 6.39844C6.24712 7.13265 5.36414 7.5 4.33301 7.5C3.30197 7.49988 2.41883 7.1327 1.68457 6.39844C0.950358 5.66411 0.583008 4.78114 0.583008 3.75C0.583008 2.71886 0.950358 1.83589 1.68457 1.10156C2.41883 0.367303 3.30197 0.00011605 4.33301 0Z" fill="url(#rec-accident-grad)" />
+    </svg>
+  )
+}
+
+function HospitalIconGrad() {
+  return (
+    <svg viewBox="0 0 15 15" fill="none" className="size-[20px]" aria-hidden="true">
+      <RecGradDef id="rec-hospital-grad" />
+      <path d="M14.2857 3.57143H12.1429V0.714286C12.1429 0.285714 11.8571 0 11.4286 0H3.57143C3.14286 0 2.85714 0.285714 2.85714 0.714286V3.57143H0.714286C0.285714 3.57143 0 3.85714 0 4.28571V14.2857C0 14.7143 0.285714 15 0.714286 15H14.2857C14.7143 15 15 14.7143 15 14.2857V4.28571C15 3.85714 14.7143 3.57143 14.2857 3.57143ZM4.28571 12.1429H3.57143C3.14286 12.1429 2.85714 11.8571 2.85714 11.4286C2.85714 11 3.14286 10.7143 3.57143 10.7143H4.28571C4.71429 10.7143 5 11 5 11.4286C5 11.8571 4.71429 12.1429 4.28571 12.1429ZM4.28571 9.28571H3.57143C3.14286 9.28571 2.85714 9 2.85714 8.57143C2.85714 8.14286 3.14286 7.85714 3.57143 7.85714H4.28571C4.71429 7.85714 5 8.14286 5 8.57143C5 9 4.71429 9.28571 4.28571 9.28571ZM7.85714 12.1429H7.14286C6.71429 12.1429 6.42857 11.8571 6.42857 11.4286C6.42857 11 6.71429 10.7143 7.14286 10.7143H7.85714C8.28571 10.7143 8.57143 11 8.57143 11.4286C8.57143 11.8571 8.28571 12.1429 7.85714 12.1429ZM7.85714 9.28571H7.14286C6.71429 9.28571 6.42857 9 6.42857 8.57143C6.42857 8.14286 6.71429 7.85714 7.14286 7.85714H7.85714C8.28571 7.85714 8.57143 8.14286 8.57143 8.57143C8.57143 9 8.28571 9.28571 7.85714 9.28571ZM8.57143 5.35714H8.21429V5.71429C8.21429 6.14286 7.92857 6.42857 7.5 6.42857C7.07143 6.42857 6.78571 6.14286 6.78571 5.71429V5.35714H6.42857C6 5.35714 5.71429 5.07143 5.71429 4.64286C5.71429 4.21429 6 3.92857 6.42857 3.92857H6.78571V3.57143C6.78571 3.14286 7.07143 2.85714 7.5 2.85714C7.92857 2.85714 8.21429 3.14286 8.21429 3.57143V3.92857H8.57143C9 3.92857 9.28571 4.21429 9.28571 4.64286C9.28571 5.07143 9 5.35714 8.57143 5.35714ZM11.4286 12.1429H10.7143C10.2857 12.1429 10 11.8571 10 11.4286C10 11 10.2857 10.7143 10.7143 10.7143H11.4286C11.8571 10.7143 12.1429 11 12.1429 11.4286C12.1429 11.8571 11.8571 12.1429 11.4286 12.1429ZM11.4286 9.28571H10.7143C10.2857 9.28571 10 9 10 8.57143C10 8.14286 10.2857 7.85714 10.7143 7.85714H11.4286C11.8571 7.85714 12.1429 8.14286 12.1429 8.57143C12.1429 9 11.8571 9.28571 11.4286 9.28571Z" fill="url(#rec-hospital-grad)" />
     </svg>
   )
 }
@@ -211,7 +236,7 @@ function PolicyCard({ policy }: { policy: PolicyData }) {
       onClick={() => console.log('View policy', policy.id)}
       className={[
         'w-full text-left border-0 cursor-pointer bg-transparent p-0',
-        'rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] overflow-hidden',
+        'rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] hover:shadow-pop transition-shadow overflow-hidden',
         isRenewal ? 'border-l-[6px] border-l-[#ffb020]' : '',
       ].join(' ')}
     >
@@ -258,40 +283,103 @@ function PolicyCard({ policy }: { policy: PolicyData }) {
   )
 }
 
-/* ─── Filter dropdown (visual placeholder — Date Range / Status) ─ */
-function FilterDropdown({ label, value }: { label: string; value: string }) {
+/* ─── Select dropdown — matches UOI design system Dropdown ───
+   Closed: white field, grey border. Open: blue border + 3px blue
+   halo, chevron flips to point up, menu below with hover state. */
+function SelectDropdown({
+  label,
+  value,
+  options,
+  onChange,
+  className,
+}: {
+  label: string
+  value: string
+  options: string[]
+  onChange: (value: string) => void
+  className?: string
+}) {
+  const [open, setOpen] = useState(false)
+  const rootRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
+
   return (
-    <button className="flex items-center gap-[8px] bg-white border border-[rgba(0,0,0,0.09)] rounded-[8px] px-[16px] py-[12px] w-full sm:w-[320px] cursor-pointer">
-      <span className="text-[16px] text-[#949494] whitespace-nowrap">{label}:</span>
-      <span className="flex-1 text-[16px] text-[#212121] text-left">{value}</span>
-      <DownOutlined className="text-text-tertiary shrink-0" style={{ fontSize: 12 }} />
-    </button>
+    <div ref={rootRef} className={['relative', className || 'w-full sm:w-[320px]'].join(' ')}>
+      <div className={open ? 'p-[3px] rounded-[8px] bg-[rgba(0,94,184,0.2)] -m-[3px]' : ''}>
+        <button
+          type="button"
+          onClick={() => setOpen(o => !o)}
+          className={[
+            'flex items-center gap-[8px] bg-white border border-solid rounded-[8px] px-[16px] py-[12px] w-full cursor-pointer',
+            open ? 'border-[#005eb8]' : 'border-[rgba(0,0,0,0.09)]',
+          ].join(' ')}
+        >
+          <span className="text-[16px] text-[#949494] whitespace-nowrap">{label}:</span>
+          <span className="flex-1 text-[16px] text-[#212121] text-left truncate">{value}</span>
+          {open
+            ? <UpOutlined className="shrink-0" style={{ fontSize: 12, color: '#005eb8' }} />
+            : <DownOutlined className="text-text-tertiary shrink-0" style={{ fontSize: 12 }} />}
+        </button>
+      </div>
+      {open && (
+        <div className="absolute z-20 top-full mt-[8px] left-0 right-0 bg-white rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] overflow-hidden max-h-[260px] overflow-y-auto">
+          {options.map(opt => (
+            <button
+              key={opt}
+              type="button"
+              onClick={() => { onChange(opt); setOpen(false) }}
+              className={[
+                'w-full text-left p-[12px] text-[16px] text-[#212121] cursor-pointer border-0 transition-colors',
+                opt === value ? 'bg-[#f6f8fc]' : 'bg-white hover:bg-[#f6f8fc]',
+              ].join(' ')}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   )
 }
 
 /* ─── Not Yet Covered — recommendation cards ─────────────── */
-type RecommendationItem =
-  | { key: string; visual: { type: 'icon'; node: React.ReactNode }; title: string; price: string; description: string }
-  | { key: string; visual: { type: 'image'; src: string }; title: string; price: string; description: string }
+type RecommendationItem = {
+  key: string
+  image: string
+  icon: React.ReactNode
+  title: string
+  price: string
+  description: string
+}
 
 const RECOMMENDATIONS: RecommendationItem[] = [
   {
     key: 'home',
-    visual: { type: 'icon', node: <HomeInsuranceIcon /> },
+    image: recHome,
+    icon: <HomeInsuranceIcon />,
     title: 'Home Insurance',
     price: 'From $X/year',
     description: 'Protect your home and loved ones from unforeseen events.',
   },
   {
     key: 'accident',
-    visual: { type: 'image', src: recAccident },
+    image: recAccident,
+    icon: <PersonalAccidentIcon />,
     title: 'Personal Accident',
     price: 'From $X/year',
     description: 'Get medical coverage for accidents and have peace of mind.',
   },
   {
     key: 'hospital',
-    visual: { type: 'image', src: recHospital },
+    image: recHospital,
+    icon: <HospitalIconGrad />,
     title: 'Hospital Protection',
     price: 'From $X/year',
     description: 'Cover day-to-day hospital expenses when you need it most.',
@@ -301,21 +389,17 @@ const RECOMMENDATIONS: RecommendationItem[] = [
 function RecommendationCard({ item }: { item: RecommendationItem }) {
   return (
     <div className="flex h-[143px] rounded-[8px] overflow-hidden shadow-[0px_1px_2px_rgba(0,0,0,0.05)]">
-      {item.visual.type === 'image' && (
-        <div className="w-[120px] shrink-0 h-full">
-          <img src={item.visual.src} alt="" aria-hidden="true" className="w-full h-full object-cover" />
-        </div>
-      )}
+      <div className="w-[120px] shrink-0 h-full">
+        <img src={item.image} alt="" aria-hidden="true" className="w-full h-full object-cover" />
+      </div>
       <div className="flex-1 bg-white p-[16px] flex flex-col gap-[12px] justify-center min-w-0">
         <div className="flex flex-col gap-[4px]">
           <div className="flex items-center justify-between gap-[12px]">
             <div className="flex items-center gap-[12px] min-w-0">
-              {item.visual.type === 'icon' && (
-                <div className="flex items-center justify-center size-[32px] rounded-[8px] shrink-0"
-                  style={{ background: 'linear-gradient(90deg, rgba(0,94,184,0.1) 0.618%, rgba(92,85,235,0.1) 100%)' }}>
-                  {item.visual.node}
-                </div>
-              )}
+              <div className="flex items-center justify-center size-[32px] rounded-[8px] shrink-0"
+                style={{ background: 'linear-gradient(90deg, rgba(0,94,184,0.1) 0.618%, rgba(92,85,235,0.1) 100%)' }}>
+                {item.icon}
+              </div>
               <span className="text-[16px] font-medium text-[#212121] leading-[1.5] whitespace-nowrap">{item.title}</span>
             </div>
             <span className="text-[12px] text-[#6e6e6e] leading-[1.4] shrink-0 whitespace-nowrap">{item.price}</span>
@@ -331,16 +415,47 @@ function RecommendationCard({ item }: { item: RecommendationItem }) {
   )
 }
 
+/* ─── Status / date-range filter options ─────────────────── */
+const STATUS_LABELS: Record<PolicyStatus, string> = {
+  'in-force':    'In Force',
+  'renewal-due': 'Renewal Due',
+  'lapsed':      'Lapsed',
+}
+const STATUS_OPTIONS = ['All', 'In Force', 'Renewal Due', 'Lapsed']
+const YEAR_OPTIONS = ['All', '2023', '2024', '2025', '2026', '2027']
+
+function coverageStartYear(period: string): number | null {
+  const match = period.match(/\/(\d{4})/)
+  return match ? Number(match[1]) : null
+}
+
 /* ─── Main page ──────────────────────────────────────────── */
 export default function PoliciesPage() {
   const [activeFilter, setActiveFilter] = useState<FilterKey>('all')
+  const [statusFilter, setStatusFilter] = useState('All')
+  const [yearFrom, setYearFrom] = useState('All')
+  const [yearTo, setYearTo] = useState('All')
 
   const countFor = (key: FilterKey) =>
     key === 'all' ? POLICIES.length : POLICIES.filter(p => p.category === key).length
 
-  const visible = activeFilter === 'all'
-    ? POLICIES
-    : POLICIES.filter(p => p.category === activeFilter)
+  const visible = POLICIES.filter(p => {
+    if (activeFilter !== 'all' && p.category !== activeFilter) return false
+    if (statusFilter !== 'All' && STATUS_LABELS[p.status] !== statusFilter) return false
+    const startYear = coverageStartYear(p.coveragePeriod)
+    if (yearFrom !== 'All' && startYear !== null && startYear < Number(yearFrom)) return false
+    if (yearTo !== 'All' && startYear !== null && startYear > Number(yearTo)) return false
+    return true
+  })
+
+  const hasActiveFilters = activeFilter !== 'all' || statusFilter !== 'All' || yearFrom !== 'All' || yearTo !== 'All'
+
+  function clearFilters() {
+    setActiveFilter('all')
+    setStatusFilter('All')
+    setYearFrom('All')
+    setYearTo('All')
+  }
 
   return (
     <div className="bg-bg-page min-h-full">
@@ -376,8 +491,8 @@ export default function PoliciesPage() {
                   onClick={() => setActiveFilter('all')}
                   className={[
                     'flex items-center justify-center px-[20px] py-[8px] rounded-[24px]',
-                    'shrink-0 whitespace-nowrap border-0 cursor-pointer transition-colors',
-                    isActive ? 'bg-primary text-white font-medium' : 'bg-white border border-[rgba(0,0,0,0.09)] text-[#6e6e6e]',
+                    'shrink-0 whitespace-nowrap cursor-pointer transition-colors',
+                    isActive ? 'bg-primary text-white font-medium border-0' : 'bg-white border border-[rgba(0,0,0,0.09)] text-[#6e6e6e]',
                   ].join(' ')}
                 >
                   <span className="text-sm leading-[1.5]">{label}</span>
@@ -416,9 +531,17 @@ export default function PoliciesPage() {
 
         {/* ── Date range / status filters ── */}
         <div className="flex flex-col sm:flex-row gap-[16px] items-start sm:items-center w-full">
-          <FilterDropdown label="Date Range" value="All" />
-          <FilterDropdown label="Status" value="All" />
-          <button className="text-[16px] font-medium text-[#bdbdbd] bg-transparent border-0 cursor-not-allowed h-[32px]">
+          <SelectDropdown label="From" value={yearFrom} options={YEAR_OPTIONS} onChange={setYearFrom} className="w-full sm:w-[160px]" />
+          <SelectDropdown label="To" value={yearTo} options={YEAR_OPTIONS} onChange={setYearTo} className="w-full sm:w-[160px]" />
+          <SelectDropdown label="Status" value={statusFilter} options={STATUS_OPTIONS} onChange={setStatusFilter} className="w-full sm:w-[320px]" />
+          <button
+            onClick={clearFilters}
+            disabled={!hasActiveFilters}
+            className={[
+              'text-[16px] font-medium bg-transparent border-0 h-[32px]',
+              hasActiveFilters ? 'text-[#005eb8] cursor-pointer hover:opacity-80 transition-opacity' : 'text-[#bdbdbd] cursor-not-allowed',
+            ].join(' ')}
+          >
             Clear Filter
           </button>
         </div>
