@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { ShoppingCartOutlined, RightOutlined, ArrowRightOutlined, DownOutlined, UpOutlined } from '@ant-design/icons'
+import { ShoppingCartOutlined, RightOutlined, LeftOutlined, ArrowRightOutlined, DownOutlined, UpOutlined } from '@ant-design/icons'
 import recHome     from '../assets/rec-home.png'
 import recAccident from '../assets/rec-accident.png'
 import recHospital from '../assets/rec-hospital.png'
@@ -346,10 +346,11 @@ function SelectDropdown({
   )
 }
 
-/* ─── Date range dropdown — single dropdown, pick a year or a
-   range (click a start year, then an end year; click the same
-   year twice for a single year). Matches the design system's
-   Dropdown field/menu styling. ─────────────────────────────── */
+/* ─── Date range dropdown — calendar-style year picker. Pick a
+   year or a range (click a start year, then an end year; click
+   the same year twice for a single year). 12-year grid slides one
+   year at a time via the arrows, matching the design system's
+   Dropdown field/menu styling. ────────────────────────────────── */
 function DateRangeDropdown({
   from,
   to,
@@ -363,6 +364,8 @@ function DateRangeDropdown({
 }) {
   const [open, setOpen] = useState(false)
   const [pendingStart, setPendingStart] = useState<number | null>(null)
+  const fallbackYear = years[years.length - 1] ?? new Date().getFullYear()
+  const [centerYear, setCenterYear] = useState(from ?? fallbackYear)
   const rootRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -376,6 +379,13 @@ function DateRangeDropdown({
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
+  function toggleOpen() {
+    setOpen(o => {
+      if (!o) setCenterYear(from ?? fallbackYear)
+      return !o
+    })
+  }
+
   const displayValue = from === null ? 'All' : (to === null || to === from) ? `${from}` : `${from} - ${to}`
 
   function handleYearClick(year: number) {
@@ -388,12 +398,14 @@ function DateRangeDropdown({
     }
   }
 
+  const pageYears = Array.from({ length: 12 }, (_, i) => centerYear - 5 + i)
+
   return (
     <div ref={rootRef} className="relative w-full sm:w-[320px]">
       <div className={open ? 'p-[3px] rounded-[8px] bg-[rgba(0,94,184,0.2)] -m-[3px]' : ''}>
         <button
           type="button"
-          onClick={() => setOpen(o => !o)}
+          onClick={toggleOpen}
           className={[
             'flex items-center gap-[8px] bg-white border border-solid rounded-[8px] px-[16px] py-[12px] w-full cursor-pointer',
             open ? 'border-[#005eb8]' : 'border-[rgba(0,0,0,0.09)]',
@@ -407,37 +419,58 @@ function DateRangeDropdown({
         </button>
       </div>
       {open && (
-        <div className="absolute z-20 top-full mt-[8px] left-0 right-0 bg-white rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] overflow-hidden max-h-[300px] overflow-y-auto">
-          <div className="px-[12px] pt-[10px] pb-[8px] text-[12px] text-[#8d8d8d]">
-            {pendingStart === null ? 'Select a year, or a start year for a range' : `Select an end year (click ${pendingStart} again for a single year)`}
+        <div className="absolute z-20 top-full mt-[8px] left-0 right-0 bg-white rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] overflow-hidden">
+          <div className="px-[12px] pt-[12px] flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => setCenterYear(y => y - 1)}
+              className="flex items-center justify-center size-[28px] rounded-[6px] border-0 bg-transparent cursor-pointer text-[#6e6e6e] hover:bg-[#f6f8fc] hover:text-[#005eb8] transition-colors"
+            >
+              <LeftOutlined style={{ fontSize: 12 }} />
+            </button>
+            <span className="text-[16px] font-medium text-[#212121]">{centerYear}</span>
+            <button
+              type="button"
+              onClick={() => setCenterYear(y => y + 1)}
+              className="flex items-center justify-center size-[28px] rounded-[6px] border-0 bg-transparent cursor-pointer text-[#6e6e6e] hover:bg-[#f6f8fc] hover:text-[#005eb8] transition-colors"
+            >
+              <RightOutlined style={{ fontSize: 12 }} />
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={() => { onChange(null, null); setPendingStart(null); setOpen(false) }}
-            className={[
-              'w-full text-left p-[12px] text-[16px] text-[#212121] cursor-pointer border-0 transition-colors',
-              from === null ? 'bg-[#f6f8fc]' : 'bg-white hover:bg-[#f6f8fc]',
-            ].join(' ')}
-          >
-            All
-          </button>
-          {years.map(year => {
-            const isEndpoint = year === pendingStart || year === from || year === to
-            const inRange = from !== null && to !== null && year > from && year < to
-            return (
-              <button
-                key={year}
-                type="button"
-                onClick={() => handleYearClick(year)}
-                className={[
-                  'w-full text-left p-[12px] text-[16px] cursor-pointer border-0 transition-colors',
-                  isEndpoint ? 'bg-[#005eb8] text-white font-medium' : inRange ? 'bg-[#eff6ff] text-[#212121]' : 'bg-white text-[#212121] hover:bg-[#f6f8fc]',
-                ].join(' ')}
-              >
-                {year}
-              </button>
-            )
-          })}
+          <p className="px-[12px] pt-[4px] pb-[8px] text-[12px] text-[#8d8d8d] m-0">
+            {pendingStart === null ? 'Select a year, or a start year for a range' : `Select an end year (click ${pendingStart} again for a single year)`}
+          </p>
+          <div className="grid grid-cols-3 gap-[4px] px-[12px] pb-[12px]">
+            {pageYears.map(year => {
+              const isEndpoint = year === pendingStart || year === from || year === to
+              const inRange = from !== null && to !== null && year > from && year < to
+              return (
+                <button
+                  key={year}
+                  type="button"
+                  onClick={() => handleYearClick(year)}
+                  className={[
+                    'py-[10px] rounded-[6px] text-[14px] text-center cursor-pointer border-0 transition-colors',
+                    isEndpoint ? 'bg-[#005eb8] text-white font-medium' : inRange ? 'bg-[#eff6ff] text-[#212121]' : 'bg-white text-[#212121] hover:bg-[#f6f8fc]',
+                  ].join(' ')}
+                >
+                  {year}
+                </button>
+              )
+            })}
+          </div>
+          <div className="border-t border-[rgba(0,0,0,0.09)] px-[12px] py-[10px]">
+            <button
+              type="button"
+              onClick={() => { onChange(null, null); setPendingStart(null); setOpen(false) }}
+              className={[
+                'w-full text-center py-[8px] rounded-[6px] text-[14px] cursor-pointer border-0 transition-colors',
+                from === null ? 'bg-[#f6f8fc] text-[#005eb8] font-medium' : 'bg-white text-[#6e6e6e] hover:bg-[#f6f8fc] hover:text-[#005eb8]',
+              ].join(' ')}
+            >
+              All years
+            </button>
+          </div>
         </div>
       )}
     </div>

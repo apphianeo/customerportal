@@ -1,41 +1,42 @@
 import { RightOutlined, ArrowRightOutlined } from '@ant-design/icons'
 
-/* ─── Quick action icons — solid blue, matches design system ─ */
+/* ─── Quick action icons — solid blue, matches provided reference ─ */
 function GettingStartedIcon() {
   return (
-    <svg viewBox="0 0 20 20" fill="none" className="size-[18px]" aria-hidden="true">
-      <circle cx="10" cy="10" r="8" stroke="#005EB8" strokeWidth="1.6" />
-      <circle cx="10" cy="10" r="2" fill="#005EB8" />
-      <path d="M10 2V5M10 15V18M2 10H5M15 10H18" stroke="#005EB8" strokeWidth="1.6" strokeLinecap="round" />
+    <svg viewBox="0 0 24 24" fill="none" className="size-[20px]" aria-hidden="true">
+      <circle cx="12" cy="8.5" r="4" fill="#005EB8" />
+      <path d="M4 20.5c0-4.42 3.58-7.5 8-7.5s8 3.08 8 7.5" fill="#005EB8" />
     </svg>
   )
 }
 
 function PoliciesIcon() {
   return (
-    <svg viewBox="0 0 20 20" fill="none" className="size-[18px]" aria-hidden="true">
-      <rect x="4" y="2.5" width="12" height="15" rx="1.5" stroke="#005EB8" strokeWidth="1.6" />
-      <path d="M7 7H13M7 10.5H13M7 14H10.5" stroke="#005EB8" strokeWidth="1.6" strokeLinecap="round" />
+    <svg viewBox="0 0 24 24" fill="none" className="size-[20px]" aria-hidden="true">
+      <path d="M12 2.5 4.5 5v6c0 5.2 3.2 9.5 7.5 10.9 4.3-1.4 7.5-5.7 7.5-10.9V5L12 2.5Z" fill="#005EB8" />
+      <circle cx="10.6" cy="10.8" r="2.6" fill="none" stroke="white" strokeWidth="1.4" />
+      <line x1="12.5" y1="12.7" x2="14.6" y2="14.8" stroke="white" strokeWidth="1.4" strokeLinecap="round" />
     </svg>
   )
 }
 
 function PaymentsIcon() {
   return (
-    <svg viewBox="0 0 20 20" fill="none" className="size-[18px]" aria-hidden="true">
-      <rect x="2" y="4.5" width="16" height="11" rx="1.8" stroke="#005EB8" strokeWidth="1.6" />
-      <path d="M2 8.5H18" stroke="#005EB8" strokeWidth="1.6" />
-      <rect x="4.5" y="11.5" width="4" height="1.8" rx="0.9" fill="#005EB8" />
+    <svg viewBox="0 0 24 24" fill="none" className="size-[20px]" aria-hidden="true">
+      <rect x="3" y="6" width="18" height="12" rx="2.5" fill="#005EB8" />
+      <rect x="6" y="13.5" width="3.2" height="1.7" rx="0.85" fill="white" />
+      <rect x="10.2" y="13.5" width="3.2" height="1.7" rx="0.85" fill="white" />
     </svg>
   )
 }
 
 function AccountSettingsIcon() {
   return (
-    <svg viewBox="0 0 20 20" fill="none" className="size-[18px]" aria-hidden="true">
-      <rect x="4.5" y="9" width="11" height="8" rx="1.6" stroke="#005EB8" strokeWidth="1.6" />
-      <path d="M6.8 9V6.5C6.8 4.6 8.3 3 10 3C11.7 3 13.2 4.6 13.2 6.5V9" stroke="#005EB8" strokeWidth="1.6" />
-      <circle cx="10" cy="12.7" r="1.1" fill="#005EB8" />
+    <svg viewBox="0 0 24 24" fill="none" className="size-[20px]" aria-hidden="true">
+      <path d="M8 10V7.5C8 5.01 10.01 3 12.5 3S17 5.01 17 7.5V10" stroke="#005EB8" strokeWidth="1.8" fill="none" />
+      <rect x="5.5" y="10" width="14" height="10.5" rx="3" fill="#005EB8" />
+      <circle cx="12.5" cy="15" r="1.7" fill="white" />
+      <rect x="11.6" y="16" width="1.8" height="2.8" rx="0.9" fill="white" />
     </svg>
   )
 }
@@ -88,12 +89,9 @@ function QuickActionCard({ icon, title, subtitle }: { icon: React.ReactNode; tit
   return (
     <button
       onClick={() => console.log('Open help topic', title)}
-      className="bg-white rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] px-[12px] py-[16px] flex flex-col items-center justify-center gap-[16px] text-center cursor-pointer border-0"
+      className="bg-white rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] hover:shadow-pop transition-shadow px-[12px] py-[16px] flex flex-col items-center justify-center gap-[16px] text-center cursor-pointer border-0"
     >
-      <div
-        className="flex items-center justify-center size-[36px] rounded-[9px] shrink-0"
-        style={{ backgroundImage: 'linear-gradient(90deg, rgba(0,94,184,0.1) 0%, rgba(92,85,235,0.1) 100%)' }}
-      >
+      <div className="flex items-center justify-center size-[48px] rounded-[12px] shrink-0 bg-[rgba(0,94,184,0.08)]">
         {icon}
       </div>
       <div className="flex flex-col gap-[4px] items-center">

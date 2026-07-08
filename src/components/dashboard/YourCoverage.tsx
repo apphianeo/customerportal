@@ -89,6 +89,7 @@ type PolicyDetail = {
   statusLabel: string
   details: string[]         // each item separated by • in the UI
   category: FilterKey
+  detailSlug?: string
 }
 
 type FilterKey = 'all' | 'motor' | 'travel' | 'helper' | 'home' | 'hospital' | 'accident'
@@ -112,6 +113,7 @@ const POLICIES: PolicyDetail[] = [
     statusLabel: 'In Force',
     details: ['Area 1', 'Value Plan', '8/4/2026 - 13/4/2026 (6 Days)'],
     category: 'travel',
+    detailSlug: 'unitravel',
   },
   {
     id: '3',
@@ -143,9 +145,10 @@ const FILTERS: FilterOption[] = [
 /* ─── Main section ───────────────────────────────────────── */
 type Props = {
   onViewPolicies?: () => void
+  onSelectPolicy?: (slug: string) => void
 }
 
-export default function YourCoverage({ onViewPolicies }: Props) {
+export default function YourCoverage({ onViewPolicies, onSelectPolicy }: Props) {
   const [activeFilter, setActiveFilter] = useState<FilterKey>('all')
 
   const countFor = (key: FilterKey) =>
@@ -233,7 +236,11 @@ export default function YourCoverage({ onViewPolicies }: Props) {
           </p>
         ) : (
           visible.map(policy => (
-            <PolicyCard key={policy.id} policy={policy} onClick={onViewPolicies} />
+            <PolicyCard
+              key={policy.id}
+              policy={policy}
+              onClick={() => policy.detailSlug ? onSelectPolicy?.(policy.detailSlug) : onViewPolicies?.()}
+            />
           ))
         )}
       </div>

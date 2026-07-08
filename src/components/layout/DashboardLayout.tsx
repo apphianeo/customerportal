@@ -32,7 +32,7 @@ export default function DashboardLayout() {
       case 'policies': return <PoliciesPage onSelectPolicy={setPolicyDetail} />
       case 'account':  return <ManageAccountPage onNavigateToDashboard={() => navigate('dashboard')} />
       case 'help':     return <HelpSupportPage onNavigateToDashboard={() => navigate('dashboard')} />
-      default:         return <DashboardPage onNavigateToPolicies={() => setActiveNav('policies')} />
+      default:         return <DashboardPage onNavigateToPolicies={() => setActiveNav('policies')} onSelectPolicy={setPolicyDetail} />
     }
   }
 

@@ -53,7 +53,7 @@ function FormCard({
         {children}
       </div>
       {footer && (
-        <div className="bg-[#f9fafb] border-t border-[rgba(0,0,0,0.09)] px-[24px] py-[16px] flex items-center justify-between gap-[16px] flex-wrap">
+        <div className="bg-white border-t border-[rgba(0,0,0,0.09)] px-[24px] py-[16px] flex items-center justify-between gap-[16px] flex-wrap">
           {footer}
         </div>
       )}
