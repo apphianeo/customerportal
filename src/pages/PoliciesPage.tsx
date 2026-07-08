@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { ShoppingCartOutlined, RightOutlined, LeftOutlined, ArrowRightOutlined, DownOutlined, UpOutlined } from '@ant-design/icons'
+import { ShoppingCartOutlined, RightOutlined, ArrowRightOutlined, DownOutlined, UpOutlined } from '@ant-design/icons'
 import recHome     from '../assets/rec-home.png'
 import recAccident from '../assets/rec-accident.png'
 import recHospital from '../assets/rec-hospital.png'
@@ -346,137 +346,6 @@ function SelectDropdown({
   )
 }
 
-/* ─── Date range dropdown — calendar-style year picker. Pick a
-   year or a range (click a start year, then an end year; click
-   the same year twice for a single year). 12-year grid slides one
-   year at a time via the arrows, matching the design system's
-   Dropdown field/menu styling. ────────────────────────────────── */
-function DateRangeDropdown({
-  from,
-  to,
-  years,
-  onChange,
-}: {
-  from: number | null
-  to: number | null
-  years: number[]
-  onChange: (from: number | null, to: number | null) => void
-}) {
-  const [open, setOpen] = useState(false)
-  const [pendingStart, setPendingStart] = useState<number | null>(null)
-  const fallbackYear = years[years.length - 1] ?? new Date().getFullYear()
-  const [centerYear, setCenterYear] = useState(from ?? fallbackYear)
-  const rootRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
-        setOpen(false)
-        setPendingStart(null)
-      }
-    }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [])
-
-  function toggleOpen() {
-    setOpen(o => {
-      if (!o) setCenterYear(from ?? fallbackYear)
-      return !o
-    })
-  }
-
-  const displayValue = from === null ? 'All' : (to === null || to === from) ? `${from}` : `${from} - ${to}`
-
-  function handleYearClick(year: number) {
-    if (pendingStart === null) {
-      setPendingStart(year)
-    } else {
-      onChange(Math.min(pendingStart, year), Math.max(pendingStart, year))
-      setPendingStart(null)
-      setOpen(false)
-    }
-  }
-
-  const pageYears = Array.from({ length: 12 }, (_, i) => centerYear - 5 + i)
-
-  return (
-    <div ref={rootRef} className="relative w-full sm:w-[320px]">
-      <div className={open ? 'p-[3px] rounded-[8px] bg-[rgba(0,94,184,0.2)] -m-[3px]' : ''}>
-        <button
-          type="button"
-          onClick={toggleOpen}
-          className={[
-            'flex items-center gap-[8px] bg-white border border-solid rounded-[8px] px-[16px] py-[12px] w-full cursor-pointer',
-            open ? 'border-[#005eb8]' : 'border-[rgba(0,0,0,0.09)]',
-          ].join(' ')}
-        >
-          <span className="text-[16px] text-[#949494] whitespace-nowrap">Date Range:</span>
-          <span className="flex-1 text-[16px] text-[#212121] text-left truncate">{displayValue}</span>
-          {open
-            ? <UpOutlined className="shrink-0" style={{ fontSize: 12, color: '#005eb8' }} />
-            : <DownOutlined className="shrink-0" style={{ fontSize: 12, color: '#6E6E6E' }} />}
-        </button>
-      </div>
-      {open && (
-        <div className="absolute z-20 top-full mt-[8px] left-0 right-0 bg-white rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] overflow-hidden">
-          <div className="px-[12px] pt-[12px] flex items-center justify-between">
-            <button
-              type="button"
-              onClick={() => setCenterYear(y => y - 1)}
-              className="flex items-center justify-center size-[28px] rounded-[6px] border-0 bg-transparent cursor-pointer text-[#6e6e6e] hover:bg-[#f6f8fc] hover:text-[#005eb8] transition-colors"
-            >
-              <LeftOutlined style={{ fontSize: 12 }} />
-            </button>
-            <span className="text-[16px] font-medium text-[#212121]">{centerYear}</span>
-            <button
-              type="button"
-              onClick={() => setCenterYear(y => y + 1)}
-              className="flex items-center justify-center size-[28px] rounded-[6px] border-0 bg-transparent cursor-pointer text-[#6e6e6e] hover:bg-[#f6f8fc] hover:text-[#005eb8] transition-colors"
-            >
-              <RightOutlined style={{ fontSize: 12 }} />
-            </button>
-          </div>
-          <p className="px-[12px] pt-[4px] pb-[8px] text-[12px] text-[#8d8d8d] m-0">
-            {pendingStart === null ? 'Select a year, or a start year for a range' : `Select an end year (click ${pendingStart} again for a single year)`}
-          </p>
-          <div className="grid grid-cols-3 gap-[4px] px-[12px] pb-[12px]">
-            {pageYears.map(year => {
-              const isEndpoint = year === pendingStart || year === from || year === to
-              const inRange = from !== null && to !== null && year > from && year < to
-              return (
-                <button
-                  key={year}
-                  type="button"
-                  onClick={() => handleYearClick(year)}
-                  className={[
-                    'py-[10px] rounded-[6px] text-[14px] text-center cursor-pointer border-0 transition-colors',
-                    isEndpoint ? 'bg-[#005eb8] text-white font-medium' : inRange ? 'bg-[#eff6ff] text-[#212121]' : 'bg-white text-[#212121] hover:bg-[#f6f8fc]',
-                  ].join(' ')}
-                >
-                  {year}
-                </button>
-              )
-            })}
-          </div>
-          <div className="border-t border-[rgba(0,0,0,0.09)] px-[12px] py-[10px]">
-            <button
-              type="button"
-              onClick={() => { onChange(null, null); setPendingStart(null); setOpen(false) }}
-              className={[
-                'w-full text-center py-[8px] rounded-[6px] text-[14px] cursor-pointer border-0 transition-colors',
-                from === null ? 'bg-[#f6f8fc] text-[#005eb8] font-medium' : 'bg-white text-[#6e6e6e] hover:bg-[#f6f8fc] hover:text-[#005eb8]',
-              ].join(' ')}
-            >
-              All years
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
 /* ─── Not Yet Covered — recommendation cards ─────────────── */
 type RecommendationItem = {
   key: string
@@ -551,12 +420,23 @@ const STATUS_LABELS: Record<PolicyStatus, string> = {
 }
 const STATUS_OPTIONS = ['All', 'In Force', 'Renewal Due', 'Lapsed']
 
-function coverageStartYear(period: string): number | null {
-  const match = period.match(/\/(\d{4})/)
-  return match ? Number(match[1]) : null
+function coverageStartDate(period: string): Date | null {
+  const match = period.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/)
+  if (!match) return null
+  const [, day, month, year] = match
+  return new Date(Number(year), Number(month) - 1, Number(day))
 }
 
-const RANGE_YEARS = [2023, 2024, 2025, 2026, 2027]
+const DATE_RANGE_OPTIONS = ['All Time', 'Past 1 Year', 'Past 2 Years', 'Past 3 Years']
+
+function yearsBackFor(label: string): number | null {
+  switch (label) {
+    case 'Past 1 Year':  return 1
+    case 'Past 2 Years': return 2
+    case 'Past 3 Years': return 3
+    default:              return null
+  }
+}
 
 /* ─── Main page ──────────────────────────────────────────── */
 type Props = {
@@ -566,8 +446,7 @@ type Props = {
 export default function PoliciesPage({ onSelectPolicy }: Props) {
   const [activeFilter, setActiveFilter] = useState<FilterKey>('all')
   const [statusFilter, setStatusFilter] = useState('All')
-  const [yearFrom, setYearFrom] = useState<number | null>(null)
-  const [yearTo, setYearTo] = useState<number | null>(null)
+  const [dateRangeFilter, setDateRangeFilter] = useState('All Time')
 
   const countFor = (key: FilterKey) =>
     key === 'all' ? POLICIES.length : POLICIES.filter(p => p.category === key).length
@@ -575,19 +454,24 @@ export default function PoliciesPage({ onSelectPolicy }: Props) {
   const visible = POLICIES.filter(p => {
     if (activeFilter !== 'all' && p.category !== activeFilter) return false
     if (statusFilter !== 'All' && STATUS_LABELS[p.status] !== statusFilter) return false
-    const startYear = coverageStartYear(p.coveragePeriod)
-    if (yearFrom !== null && startYear !== null && startYear < yearFrom) return false
-    if (yearTo !== null && startYear !== null && startYear > yearTo) return false
+    const yearsBack = yearsBackFor(dateRangeFilter)
+    if (yearsBack !== null) {
+      const startDate = coverageStartDate(p.coveragePeriod)
+      if (startDate) {
+        const cutoff = new Date()
+        cutoff.setFullYear(cutoff.getFullYear() - yearsBack)
+        if (startDate < cutoff) return false
+      }
+    }
     return true
   })
 
-  const hasActiveFilters = activeFilter !== 'all' || statusFilter !== 'All' || yearFrom !== null || yearTo !== null
+  const hasActiveFilters = activeFilter !== 'all' || statusFilter !== 'All' || dateRangeFilter !== 'All Time'
 
   function clearFilters() {
     setActiveFilter('all')
     setStatusFilter('All')
-    setYearFrom(null)
-    setYearTo(null)
+    setDateRangeFilter('All Time')
   }
 
   return (
@@ -667,7 +551,7 @@ export default function PoliciesPage({ onSelectPolicy }: Props) {
 
         {/* ── Date range / status filters ── */}
         <div className="flex flex-col sm:flex-row gap-[16px] items-start sm:items-center w-full">
-          <DateRangeDropdown from={yearFrom} to={yearTo} years={RANGE_YEARS} onChange={(f, t) => { setYearFrom(f); setYearTo(t) }} />
+          <SelectDropdown label="Date Range" value={dateRangeFilter} options={DATE_RANGE_OPTIONS} onChange={setDateRangeFilter} className="w-full sm:w-[320px]" />
           <SelectDropdown label="Status" value={statusFilter} options={STATUS_OPTIONS} onChange={setStatusFilter} className="w-full sm:w-[320px]" />
           <button
             onClick={clearFilters}
