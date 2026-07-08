@@ -8,14 +8,17 @@ import PoliciesPage from '../../pages/PoliciesPage'
 import UniTravelPolicyPage from '../../pages/UniTravelPolicyPage'
 import ManageAccountPage from '../../pages/ManageAccountPage'
 import HelpSupportPage from '../../pages/HelpSupportPage'
+import HelpTopicPage, { type HelpTopicKey } from '../../pages/HelpTopicPage'
 
 export default function DashboardLayout() {
   const [activeNav, setActiveNav] = useState<NavKey>('dashboard')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [policyDetail, setPolicyDetail] = useState<string | null>(null)
+  const [helpTopic, setHelpTopic] = useState<HelpTopicKey | null>(null)
 
   function navigate(key: NavKey) {
     setPolicyDetail(null)
+    setHelpTopic(null)
     setActiveNav(key)
   }
 
@@ -24,19 +27,27 @@ export default function DashboardLayout() {
     setActiveNav('policies')
   }
 
+  function goToHelp() {
+    setHelpTopic(null)
+    setActiveNav('help')
+  }
+
   function renderPage() {
     if (policyDetail === 'unitravel') {
       return <UniTravelPolicyPage onNavigateToDashboard={() => navigate('dashboard')} onNavigateToPolicies={goToPolicies} />
     }
+    if (helpTopic) {
+      return <HelpTopicPage topic={helpTopic} onNavigateToDashboard={() => navigate('dashboard')} onNavigateToHelp={goToHelp} />
+    }
     switch (activeNav) {
       case 'policies': return <PoliciesPage onSelectPolicy={setPolicyDetail} />
       case 'account':  return <ManageAccountPage onNavigateToDashboard={() => navigate('dashboard')} />
-      case 'help':     return <HelpSupportPage onNavigateToDashboard={() => navigate('dashboard')} />
+      case 'help':     return <HelpSupportPage onNavigateToDashboard={() => navigate('dashboard')} onSelectTopic={setHelpTopic} />
       default:         return <DashboardPage onNavigateToPolicies={() => setActiveNav('policies')} onSelectPolicy={setPolicyDetail} />
     }
   }
 
-  const sidebarActiveKey = policyDetail ? 'policies' : activeNav
+  const sidebarActiveKey = policyDetail ? 'policies' : helpTopic ? 'help' : activeNav
 
   return (
     <div className="flex h-screen overflow-hidden bg-bg-page">
