@@ -6,6 +6,8 @@ import FooterShort from './FooterShort'
 import DashboardPage from '../../pages/DashboardPage'
 import PoliciesPage from '../../pages/PoliciesPage'
 import UniTravelPolicyPage from '../../pages/UniTravelPolicyPage'
+import ManageAccountPage from '../../pages/ManageAccountPage'
+import HelpSupportPage from '../../pages/HelpSupportPage'
 
 export default function DashboardLayout() {
   const [activeNav, setActiveNav] = useState<NavKey>('dashboard')
@@ -28,6 +30,8 @@ export default function DashboardLayout() {
     }
     switch (activeNav) {
       case 'policies': return <PoliciesPage onSelectPolicy={setPolicyDetail} />
+      case 'account':  return <ManageAccountPage onNavigateToDashboard={() => navigate('dashboard')} />
+      case 'help':     return <HelpSupportPage onNavigateToDashboard={() => navigate('dashboard')} />
       default:         return <DashboardPage onNavigateToPolicies={() => setActiveNav('policies')} />
     }
   }
