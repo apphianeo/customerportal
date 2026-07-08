@@ -229,7 +229,7 @@ export default function YourCoverage() {
 /* ─── Policy Card ────────────────────────────────────────── */
 function PolicyCard({ policy }: { policy: PolicyDetail }) {
   return (
-    <button className="flex items-center gap-1 w-full bg-white rounded-xl p-4 shadow-card text-left cursor-pointer border-0 hover:shadow-md transition-shadow">
+    <button className="flex items-center gap-1 w-full bg-white rounded-xl p-4 shadow-card text-left cursor-pointer border-0 hover:shadow-pop transition-shadow">
       {/* Details */}
       <div className="flex flex-col gap-[4px] flex-1 min-w-0">
         {/* Name + status tag */}
@@ -256,12 +256,17 @@ function PolicyCard({ policy }: { policy: PolicyDetail }) {
                   <Tooltip
                     title={AREA_1_COUNTRIES}
                     color="white"
-                    overlayInnerStyle={{
-                      color: '#212121',
-                      fontSize: 14,
-                      lineHeight: 1.5,
-                      padding: 12,
-                      borderRadius: 8,
+                    placement="top"
+                    styles={{
+                      root: { maxWidth: 265 },
+                      container: {
+                        color: '#212121',
+                        fontSize: 14,
+                        lineHeight: 1.5,
+                        padding: 12,
+                        borderRadius: 8,
+                        boxShadow: '0px 0px 4.5px rgba(0, 0, 0, 0.12)',
+                      },
                     }}
                   >
                     <InfoCircleOutlined

@@ -54,7 +54,7 @@ function QuickActionCard({ icon, title, description, onClick }: QuickAction) {
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-3 w-full bg-white rounded-lg p-4 shadow-card text-left cursor-pointer border-0 hover:shadow-md transition-shadow"
+      className="flex items-center gap-3 w-full bg-white rounded-lg p-4 shadow-card text-left cursor-pointer border-0 hover:shadow-pop transition-shadow"
     >
       {/* Icon container */}
       <span

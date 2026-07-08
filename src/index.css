@@ -74,6 +74,7 @@
 
   /* ─── Shadows ─────────────────────────────────────────── */
   --shadow-card: 0px 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-pop:  0px 10px 35px 0px rgba(0, 94, 184, 0.06);
 }
 
 /* Custom utilities */

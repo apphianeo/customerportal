@@ -9,24 +9,11 @@ export type NavKey = 'dashboard' | 'policies' | 'account' | 'help'
 type NavItemDef = {
   key: NavKey
   label: string
-  icon: (active: boolean) => React.ReactNode
+  icon: React.ReactNode
 }
 
 /* ─── Icons — exact Figma SVG paths, size-[20px] ─────────── */
-function HomeIcon({ active }: { active: boolean }) {
-  if (active) {
-    return (
-      <svg viewBox="0 0 20 20" fill="none" className="size-full" aria-hidden="true">
-        <defs>
-          <linearGradient id="home-grad" x1="3.416" y1="3.461" x2="16.667" y2="3.461" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#005EB8" />
-            <stop offset="1" stopColor="#5C55EB" />
-          </linearGradient>
-        </defs>
-        <path d="M3.33333 17.5V7.5L10 2.5L16.6667 7.5V17.5H11.6667V11.6667H8.33333V17.5H3.33333Z" fill="url(#home-grad)" />
-      </svg>
-    )
-  }
+function HomeIcon() {
   return (
     <svg viewBox="0 0 20 20" fill="none" className="size-full" aria-hidden="true">
       <path d="M3.33333 17.5V7.5L10 2.5L16.6667 7.5V17.5H11.6667V11.6667H8.33333V17.5H3.33333Z" fill="currentColor" />
@@ -60,10 +47,10 @@ function HelpIcon() {
 
 /* ─── Nav definitions ─────────────────────────────────────── */
 const navItems: NavItemDef[] = [
-  { key: 'dashboard', label: 'Dashboard',       icon: (a) => <HomeIcon active={a} /> },
-  { key: 'policies',  label: 'Policies',        icon: () => <PolicyIcon /> },
-  { key: 'account',   label: 'Manage Account',  icon: () => <SettingsIcon /> },
-  { key: 'help',      label: 'Help & Support',  icon: () => <HelpIcon /> },
+  { key: 'dashboard', label: 'Dashboard',       icon: <HomeIcon /> },
+  { key: 'policies',  label: 'Policies',        icon: <PolicyIcon /> },
+  { key: 'account',   label: 'Manage Account',  icon: <SettingsIcon /> },
+  { key: 'help',      label: 'Help & Support',  icon: <HelpIcon /> },
 ]
 
 /* ─── Sidebar ─────────────────────────────────────────────── */
@@ -121,7 +108,7 @@ export default function Sidebar({
             <li key={key}>
               <NavItem
                 label={label}
-                icon={icon(activeKey === key)}
+                icon={icon}
                 isActive={activeKey === key}
                 collapsed={collapsed}
                 onClick={() => onNavigate?.(key)}
@@ -155,45 +142,28 @@ function NavItem({
   collapsed: boolean
   onClick: () => void
 }) {
-  if (isActive) {
-    return (
-      <button
-        onClick={onClick}
-        title={collapsed ? label : undefined}
-        className="flex items-start w-full cursor-pointer border-0 p-0 bg-transparent"
-      >
-        {/* Gradient accent bar */}
-        <span className="w-[4px] self-stretch shrink-0 bg-gradient-to-b from-primary to-regal rounded-tl-[8px] rounded-bl-[8px]" />
-        {/* Content */}
-        <span
-          className={[
-            'flex items-center bg-gradient-to-r from-primary/10 to-regal/10',
-            'rounded-tr-[8px] rounded-br-[8px] text-primary flex-1',
-            collapsed ? 'justify-center py-[10px] px-[12px]' : 'gap-[12px] pl-[10px] pr-[12px] py-[10px]',
-          ].join(' ')}
-        >
-          <span className="size-[20px] shrink-0 flex items-center justify-center">{icon}</span>
-          {!collapsed && (
-            <span className="text-sm font-medium leading-relaxed flex-1 min-w-0 text-left">{label}</span>
-          )}
-        </span>
-      </button>
-    )
-  }
-
   return (
     <button
       onClick={onClick}
       title={collapsed ? label : undefined}
       className={[
-        'flex items-center w-full cursor-pointer border-0 bg-transparent rounded-[8px]',
-        'text-[#8D8D8D] hover:bg-grey-tag transition-colors py-[10px] px-[12px]',
+        'flex items-center w-full cursor-pointer border-0 transition-colors py-[10px] px-[12px]',
         collapsed ? 'justify-center' : 'gap-[12px]',
+        isActive
+          ? 'rounded-[4px] bg-[rgba(51,133,230,0.12)] text-primary'
+          : 'rounded-[8px] bg-transparent text-[#8D8D8D] hover:bg-grey-tag',
       ].join(' ')}
     >
       <span className="size-[20px] shrink-0 flex items-center justify-center">{icon}</span>
       {!collapsed && (
-        <span className="text-sm leading-relaxed flex-1 min-w-0 text-left">{label}</span>
+        <span
+          className={[
+            'text-sm leading-relaxed flex-1 min-w-0 text-left',
+            isActive ? 'font-medium' : '',
+          ].join(' ')}
+        >
+          {label}
+        </span>
       )}
     </button>
   )
