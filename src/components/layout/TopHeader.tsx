@@ -3,7 +3,6 @@ import uoiLogo from '../../assets/uoi-logo.svg'
 import iconLogout from '../../assets/icon-logout.svg'
 import {
   SearchOutlined,
-  BellOutlined,
   DownOutlined,
   CloseOutlined,
 } from '@ant-design/icons'
@@ -11,13 +10,11 @@ import {
 type Props = {
   userName?: string
   userInitials?: string
-  notificationCount?: number
 }
 
 export default function TopHeader({
   userName: _userName = 'Chris Wong',
   userInitials = 'CW',
-  notificationCount = 1,
 }: Props) {
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
@@ -104,9 +101,6 @@ export default function TopHeader({
           {/* Divider — desktop only */}
           <div className="hidden lg:block w-px h-[31px] bg-border-default shrink-0" />
 
-          {/* Notification bell */}
-          <NotificationBell count={notificationCount} />
-
           {/* User avatar */}
           <div ref={userMenuRef} className="relative">
             <button
@@ -160,29 +154,8 @@ export default function TopHeader({
           </div>
         </div>
 
-        {/* ── Right icons — visible when mobile search is open (bell + avatar only) ── */}
-        {searchOpen && (
-          <div className="flex items-center gap-3 lg:hidden">
-            <NotificationBell count={notificationCount} />
-          </div>
-        )}
       </div>
     </header>
-  )
-}
-
-/* ─── Notification Bell ─────────────────────────────────── */
-function NotificationBell({ count }: { count: number }) {
-  return (
-    <button
-      className="relative size-6 flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors bg-transparent border-0 cursor-pointer"
-      aria-label={`${count} notification${count !== 1 ? 's' : ''}`}
-    >
-      <BellOutlined style={{ fontSize: 20 }} />
-      {count > 0 && (
-        <span className="absolute top-0 right-0 translate-x-1/4 -translate-y-1/4 flex items-center justify-center min-w-[8px] h-2 rounded-full bg-error" />
-      )}
-    </button>
   )
 }
 

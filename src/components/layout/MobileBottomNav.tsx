@@ -2,16 +2,12 @@ import {
   HomeFilled,
   HomeOutlined,
   FileProtectOutlined,
-  FileTextOutlined,
-  TagsOutlined,
 } from '@ant-design/icons'
 import type { NavKey } from './Sidebar'
 
 const mobileNavItems: { key: NavKey; label: string; icon: React.ReactNode; activeIcon: React.ReactNode }[] = [
   { key: 'dashboard', label: 'Dashboard', icon: <HomeOutlined />,        activeIcon: <HomeFilled /> },
   { key: 'policies',  label: 'Policies',  icon: <FileProtectOutlined />, activeIcon: <FileProtectOutlined /> },
-  { key: 'claims',    label: 'Claims',    icon: <FileTextOutlined />,    activeIcon: <FileTextOutlined /> },
-  { key: 'rewards',   label: 'Rewards',   icon: <TagsOutlined />,        activeIcon: <TagsOutlined /> },
 ]
 
 type Props = {
