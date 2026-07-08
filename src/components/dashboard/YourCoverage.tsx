@@ -1,5 +1,20 @@
 import { useState } from 'react'
-import { RightOutlined, ArrowRightOutlined, InfoCircleOutlined } from '@ant-design/icons'
+import { Tooltip } from 'antd'
+import { RightOutlined, ArrowRightOutlined } from '@ant-design/icons'
+
+const AREA_1_COUNTRIES =
+  'Area 1 includes Brunei, Cambodia, Indonesia, Laos, Malaysia, Myanmar, Philippines, Thailand and Vietnam.'
+
+/* ─── Info icon — grey filled circle, matches design system ─ */
+function InfoIcon() {
+  return (
+    <svg viewBox="0 0 16 16" className="shrink-0" style={{ width: 13, height: 13 }} aria-hidden="true">
+      <circle cx="8" cy="8" r="8" fill="#BDBDBD" />
+      <circle cx="8" cy="4.75" r="1" fill="white" />
+      <rect x="7.1" y="7" width="1.8" height="5" rx="0.9" fill="white" />
+    </svg>
+  )
+}
 import iconMotor      from '../../assets/icon-motor.svg'
 import iconTravel     from '../../assets/icon-travel.svg'
 import iconHelperBody from '../../assets/icon-helper-body.svg'
@@ -74,6 +89,7 @@ type PolicyDetail = {
   statusLabel: string
   details: string[]         // each item separated by • in the UI
   category: FilterKey
+  detailSlug?: string
 }
 
 type FilterKey = 'all' | 'motor' | 'travel' | 'helper' | 'home' | 'hospital' | 'accident'
@@ -97,6 +113,7 @@ const POLICIES: PolicyDetail[] = [
     statusLabel: 'In Force',
     details: ['Area 1', 'Value Plan', '8/4/2026 - 13/4/2026 (6 Days)'],
     category: 'travel',
+    detailSlug: 'unitravel',
   },
   {
     id: '3',
@@ -126,7 +143,12 @@ const FILTERS: FilterOption[] = [
 ]
 
 /* ─── Main section ───────────────────────────────────────── */
-export default function YourCoverage() {
+type Props = {
+  onViewPolicies?: () => void
+  onSelectPolicy?: (slug: string) => void
+}
+
+export default function YourCoverage({ onViewPolicies, onSelectPolicy }: Props) {
   const [activeFilter, setActiveFilter] = useState<FilterKey>('all')
 
   const countFor = (key: FilterKey) =>
@@ -148,7 +170,7 @@ export default function YourCoverage() {
             ({POLICIES.length})
           </span>
         </div>
-        <ViewAll />
+        <ViewAll onClick={onViewPolicies} />
       </div>
 
       {/* ── Filter pills — scrollable on mobile ── */}
@@ -166,8 +188,8 @@ export default function YourCoverage() {
                 onClick={() => setActiveFilter('all')}
                 className={[
                   'flex items-center justify-center px-[20px] py-[8px] rounded-[24px]',
-                  'shrink-0 whitespace-nowrap border-0 cursor-pointer transition-colors',
-                  isActive ? 'bg-primary text-white font-medium' : 'bg-white border border-[rgba(0,0,0,0.09)] text-[#6e6e6e]',
+                  'shrink-0 whitespace-nowrap cursor-pointer transition-colors',
+                  isActive ? 'bg-primary text-white font-medium border-0' : 'bg-white border border-[rgba(0,0,0,0.09)] text-[#6e6e6e]',
                 ].join(' ')}
               >
                 <span className="text-sm leading-[1.5]">{label}</span>
@@ -187,7 +209,7 @@ export default function YourCoverage() {
                   ? 'bg-primary border-primary cursor-pointer [&_img]:brightness-0 [&_img]:invert'
                   : isEmpty
                     ? 'bg-[#f5f5f5] border-[rgba(0,0,0,0.09)] cursor-not-allowed'
-                    : 'bg-white border-[rgba(0,0,0,0.09)] hover:border-primary cursor-pointer',
+                    : 'bg-white border-[rgba(0,0,0,0.09)] cursor-pointer',
               ].join(' ')}
             >
               {icon}
@@ -214,7 +236,11 @@ export default function YourCoverage() {
           </p>
         ) : (
           visible.map(policy => (
-            <PolicyCard key={policy.id} policy={policy} />
+            <PolicyCard
+              key={policy.id}
+              policy={policy}
+              onClick={() => policy.detailSlug ? onSelectPolicy?.(policy.detailSlug) : onViewPolicies?.()}
+            />
           ))
         )}
       </div>
@@ -223,9 +249,9 @@ export default function YourCoverage() {
 }
 
 /* ─── Policy Card ────────────────────────────────────────── */
-function PolicyCard({ policy }: { policy: PolicyDetail }) {
+function PolicyCard({ policy, onClick }: { policy: PolicyDetail; onClick?: () => void }) {
   return (
-    <button className="flex items-center gap-1 w-full bg-white rounded-xl p-4 shadow-card text-left cursor-pointer border-0 hover:shadow-md transition-shadow">
+    <button onClick={onClick} className="flex items-center gap-1 w-full bg-white rounded-xl p-4 shadow-card text-left cursor-pointer border-0 hover:shadow-pop transition-shadow">
       {/* Details */}
       <div className="flex flex-col gap-[4px] flex-1 min-w-0">
         {/* Name + status tag */}
@@ -246,23 +272,40 @@ function PolicyCard({ policy }: { policy: PolicyDetail }) {
           {policy.details.map((detail, i) => (
             <span key={i} className="flex items-center gap-2">
               {i > 0 && <span className="text-text-secondary text-xs">•</span>}
-              <span className="text-sm text-text-secondary leading-relaxed">
-                {detail}
-                {/* info icon on "Area 1" for travel policies */}
-                {detail.startsWith('Area') && (
-                  <InfoCircleOutlined
-                    className="ml-1 text-text-tertiary"
-                    style={{ fontSize: 13 }}
-                  />
-                )}
-              </span>
+              {detail.startsWith('Area') ? (
+                <span className="flex items-center">
+                  <span className="text-sm text-text-secondary leading-relaxed">{detail}</span>
+                  <Tooltip
+                    title={AREA_1_COUNTRIES}
+                    color="white"
+                    placement="top"
+                    styles={{
+                      root: { maxWidth: 265 },
+                      container: {
+                        color: '#212121',
+                        fontSize: 14,
+                        lineHeight: 1.5,
+                        padding: 12,
+                        borderRadius: 8,
+                        boxShadow: '0px 0px 4.5px rgba(0, 0, 0, 0.12)',
+                      },
+                    }}
+                  >
+                    <span className="cursor-help flex items-center" style={{ marginLeft: 4 }}>
+                      <InfoIcon />
+                    </span>
+                  </Tooltip>
+                </span>
+              ) : (
+                <span className="text-sm text-text-secondary leading-relaxed">{detail}</span>
+              )}
             </span>
           ))}
         </div>
       </div>
 
       {/* Right chevron */}
-      <RightOutlined className="text-text-tertiary shrink-0 ml-2" style={{ fontSize: 16 }} />
+      <RightOutlined className="shrink-0 ml-2" style={{ fontSize: 16, color: '#6E6E6E' }} />
     </button>
   )
 }
@@ -282,9 +325,9 @@ function StatusTag({ status, label }: { status: PolicyStatus; label: string }) {
 }
 
 /* ─── View All link ──────────────────────────────────────── */
-function ViewAll() {
+function ViewAll({ onClick }: { onClick?: () => void }) {
   return (
-    <button className="flex items-center gap-1.5 text-base font-medium text-text-link bg-transparent border-0 cursor-pointer p-0 shrink-0 hover:opacity-80 transition-opacity">
+    <button onClick={onClick} className="flex items-center gap-1.5 text-base font-medium text-text-link bg-transparent border-0 cursor-pointer p-0 shrink-0 hover:opacity-80 transition-opacity">
       View All
       <ArrowRightOutlined style={{ fontSize: 13 }} />
     </button>
