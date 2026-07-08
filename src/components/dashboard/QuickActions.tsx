@@ -1,6 +1,6 @@
 const ICON_GRADIENT = 'linear-gradient(90deg, rgba(0, 94, 184, 0.10) 0.62%, rgba(92, 85, 235, 0.10) 100%), #FFF'
 
-/* ─── Icons — filled Material Symbols glyphs, matching Figma ─ */
+/* ─── Icons — matching the Figma-exported Cart / Messaging glyphs ─ */
 function CartIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className="size-full" aria-hidden="true">
@@ -11,8 +11,12 @@ function CartIcon() {
 
 function MessagingIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="size-full" aria-hidden="true">
-      <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM7 11H5V9h2v2zm4 0H9V9h2v2zm4 0h-2V9h2v2z" />
+    <svg viewBox="0 0 24 24" className="size-full" aria-hidden="true">
+      <rect x="4" y="3" width="16" height="13" rx="4" fill="currentColor" />
+      <path d="M6 14.5V19l4.5-3.5H6Z" fill="currentColor" />
+      <circle cx="8.5" cy="9.5" r="1.15" fill="white" />
+      <circle cx="12" cy="9.5" r="1.15" fill="white" />
+      <circle cx="15.5" cy="9.5" r="1.15" fill="white" />
     </svg>
   )
 }
