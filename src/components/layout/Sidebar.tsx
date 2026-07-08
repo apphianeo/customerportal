@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import uoiLogo from '../../assets/uoi-logo.svg'
 import shieldSvg from '../../assets/shield.svg'
-import { ShoppingCartOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
+import { ShoppingCartOutlined } from '@ant-design/icons'
+import { PanelLeft } from 'lucide-react'
 
 export type NavKey = 'dashboard' | 'policies' | 'account' | 'help'
 
@@ -58,14 +59,11 @@ function HelpIcon() {
 }
 
 /* ─── Nav definitions ─────────────────────────────────────── */
-const primaryNav: NavItemDef[] = [
-  { key: 'dashboard', label: 'Dashboard', icon: (a) => <HomeIcon active={a} /> },
-  { key: 'policies',  label: 'Policies',  icon: () => <PolicyIcon /> },
-]
-
-const secondaryNav: NavItemDef[] = [
-  { key: 'account', label: 'Manage Account', icon: () => <SettingsIcon /> },
-  { key: 'help',    label: 'Help & Support', icon: () => <HelpIcon /> },
+const navItems: NavItemDef[] = [
+  { key: 'dashboard', label: 'Dashboard',       icon: (a) => <HomeIcon active={a} /> },
+  { key: 'policies',  label: 'Policies',        icon: () => <PolicyIcon /> },
+  { key: 'account',   label: 'Manage Account',  icon: () => <SettingsIcon /> },
+  { key: 'help',      label: 'Help & Support',  icon: () => <HelpIcon /> },
 ]
 
 /* ─── Sidebar ─────────────────────────────────────────────── */
@@ -100,7 +98,7 @@ export default function Sidebar({
             aria-label="Expand sidebar"
             className="flex items-center justify-center w-[48px] h-[40px] text-[#8D8D8D] hover:text-primary transition-colors"
           >
-            <MenuUnfoldOutlined style={{ fontSize: 18 }} />
+            <PanelLeft size={18} />
           </button>
         </div>
       ) : (
@@ -111,31 +109,15 @@ export default function Sidebar({
             aria-label="Collapse sidebar"
             className="text-[#8D8D8D] hover:text-primary transition-colors"
           >
-            <MenuFoldOutlined style={{ fontSize: 18 }} />
+            <PanelLeft size={18} />
           </button>
         </div>
       )}
 
       {/* ── Nav ── */}
-      <nav className="flex flex-col gap-[16px] flex-1">
+      <nav className="flex flex-col flex-1">
         <ul className="flex flex-col gap-[12px] list-none m-0 p-0">
-          {primaryNav.map(({ key, label, icon }) => (
-            <li key={key}>
-              <NavItem
-                label={label}
-                icon={icon(activeKey === key)}
-                isActive={activeKey === key}
-                collapsed={collapsed}
-                onClick={() => onNavigate?.(key)}
-              />
-            </li>
-          ))}
-        </ul>
-
-        <div className="border-t border-border-default" />
-
-        <ul className="flex flex-col gap-[12px] list-none m-0 p-0">
-          {secondaryNav.map(({ key, label, icon }) => (
+          {navItems.map(({ key, label, icon }) => (
             <li key={key}>
               <NavItem
                 label={label}

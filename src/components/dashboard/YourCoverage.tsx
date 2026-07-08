@@ -1,5 +1,9 @@
 import { useState } from 'react'
+import { Tooltip } from 'antd'
 import { RightOutlined, ArrowRightOutlined, InfoCircleOutlined } from '@ant-design/icons'
+
+const AREA_1_COUNTRIES =
+  'Area 1 includes Brunei, Cambodia, Indonesia, Laos, Malaysia, Myanmar, Philippines, Thailand and Vietnam.'
 import iconMotor      from '../../assets/icon-motor.svg'
 import iconTravel     from '../../assets/icon-travel.svg'
 import iconHelperBody from '../../assets/icon-helper-body.svg'
@@ -246,16 +250,29 @@ function PolicyCard({ policy }: { policy: PolicyDetail }) {
           {policy.details.map((detail, i) => (
             <span key={i} className="flex items-center gap-2">
               {i > 0 && <span className="text-text-secondary text-xs">•</span>}
-              <span className="text-sm text-text-secondary leading-relaxed">
-                {detail}
-                {/* info icon on "Area 1" for travel policies */}
-                {detail.startsWith('Area') && (
-                  <InfoCircleOutlined
-                    className="ml-1 text-text-tertiary"
-                    style={{ fontSize: 13 }}
-                  />
-                )}
-              </span>
+              {detail.startsWith('Area') ? (
+                <span className="flex items-center gap-1">
+                  <span className="text-sm text-text-secondary leading-relaxed">{detail}</span>
+                  <Tooltip
+                    title={AREA_1_COUNTRIES}
+                    color="white"
+                    overlayInnerStyle={{
+                      color: '#212121',
+                      fontSize: 14,
+                      lineHeight: 1.5,
+                      padding: 12,
+                      borderRadius: 8,
+                    }}
+                  >
+                    <InfoCircleOutlined
+                      className="text-text-tertiary cursor-help"
+                      style={{ fontSize: 13 }}
+                    />
+                  </Tooltip>
+                </span>
+              ) : (
+                <span className="text-sm text-text-secondary leading-relaxed">{detail}</span>
+              )}
             </span>
           ))}
         </div>
