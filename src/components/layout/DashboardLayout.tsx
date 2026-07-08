@@ -5,24 +5,41 @@ import TopHeader from './TopHeader'
 import FooterShort from './FooterShort'
 import DashboardPage from '../../pages/DashboardPage'
 import PoliciesPage from '../../pages/PoliciesPage'
+import UniTravelPolicyPage from '../../pages/UniTravelPolicyPage'
 
 export default function DashboardLayout() {
   const [activeNav, setActiveNav] = useState<NavKey>('dashboard')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [policyDetail, setPolicyDetail] = useState<string | null>(null)
+
+  function navigate(key: NavKey) {
+    setPolicyDetail(null)
+    setActiveNav(key)
+  }
+
+  function goToPolicies() {
+    setPolicyDetail(null)
+    setActiveNav('policies')
+  }
 
   function renderPage() {
+    if (policyDetail === 'unitravel') {
+      return <UniTravelPolicyPage onNavigateToDashboard={() => navigate('dashboard')} onNavigateToPolicies={goToPolicies} />
+    }
     switch (activeNav) {
-      case 'policies': return <PoliciesPage />
+      case 'policies': return <PoliciesPage onSelectPolicy={setPolicyDetail} />
       default:         return <DashboardPage onNavigateToPolicies={() => setActiveNav('policies')} />
     }
   }
+
+  const sidebarActiveKey = policyDetail ? 'policies' : activeNav
 
   return (
     <div className="flex h-screen overflow-hidden bg-bg-page">
       {/* ── Desktop Sidebar ── */}
       <Sidebar
-        activeKey={activeNav}
-        onNavigate={setActiveNav}
+        activeKey={sidebarActiveKey}
+        onNavigate={navigate}
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed(c => !c)}
       />
@@ -37,7 +54,7 @@ export default function DashboardLayout() {
       </div>
 
       {/* ── Mobile Bottom Nav ── */}
-      <MobileBottomNav activeKey={activeNav} onNavigate={setActiveNav} />
+      <MobileBottomNav activeKey={sidebarActiveKey} onNavigate={navigate} />
     </div>
   )
 }

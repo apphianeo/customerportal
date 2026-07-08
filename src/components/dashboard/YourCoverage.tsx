@@ -298,7 +298,7 @@ function PolicyCard({ policy, onClick }: { policy: PolicyDetail; onClick?: () =>
       </div>
 
       {/* Right chevron */}
-      <RightOutlined className="text-text-tertiary shrink-0 ml-2" style={{ fontSize: 16 }} />
+      <RightOutlined className="shrink-0 ml-2" style={{ fontSize: 16, color: '#6E6E6E' }} />
     </button>
   )
 }

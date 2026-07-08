@@ -30,6 +30,7 @@ type PolicyData = {
   recurringPayment: string
   paymentMethod: string
   cardLast4: string
+  detailSlug?: string
 }
 
 /* ─── Data ───────────────────────────────────────────────── */
@@ -63,6 +64,7 @@ const POLICIES: PolicyData[] = [
     recurringPayment: 'No (Non-Renewal)',
     paymentMethod: 'mastercard',
     cardLast4: '9111',
+    detailSlug: 'unitravel',
   },
   {
     id: '3',
@@ -150,41 +152,36 @@ function AccidentIcon() {
   )
 }
 
-/* ─── Recommendation icons (gradient, "Not yet covered" cards) ─ */
-function RecGradDef({ id }: { id: string }) {
-  return (
-    <defs>
-      <linearGradient id={id} x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0.618%" stopColor="#005eb8" />
-        <stop offset="100%" stopColor="#5c55eb" />
-      </linearGradient>
-    </defs>
-  )
-}
-
+/* ─── Recommendation icons — solid filled icons, "Not yet covered" ─ */
 function HomeInsuranceIcon() {
   return (
-    <svg viewBox="0 0 13.3333 15" fill="none" className="size-[20px]" aria-hidden="true">
-      <RecGradDef id="rec-home-grad" />
-      <path d="M5.41667 11.6667H7.91667V9.58333H10V7.08333H7.91667V5H5.41667V7.08333H3.33333V9.58333H5.41667V11.6667ZM0 15V5L6.66667 0L13.3333 5V15H0Z" fill="url(#rec-home-grad)" />
+    <svg viewBox="0 0 20 20" fill="none" className="size-[20px]" aria-hidden="true">
+      <path d="M10 2L18 9V18H2V9L10 2Z" fill="#005EB8" />
+      <rect x="8.75" y="9.5" width="2.5" height="7" fill="white" />
+      <rect x="6.5" y="11.75" width="7" height="2.5" fill="white" />
     </svg>
   )
 }
 
 function PersonalAccidentIcon() {
   return (
-    <svg viewBox="0 0 11.833 15" fill="none" className="size-[20px]" aria-hidden="true">
-      <RecGradDef id="rec-accident-grad" />
-      <path d="M4.33301 8.4375C5.36406 8.43688 6.38007 8.55775 7.37988 8.80078C8.37975 9.04387 9.36438 9.4076 10.333 9.89062C10.7859 10.1249 11.1492 10.4649 11.4229 10.9102C11.6966 11.3558 11.8336 11.8444 11.833 12.375V15H0V14.9668C0.704008 14.4571 1 14.1652 1 13.2783V9.82812C1 9.61246 0.957607 9.52538 0.794922 9.46484C0.590949 9.39278 0.316196 9.2908 0.0117188 9.17969C0.433677 9.03187 0.858459 8.90424 1.28613 8.80078C2.28594 8.55896 3.30196 8.43816 4.33301 8.4375ZM4.33301 0C5.36414 0 6.24712 0.367351 6.98145 1.10156C7.71582 1.83594 8.08301 2.71875 8.08301 3.75C8.08301 4.78125 7.71582 5.66406 6.98145 6.39844C6.24712 7.13265 5.36414 7.5 4.33301 7.5C3.30197 7.49988 2.41883 7.1327 1.68457 6.39844C0.950358 5.66411 0.583008 4.78114 0.583008 3.75C0.583008 2.71886 0.950358 1.83589 1.68457 1.10156C2.41883 0.367303 3.30197 0.00011605 4.33301 0Z" fill="url(#rec-accident-grad)" />
+    <svg viewBox="0 0 20 20" fill="none" className="size-[20px]" aria-hidden="true">
+      <path d="M10 1.5L17 4V9.5C17 13.5 14 16.8 10 18.5C6 16.8 3 13.5 3 9.5V4L10 1.5Z" fill="#D6DDE8" />
+      <circle cx="10" cy="8.3" r="2.4" fill="#1E4B8F" />
+      <path d="M10 11.3C7.3 11.3 5.2 12.9 5.2 14.8V15.4C6.8 16.6 8.3 17.4 10 17.9C11.7 17.4 13.2 16.6 14.8 15.4V14.8C14.8 12.9 12.7 11.3 10 11.3Z" fill="#1E4B8F" />
     </svg>
   )
 }
 
 function HospitalIconGrad() {
   return (
-    <svg viewBox="0 0 15 15" fill="none" className="size-[20px]" aria-hidden="true">
-      <RecGradDef id="rec-hospital-grad" />
-      <path d="M14.2857 3.57143H12.1429V0.714286C12.1429 0.285714 11.8571 0 11.4286 0H3.57143C3.14286 0 2.85714 0.285714 2.85714 0.714286V3.57143H0.714286C0.285714 3.57143 0 3.85714 0 4.28571V14.2857C0 14.7143 0.285714 15 0.714286 15H14.2857C14.7143 15 15 14.7143 15 14.2857V4.28571C15 3.85714 14.7143 3.57143 14.2857 3.57143ZM4.28571 12.1429H3.57143C3.14286 12.1429 2.85714 11.8571 2.85714 11.4286C2.85714 11 3.14286 10.7143 3.57143 10.7143H4.28571C4.71429 10.7143 5 11 5 11.4286C5 11.8571 4.71429 12.1429 4.28571 12.1429ZM4.28571 9.28571H3.57143C3.14286 9.28571 2.85714 9 2.85714 8.57143C2.85714 8.14286 3.14286 7.85714 3.57143 7.85714H4.28571C4.71429 7.85714 5 8.14286 5 8.57143C5 9 4.71429 9.28571 4.28571 9.28571ZM7.85714 12.1429H7.14286C6.71429 12.1429 6.42857 11.8571 6.42857 11.4286C6.42857 11 6.71429 10.7143 7.14286 10.7143H7.85714C8.28571 10.7143 8.57143 11 8.57143 11.4286C8.57143 11.8571 8.28571 12.1429 7.85714 12.1429ZM7.85714 9.28571H7.14286C6.71429 9.28571 6.42857 9 6.42857 8.57143C6.42857 8.14286 6.71429 7.85714 7.14286 7.85714H7.85714C8.28571 7.85714 8.57143 8.14286 8.57143 8.57143C8.57143 9 8.28571 9.28571 7.85714 9.28571ZM8.57143 5.35714H8.21429V5.71429C8.21429 6.14286 7.92857 6.42857 7.5 6.42857C7.07143 6.42857 6.78571 6.14286 6.78571 5.71429V5.35714H6.42857C6 5.35714 5.71429 5.07143 5.71429 4.64286C5.71429 4.21429 6 3.92857 6.42857 3.92857H6.78571V3.57143C6.78571 3.14286 7.07143 2.85714 7.5 2.85714C7.92857 2.85714 8.21429 3.14286 8.21429 3.57143V3.92857H8.57143C9 3.92857 9.28571 4.21429 9.28571 4.64286C9.28571 5.07143 9 5.35714 8.57143 5.35714ZM11.4286 12.1429H10.7143C10.2857 12.1429 10 11.8571 10 11.4286C10 11 10.2857 10.7143 10.7143 10.7143H11.4286C11.8571 10.7143 12.1429 11 12.1429 11.4286C12.1429 11.8571 11.8571 12.1429 11.4286 12.1429ZM11.4286 9.28571H10.7143C10.2857 9.28571 10 9 10 8.57143C10 8.14286 10.2857 7.85714 10.7143 7.85714H11.4286C11.8571 7.85714 12.1429 8.14286 12.1429 8.57143C12.1429 9 11.8571 9.28571 11.4286 9.28571Z" fill="url(#rec-hospital-grad)" />
+    <svg viewBox="0 0 20 20" fill="none" className="size-[20px]" aria-hidden="true">
+      <rect x="2" y="2" width="16" height="16" rx="3" fill="#005EB8" />
+      <rect x="8.9" y="5.2" width="2.2" height="6" fill="white" />
+      <rect x="6.9" y="7.2" width="6.2" height="2.2" fill="white" />
+      <circle cx="6.7" cy="14.3" r="0.9" fill="white" />
+      <circle cx="10" cy="14.3" r="0.9" fill="white" />
+      <circle cx="13.3" cy="14.3" r="0.9" fill="white" />
     </svg>
   )
 }
@@ -228,12 +225,12 @@ function MastercardIcon() {
 }
 
 /* ─── Policy card ────────────────────────────────────────── */
-function PolicyCard({ policy }: { policy: PolicyData }) {
+function PolicyCard({ policy, onSelect }: { policy: PolicyData; onSelect?: (slug: string) => void }) {
   const isRenewal = policy.status === 'renewal-due'
 
   return (
     <button
-      onClick={() => console.log('View policy', policy.id)}
+      onClick={() => policy.detailSlug ? onSelect?.(policy.detailSlug) : console.log('View policy', policy.id)}
       className={[
         'w-full text-left border-0 cursor-pointer bg-transparent p-0',
         'rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] hover:shadow-pop transition-shadow overflow-hidden',
@@ -249,7 +246,7 @@ function PolicyCard({ policy }: { policy: PolicyData }) {
           </div>
           <span className="text-[14px] text-[#6e6e6e] leading-[1.5]">Policy No: {policy.policyNo}</span>
         </div>
-        <RightOutlined className="text-text-tertiary shrink-0" style={{ fontSize: 16 }} />
+        <RightOutlined className="shrink-0" style={{ fontSize: 16, color: '#6E6E6E' }} />
       </div>
 
       {/* Body — 3-col x 2-row metadata grid */}
@@ -325,7 +322,7 @@ function SelectDropdown({
           <span className="flex-1 text-[16px] text-[#212121] text-left truncate">{value}</span>
           {open
             ? <UpOutlined className="shrink-0" style={{ fontSize: 12, color: '#005eb8' }} />
-            : <DownOutlined className="text-text-tertiary shrink-0" style={{ fontSize: 12 }} />}
+            : <DownOutlined className="shrink-0" style={{ fontSize: 12, color: '#6E6E6E' }} />}
         </button>
       </div>
       {open && (
@@ -343,6 +340,104 @@ function SelectDropdown({
               {opt}
             </button>
           ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ─── Date range dropdown — single dropdown, pick a year or a
+   range (click a start year, then an end year; click the same
+   year twice for a single year). Matches the design system's
+   Dropdown field/menu styling. ─────────────────────────────── */
+function DateRangeDropdown({
+  from,
+  to,
+  years,
+  onChange,
+}: {
+  from: number | null
+  to: number | null
+  years: number[]
+  onChange: (from: number | null, to: number | null) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const [pendingStart, setPendingStart] = useState<number | null>(null)
+  const rootRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
+        setOpen(false)
+        setPendingStart(null)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
+
+  const displayValue = from === null ? 'All' : (to === null || to === from) ? `${from}` : `${from} - ${to}`
+
+  function handleYearClick(year: number) {
+    if (pendingStart === null) {
+      setPendingStart(year)
+    } else {
+      onChange(Math.min(pendingStart, year), Math.max(pendingStart, year))
+      setPendingStart(null)
+      setOpen(false)
+    }
+  }
+
+  return (
+    <div ref={rootRef} className="relative w-full sm:w-[320px]">
+      <div className={open ? 'p-[3px] rounded-[8px] bg-[rgba(0,94,184,0.2)] -m-[3px]' : ''}>
+        <button
+          type="button"
+          onClick={() => setOpen(o => !o)}
+          className={[
+            'flex items-center gap-[8px] bg-white border border-solid rounded-[8px] px-[16px] py-[12px] w-full cursor-pointer',
+            open ? 'border-[#005eb8]' : 'border-[rgba(0,0,0,0.09)]',
+          ].join(' ')}
+        >
+          <span className="text-[16px] text-[#949494] whitespace-nowrap">Date Range:</span>
+          <span className="flex-1 text-[16px] text-[#212121] text-left truncate">{displayValue}</span>
+          {open
+            ? <UpOutlined className="shrink-0" style={{ fontSize: 12, color: '#005eb8' }} />
+            : <DownOutlined className="shrink-0" style={{ fontSize: 12, color: '#6E6E6E' }} />}
+        </button>
+      </div>
+      {open && (
+        <div className="absolute z-20 top-full mt-[8px] left-0 right-0 bg-white rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] overflow-hidden max-h-[300px] overflow-y-auto">
+          <div className="px-[12px] pt-[10px] pb-[8px] text-[12px] text-[#8d8d8d]">
+            {pendingStart === null ? 'Select a year, or a start year for a range' : `Select an end year (click ${pendingStart} again for a single year)`}
+          </div>
+          <button
+            type="button"
+            onClick={() => { onChange(null, null); setPendingStart(null); setOpen(false) }}
+            className={[
+              'w-full text-left p-[12px] text-[16px] text-[#212121] cursor-pointer border-0 transition-colors',
+              from === null ? 'bg-[#f6f8fc]' : 'bg-white hover:bg-[#f6f8fc]',
+            ].join(' ')}
+          >
+            All
+          </button>
+          {years.map(year => {
+            const isEndpoint = year === pendingStart || year === from || year === to
+            const inRange = from !== null && to !== null && year > from && year < to
+            return (
+              <button
+                key={year}
+                type="button"
+                onClick={() => handleYearClick(year)}
+                className={[
+                  'w-full text-left p-[12px] text-[16px] cursor-pointer border-0 transition-colors',
+                  isEndpoint ? 'bg-[#005eb8] text-white font-medium' : inRange ? 'bg-[#eff6ff] text-[#212121]' : 'bg-white text-[#212121] hover:bg-[#f6f8fc]',
+                ].join(' ')}
+              >
+                {year}
+              </button>
+            )
+          })}
         </div>
       )}
     </div>
@@ -422,19 +517,24 @@ const STATUS_LABELS: Record<PolicyStatus, string> = {
   'lapsed':      'Lapsed',
 }
 const STATUS_OPTIONS = ['All', 'In Force', 'Renewal Due', 'Lapsed']
-const YEAR_OPTIONS = ['All', '2023', '2024', '2025', '2026', '2027']
 
 function coverageStartYear(period: string): number | null {
   const match = period.match(/\/(\d{4})/)
   return match ? Number(match[1]) : null
 }
 
+const RANGE_YEARS = [2023, 2024, 2025, 2026, 2027]
+
 /* ─── Main page ──────────────────────────────────────────── */
-export default function PoliciesPage() {
+type Props = {
+  onSelectPolicy?: (slug: string) => void
+}
+
+export default function PoliciesPage({ onSelectPolicy }: Props) {
   const [activeFilter, setActiveFilter] = useState<FilterKey>('all')
   const [statusFilter, setStatusFilter] = useState('All')
-  const [yearFrom, setYearFrom] = useState('All')
-  const [yearTo, setYearTo] = useState('All')
+  const [yearFrom, setYearFrom] = useState<number | null>(null)
+  const [yearTo, setYearTo] = useState<number | null>(null)
 
   const countFor = (key: FilterKey) =>
     key === 'all' ? POLICIES.length : POLICIES.filter(p => p.category === key).length
@@ -443,18 +543,18 @@ export default function PoliciesPage() {
     if (activeFilter !== 'all' && p.category !== activeFilter) return false
     if (statusFilter !== 'All' && STATUS_LABELS[p.status] !== statusFilter) return false
     const startYear = coverageStartYear(p.coveragePeriod)
-    if (yearFrom !== 'All' && startYear !== null && startYear < Number(yearFrom)) return false
-    if (yearTo !== 'All' && startYear !== null && startYear > Number(yearTo)) return false
+    if (yearFrom !== null && startYear !== null && startYear < yearFrom) return false
+    if (yearTo !== null && startYear !== null && startYear > yearTo) return false
     return true
   })
 
-  const hasActiveFilters = activeFilter !== 'all' || statusFilter !== 'All' || yearFrom !== 'All' || yearTo !== 'All'
+  const hasActiveFilters = activeFilter !== 'all' || statusFilter !== 'All' || yearFrom !== null || yearTo !== null
 
   function clearFilters() {
     setActiveFilter('all')
     setStatusFilter('All')
-    setYearFrom('All')
-    setYearTo('All')
+    setYearFrom(null)
+    setYearTo(null)
   }
 
   return (
@@ -464,7 +564,7 @@ export default function PoliciesPage() {
         {/* ── Breadcrumbs ── */}
         <div className="flex items-center gap-[4px]">
           <span className="text-[12px] text-[#8d8d8d] leading-[1.4]">Dashboard</span>
-          <RightOutlined style={{ fontSize: 10, color: '#8d8d8d' }} />
+          <RightOutlined style={{ fontSize: 10, color: '#6E6E6E' }} />
           <span className="text-[12px] font-bold text-[#005eb8] leading-[1.4]">Policies</span>
         </div>
 
@@ -476,6 +576,9 @@ export default function PoliciesPage() {
             <ShoppingCartOutlined style={{ fontSize: 20 }} />
           </button>
         </div>
+
+        {/* ── Filter pills, date/status filters, and policy cards — 24px rhythm ── */}
+        <div className="flex flex-col gap-[24px]">
 
         {/* ── Filter pills ── */}
         <div className="flex gap-[12px] overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
@@ -531,8 +634,7 @@ export default function PoliciesPage() {
 
         {/* ── Date range / status filters ── */}
         <div className="flex flex-col sm:flex-row gap-[16px] items-start sm:items-center w-full">
-          <SelectDropdown label="From" value={yearFrom} options={YEAR_OPTIONS} onChange={setYearFrom} className="w-full sm:w-[160px]" />
-          <SelectDropdown label="To" value={yearTo} options={YEAR_OPTIONS} onChange={setYearTo} className="w-full sm:w-[160px]" />
+          <DateRangeDropdown from={yearFrom} to={yearTo} years={RANGE_YEARS} onChange={(f, t) => { setYearFrom(f); setYearTo(t) }} />
           <SelectDropdown label="Status" value={statusFilter} options={STATUS_OPTIONS} onChange={setStatusFilter} className="w-full sm:w-[320px]" />
           <button
             onClick={clearFilters}
@@ -551,8 +653,10 @@ export default function PoliciesPage() {
           {visible.length === 0 ? (
             <p className="text-sm text-[#8d8d8d] py-4 text-center">No policies in this category.</p>
           ) : (
-            visible.map(policy => <PolicyCard key={policy.id} policy={policy} />)
+            visible.map(policy => <PolicyCard key={policy.id} policy={policy} onSelect={onSelectPolicy} />)
           )}
+        </div>
+
         </div>
 
         {/* ── Disclaimer ── */}
@@ -570,7 +674,7 @@ export default function PoliciesPage() {
         {/* ── Not yet covered ── */}
         <div className="flex flex-col gap-[16px]">
           <div className="flex flex-col gap-[4px]">
-            <h2 className="text-[18px] font-bold text-[#212121] m-0 leading-[1.5]">🛡️ Not yet covered?</h2>
+            <h2 className="text-[18px] font-bold text-[#212121] m-0 leading-[1.5]">Not yet covered?</h2>
             <p className="text-[14px] text-[#6e6e6e] leading-[1.5] m-0">
               You might be missing critical coverage. Here's what we recommend based on your profile.
             </p>
