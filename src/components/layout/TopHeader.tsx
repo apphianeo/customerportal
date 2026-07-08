@@ -5,6 +5,49 @@ import {
   DownOutlined,
   CloseOutlined,
 } from '@ant-design/icons'
+import { searchIndex, type SearchResult } from '../../data/searchIndex'
+import type { HelpTopicKey } from '../../data/helpTopics'
+
+/* ─── Bold the portion of `text` matching `query` ────────── */
+function HighlightMatch({ text, query }: { text: string; query: string }) {
+  const idx = query ? text.toLowerCase().indexOf(query.toLowerCase()) : -1
+  if (idx === -1) return <>{text}</>
+  return (
+    <>
+      {text.slice(0, idx)}
+      <span className="font-semibold">{text.slice(idx, idx + query.length)}</span>
+      {text.slice(idx + query.length)}
+    </>
+  )
+}
+
+/* ─── Live suggestion dropdown ───────────────────────────── */
+function SearchSuggestions({
+  query,
+  results,
+  onSelect,
+}: {
+  query: string
+  results: SearchResult[]
+  onSelect: (result: SearchResult) => void
+}) {
+  if (results.length === 0) return null
+  return (
+    <div className="absolute z-30 top-full mt-[8px] left-0 right-0 bg-white rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] overflow-hidden max-h-[280px] overflow-y-auto">
+      {results.map(r => (
+        <button
+          key={r.id}
+          type="button"
+          onMouseDown={e => e.preventDefault()}
+          onClick={() => onSelect(r)}
+          className="w-full text-left px-[12px] py-[12px] bg-white hover:bg-[#f6f8fc] transition-colors border-0 cursor-pointer text-[16px] text-[#212121]"
+        >
+          <HighlightMatch text={r.title} query={query} />
+        </button>
+      ))}
+    </div>
+  )
+}
 
 /* ─── Logout icon — inline so its color can follow currentColor ─ */
 function LogoutIcon() {
@@ -18,17 +61,49 @@ function LogoutIcon() {
 type Props = {
   userName?: string
   userInitials?: string
+  onSearch?: (query: string) => void
+  onSelectPolicy?: (slug: string) => void
+  onSelectHelpTopic?: (topic: HelpTopicKey) => void
 }
 
 export default function TopHeader({
   userName: _userName = 'Chris Wong',
   userInitials = 'CW',
+  onSearch,
+  onSelectPolicy,
+  onSelectHelpTopic,
 }: Props) {
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
+  const [searchFocused, setSearchFocused] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const userMenuRef = useRef<HTMLDivElement>(null)
+  const headerRef = useRef<HTMLElement>(null)
+
+  const suggestions = searchFocused && searchValue.trim()
+    ? searchIndex(searchValue).slice(0, 6)
+    : []
+
+  function handleSelectSuggestion(result: SearchResult) {
+    if (result.kind === 'policy') {
+      if (result.slug) onSelectPolicy?.(result.slug)
+      else console.log('View policy', result.id)
+    } else {
+      onSelectHelpTopic?.(result.topic)
+    }
+    setSearchValue('')
+    setSearchFocused(false)
+    setSearchOpen(false)
+  }
+
+  function submitSearch() {
+    const q = searchValue.trim()
+    if (!q) return
+    onSearch?.(q)
+    setSearchFocused(false)
+    setSearchOpen(false)
+  }
 
   // Focus input when mobile search expands
   useEffect(() => {
@@ -41,13 +116,16 @@ export default function TopHeader({
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
         setUserMenuOpen(false)
       }
+      if (headerRef.current && !headerRef.current.contains(e.target as Node)) {
+        setSearchFocused(false)
+      }
     }
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
   return (
-    <header className="sticky top-0 z-10 h-[61px] bg-white border-b border-border-default shrink-0">
+    <header ref={headerRef} className="sticky top-0 z-10 h-[61px] bg-white border-b border-border-default shrink-0">
       <div className="flex items-center justify-between h-full px-6">
 
         {/* ── Left: logo (mobile) or mobile search expand ── */}
@@ -55,16 +133,21 @@ export default function TopHeader({
           {searchOpen ? (
             /* Mobile expanded search */
             <div className="flex items-center gap-2 flex-1">
-              <div className="flex items-center gap-3 bg-white border border-border-default rounded-lg px-4 py-2 flex-1">
-                <SearchOutlined className="text-text-tertiary text-sm shrink-0" />
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  value={searchValue}
-                  onChange={e => setSearchValue(e.target.value)}
-                  placeholder="Search policies, claims..."
-                  className="flex-1 text-sm text-text-primary placeholder:text-text-tertiary bg-transparent border-0 outline-none"
-                />
+              <div className="relative flex-1">
+                <div className="flex items-center gap-3 bg-white border border-border-default rounded-lg px-4 py-2 w-full">
+                  <SearchOutlined className="text-text-tertiary text-sm shrink-0" />
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={searchValue}
+                    onChange={e => setSearchValue(e.target.value)}
+                    onFocus={() => setSearchFocused(true)}
+                    onKeyDown={e => { if (e.key === 'Enter') submitSearch() }}
+                    placeholder="Search policies, claims..."
+                    className="flex-1 text-sm text-text-primary placeholder:text-text-tertiary bg-transparent border-0 outline-none"
+                  />
+                </div>
+                <SearchSuggestions query={searchValue} results={suggestions} onSelect={handleSelectSuggestion} />
               </div>
               <button
                 onClick={() => { setSearchOpen(false); setSearchValue('') }}
@@ -95,15 +178,20 @@ export default function TopHeader({
         ].join(' ')}>
 
           {/* Desktop search bar */}
-          <div className="hidden lg:flex items-center gap-3 bg-white border border-border-default rounded-lg px-4 py-2 w-[360px] cursor-text">
-            <SearchOutlined className="text-text-tertiary shrink-0" style={{ fontSize: 14 }} />
-            <input
-              type="text"
-              value={searchValue}
-              onChange={e => setSearchValue(e.target.value)}
-              placeholder="Search policies, claims..."
-              className="flex-1 text-sm text-text-primary placeholder:text-text-tertiary bg-transparent border-0 outline-none"
-            />
+          <div className="hidden lg:block relative w-[360px] shrink-0">
+            <div className="flex items-center gap-3 bg-white border border-border-default rounded-lg px-4 py-2 w-full cursor-text">
+              <SearchOutlined className="text-text-tertiary shrink-0" style={{ fontSize: 14 }} />
+              <input
+                type="text"
+                value={searchValue}
+                onChange={e => setSearchValue(e.target.value)}
+                onFocus={() => setSearchFocused(true)}
+                onKeyDown={e => { if (e.key === 'Enter') submitSearch() }}
+                placeholder="Search policies, claims..."
+                className="flex-1 text-sm text-text-primary placeholder:text-text-tertiary bg-transparent border-0 outline-none"
+              />
+            </div>
+            <SearchSuggestions query={searchValue} results={suggestions} onSelect={handleSelectSuggestion} />
           </div>
 
           {/* Divider — desktop only */}

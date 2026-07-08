@@ -1,5 +1,5 @@
 import { RightOutlined, ArrowRightOutlined } from '@ant-design/icons'
-import type { HelpTopicKey } from './HelpTopicPage'
+import type { HelpTopicKey } from '../data/helpTopics'
 
 /* ─── Quick action icons — solid blue glyphs, matches provided
    reference images precisely. ────────────────────────────────── */
