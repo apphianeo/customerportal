@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { ShoppingCartOutlined, RightOutlined, ArrowRightOutlined, DownOutlined, UpOutlined } from '@ant-design/icons'
+import { CartIcon, ChevronRightIcon, ArrowForwardIcon, ChevronDownIcon, ChevronUpIcon } from '../components/icons'
 import recHome     from '../assets/rec-home.png'
 import recAccident from '../assets/rec-accident.png'
 import recHospital from '../assets/rec-hospital.png'
@@ -162,7 +162,7 @@ function PolicyCard({ policy, onSelect }: { policy: PolicyData; onSelect?: (slug
           </div>
           <span className="text-[14px] text-[#6e6e6e] leading-[1.5]">Policy No: {policy.policyNo}</span>
         </div>
-        <RightOutlined className="shrink-0" style={{ fontSize: 16, color: '#6E6E6E' }} />
+        <ChevronRightIcon size={16} className="shrink-0" style={{ color: '#6E6E6E' }} />
       </div>
 
       {/* Body — 3-col x 2-row metadata grid */}
@@ -237,8 +237,8 @@ function SelectDropdown({
           <span className="text-[16px] text-[#949494] whitespace-nowrap">{label}:</span>
           <span className="flex-1 text-[16px] text-[#212121] text-left truncate">{value}</span>
           {open
-            ? <UpOutlined className="shrink-0" style={{ fontSize: 12, color: '#005eb8' }} />
-            : <DownOutlined className="shrink-0" style={{ fontSize: 12, color: '#6E6E6E' }} />}
+            ? <ChevronUpIcon size={12} className="shrink-0" style={{ color: '#005eb8' }} />
+            : <ChevronDownIcon size={12} className="shrink-0" style={{ color: '#6E6E6E' }} />}
         </button>
       </div>
       {open && (
@@ -250,7 +250,7 @@ function SelectDropdown({
               onClick={() => { onChange(opt); setOpen(false) }}
               className={[
                 'w-full text-left p-[12px] text-[16px] text-[#212121] cursor-pointer border-0 transition-colors',
-                opt === value ? 'bg-[#f6f8fc]' : 'bg-white hover:bg-[#f6f8fc]',
+                opt === value ? 'bg-[#f6f8fc]' : 'bg-white hover:bg-[#f6f8fc] transition-colors',
               ].join(' ')}
             >
               {opt}
@@ -301,7 +301,7 @@ const RECOMMENDATIONS: RecommendationItem[] = [
 
 function RecommendationCard({ item }: { item: RecommendationItem }) {
   return (
-    <div className="flex h-[143px] rounded-[8px] overflow-hidden shadow-[0px_1px_2px_rgba(0,0,0,0.05)]">
+    <div className="flex h-[143px] rounded-[8px] overflow-hidden shadow-[0px_1px_2px_rgba(0,0,0,0.05)] hover:shadow-pop transition-shadow">
       <div className="w-[120px] shrink-0 h-full">
         <img src={item.image} alt="" aria-hidden="true" className="w-full h-full object-cover" />
       </div>
@@ -319,9 +319,9 @@ function RecommendationCard({ item }: { item: RecommendationItem }) {
           </div>
           <p className="text-[14px] text-[#6e6e6e] leading-[1.5]">{item.description}</p>
         </div>
-        <button className="flex items-center gap-1.5 text-[14px] font-medium text-[#005eb8] bg-transparent border-0 cursor-pointer p-0 hover:opacity-80 transition-opacity">
+        <button className="flex items-center gap-1.5 text-[14px] font-medium text-[#005eb8] bg-transparent border-0 cursor-pointer p-0">
           Get Quote
-          <ArrowRightOutlined style={{ fontSize: 12 }} />
+          <ArrowForwardIcon size={12} />
         </button>
       </div>
     </div>
@@ -397,16 +397,16 @@ export default function PoliciesPage({ onSelectPolicy }: Props) {
         {/* ── Breadcrumbs ── */}
         <div className="flex items-center gap-[4px]">
           <span className="text-[12px] text-[#8d8d8d] leading-[1.4]">Dashboard</span>
-          <RightOutlined style={{ fontSize: 10, color: '#6E6E6E' }} />
+          <ChevronRightIcon size={10} style={{ color: '#6E6E6E' }} />
           <span className="text-[12px] font-bold text-[#005eb8] leading-[1.4]">Policies</span>
         </div>
 
         {/* ── Title row ── */}
         <div className="flex items-center gap-[12px]">
           <h1 className="flex-1 text-[32px] font-bold text-[#212121] leading-[1.2] m-0">Policies</h1>
-          <button className="flex items-center gap-[8px] bg-[#005eb8] text-white font-medium text-[16px] leading-[1.5] px-[16px] py-[12px] rounded-[8px] border-0 cursor-pointer hover:bg-[#004e9a] transition-colors shadow-[0px_1px_2px_rgba(0,0,0,0.05)] shrink-0">
+          <button className="flex items-center gap-[8px] bg-[#005eb8] text-white font-medium text-[16px] leading-[1.5] px-[16px] py-[12px] rounded-[8px] border-0 cursor-pointer shadow-[0px_1px_2px_rgba(0,0,0,0.05)] shrink-0">
             Buy Policy
-            <ShoppingCartOutlined style={{ fontSize: 20 }} />
+            <CartIcon size={20} />
           </button>
         </div>
 
@@ -474,7 +474,7 @@ export default function PoliciesPage({ onSelectPolicy }: Props) {
             disabled={!hasActiveFilters}
             className={[
               'text-[16px] font-medium bg-transparent border-0 h-[32px]',
-              hasActiveFilters ? 'text-[#005eb8] cursor-pointer hover:opacity-80 transition-opacity' : 'text-[#bdbdbd] cursor-not-allowed',
+              hasActiveFilters ? 'text-[#005eb8] cursor-pointer' : 'text-[#bdbdbd] cursor-not-allowed',
             ].join(' ')}
           >
             Clear Filter

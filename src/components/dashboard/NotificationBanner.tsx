@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { ExclamationCircleFilled, CloseOutlined, ArrowRightOutlined } from '@ant-design/icons'
+import { ExclamationCircleFilled, CloseOutlined } from '@ant-design/icons'
+import { ArrowForwardIcon } from '../icons'
 
 type Props = {
   title: string
@@ -41,10 +42,10 @@ export default function NotificationBanner({ title, description, ctaLabel, onCta
             {ctaLabel && (
               <button
                 onClick={onCtaClick}
-                className="self-start flex items-center gap-2 text-sm font-medium text-primary cursor-pointer bg-transparent border-0 p-0 hover:opacity-80 transition-opacity"
+                className="self-start flex items-center gap-2 text-sm font-medium text-primary cursor-pointer bg-transparent border-0 p-0"
               >
                 {ctaLabel}
-                <ArrowRightOutlined style={{ fontSize: 16 }} />
+                <ArrowForwardIcon size={16} />
               </button>
             )}
           </div>
@@ -53,7 +54,7 @@ export default function NotificationBanner({ title, description, ctaLabel, onCta
           <button
             onClick={() => setDismissed(true)}
             aria-label="Dismiss notification"
-            className="shrink-0 size-4 flex items-center justify-center text-text-tertiary hover:text-text-primary transition-colors bg-transparent border-0 cursor-pointer p-0"
+            className="shrink-0 size-4 flex items-center justify-center text-text-tertiary bg-transparent border-0 cursor-pointer p-0"
           >
             <CloseOutlined style={{ fontSize: 12 }} />
           </button>

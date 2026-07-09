@@ -1,4 +1,6 @@
-import { RightOutlined, ArrowRightOutlined } from '@ant-design/icons'
+import { ChevronRightIcon, ArrowForwardIcon } from '../components/icons'
+import whatsappIcon from '../assets/icons/whatsapp.svg'
+import phoneIcon from '../assets/icons/phone.svg'
 import type { HelpTopicKey } from '../data/helpTopics'
 
 /* ─── Quick action icons — solid blue glyphs, matches provided
@@ -35,33 +37,6 @@ function PaymentsIcon() {
     <svg viewBox="0 0 24 24" fill="#005EB8" className="size-[22px]" aria-hidden="true">
       <path d="M20 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Zm0 12H4v-6h16v6Zm0-9H4V7h16v1Z" />
       <rect x="6" y="13.4" width="3.2" height="1.7" rx="0.85" fill="white" />
-    </svg>
-  )
-}
-
-function WhatsAppIcon() {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" className="size-[16px] shrink-0" aria-hidden="true">
-      <circle cx="8" cy="8" r="8" fill="#25D366" />
-      <path
-        d="M8 3.6c-2.43 0-4.4 1.97-4.4 4.4 0 .78.2 1.53.59 2.19L3.6 12.4l2.26-.59a4.38 4.38 0 0 0 2.14.55c2.43 0 4.4-1.97 4.4-4.4S10.43 3.6 8 3.6Zm0 0"
-        fill="#25D366"
-      />
-      <path
-        d="M6.1 5.85c.13-.29.27-.3.4-.3h.32c.1 0 .24-.04.37.29.14.34.47 1.17.51 1.26.04.08.07.18.01.29-.06.1-.09.17-.18.26-.09.1-.19.22-.27.3-.09.08-.18.18-.08.35.1.18.44.73.95 1.18.65.58 1.2.76 1.38.85.18.08.28.07.38-.04.11-.11.44-.51.55-.68.11-.18.23-.15.38-.09.15.06.98.46 1.15.55.17.08.29.13.33.2.04.07.04.4-.1.79-.13.39-.79.75-1.1.8-.29.06-.65.08-1.06-.07-.24-.09-.55-.19-.95-.37-1.68-.72-2.78-2.42-2.86-2.53-.08-.11-.68-.9-.68-1.72 0-.82.43-1.22.58-1.39Z"
-        fill="white"
-      />
-    </svg>
-  )
-}
-
-function PhoneIcon() {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" className="size-[16px] shrink-0" aria-hidden="true">
-      <path
-        d="M4.4 2.4h2l1 2.6-1.3 1c.5 1.1 1.4 2 2.5 2.5l1-1.3 2.6 1v2c0 .55-.45 1-1 1.05C6.8 11 3 7.2 2.35 3.9 2.3 3.35 2.75 2.4 3.3 2.4h1.1Z"
-        fill="#212121"
-      />
     </svg>
   )
 }
@@ -113,10 +88,10 @@ export default function HelpSupportPage({ onNavigateToDashboard, onSelectTopic }
         {/* Breadcrumb + title */}
         <div className="flex flex-col gap-[32px]">
           <div className="flex items-center gap-[4px] flex-wrap">
-            <button onClick={onNavigateToDashboard} className="text-[12px] text-[#949494] leading-[1.4] bg-transparent border-0 p-0 cursor-pointer hover:text-[#6e6e6e] transition-colors">
+            <button onClick={onNavigateToDashboard} className="text-[12px] text-[#949494] leading-[1.4] bg-transparent border-0 p-0 cursor-pointer">
               Dashboard
             </button>
-            <RightOutlined style={{ fontSize: 10, color: '#6E6E6E' }} />
+            <ChevronRightIcon size={10} style={{ color: '#6E6E6E' }} />
             <span className="text-[12px] font-bold text-[#005eb8] leading-[1.4]">Help &amp; Support</span>
           </div>
           <h1 className="text-[28px] sm:text-[32px] font-bold text-[#212121] leading-[1.2] m-0">How can we help you?</h1>
@@ -134,14 +109,14 @@ export default function HelpSupportPage({ onNavigateToDashboard, onSelectTopic }
         {/* Still need help */}
         <div className="bg-white rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] px-[24px] py-[16px] flex flex-col gap-[20px] w-full">
           <div className="flex flex-col gap-[6px]">
-            <p className="text-[16px] font-medium text-[#212121] m-0">Still need help?</p>
+            <p className="text-[16px] font-semibold text-[#212121] m-0">Still need help?</p>
             <p className="text-[14px] text-[#6e6e6e] m-0">We're here to assist you!</p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-[16px] sm:gap-[32px] w-full">
             <div className="flex-1 min-w-0 border border-[rgba(0,0,0,0.09)] rounded-[8px] p-[16px] flex flex-col gap-[8px]">
               <div className="flex gap-[8px] items-center">
-                <WhatsAppIcon />
+                <img src={whatsappIcon} alt="" aria-hidden="true" className="size-[16px] shrink-0" />
                 <span className="text-[14px] font-medium text-[#212121]">WhatsApp</span>
               </div>
               <div className="flex flex-col gap-[4px]">
@@ -151,14 +126,14 @@ export default function HelpSupportPage({ onNavigateToDashboard, onSelectTopic }
                   className="flex items-center gap-[8px] text-[14px] font-medium text-[#005eb8] bg-transparent border-0 p-0 cursor-pointer w-fit"
                 >
                   Start Chat
-                  <ArrowRightOutlined style={{ fontSize: 12 }} />
+                  <ArrowForwardIcon size={12} />
                 </button>
               </div>
             </div>
 
             <div className="flex-1 min-w-0 border border-[rgba(0,0,0,0.09)] rounded-[8px] p-[16px] flex flex-col gap-[8px]">
               <div className="flex gap-[8px] items-center">
-                <PhoneIcon />
+                <img src={phoneIcon} alt="" aria-hidden="true" className="size-[16px] shrink-0" />
                 <span className="text-[14px] font-medium text-[#212121]">Phone</span>
               </div>
               <div className="flex flex-col gap-[4px]">

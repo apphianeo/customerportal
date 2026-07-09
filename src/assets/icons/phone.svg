@@ -1,0 +1,5 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="phone">
+<path id="Vector" d="M5.33333 2C5.66667 2 7 5 7 5.33333C7 6 6 6.66667 5.66667 7.33333C5.33333 8 6 8.66667 6.66667 9.33333C6.92667 9.59333 8 10.6667 8.66667 10.3333C9.33333 10 10 9 10.6667 9C11 9 14 10.3333 14 10.6667C14 12 13 13 12 13.3333C11 13.6667 10.3333 13.6667 9 13.3333C7.66667 13 6.66667 12.6667 5 11C3.33333 9.33333 3 8.33333 2.66667 7C2.33333 5.66667 2.33333 5 2.66667 4C3 3 4 2 5.33333 2Z" fill="var(--fill-0, #949494)" stroke="var(--stroke-0, #949494)" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>

@@ -1,4 +1,4 @@
-import { RightOutlined } from '@ant-design/icons'
+import { ChevronRightIcon } from '../components/icons'
 import { searchIndex, type SearchResult } from '../data/searchIndex'
 import type { HelpTopicKey } from '../data/helpTopics'
 
@@ -34,7 +34,7 @@ function ResultCard({ result, query, onClick }: { result: SearchResult; query: s
           )}
         </div>
       </div>
-      <RightOutlined className="shrink-0" style={{ fontSize: 20, color: '#6E6E6E' }} />
+      <ChevronRightIcon size={20} className="shrink-0" style={{ color: '#6E6E6E' }} />
     </button>
   )
 }
@@ -65,10 +65,10 @@ export default function SearchResultsPage({ query, onNavigateToDashboard, onSele
         {/* Breadcrumb */}
         <div className="flex flex-col gap-[12px]">
           <div className="flex items-center gap-[4px] flex-wrap">
-            <button onClick={onNavigateToDashboard} className="text-[12px] text-[#949494] leading-[1.4] bg-transparent border-0 p-0 cursor-pointer hover:text-[#6e6e6e] transition-colors">
+            <button onClick={onNavigateToDashboard} className="text-[12px] text-[#949494] leading-[1.4] bg-transparent border-0 p-0 cursor-pointer">
               Dashboard
             </button>
-            <RightOutlined style={{ fontSize: 10, color: '#6E6E6E' }} />
+            <ChevronRightIcon size={10} style={{ color: '#6E6E6E' }} />
             <span className="text-[12px] font-bold text-[#005eb8] leading-[1.4]">Search Results</span>
           </div>
           <h1 className="text-[28px] sm:text-[32px] leading-[1.2] m-0">

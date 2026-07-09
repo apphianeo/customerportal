@@ -1,10 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import uoiLogo from '../../assets/uoi-logo.svg'
-import {
-  SearchOutlined,
-  DownOutlined,
-  CloseOutlined,
-} from '@ant-design/icons'
+import { SearchOutlined, CloseOutlined } from '@ant-design/icons'
+import { ChevronDownIcon } from '../icons'
 import { searchIndex, type SearchResult } from '../../data/searchIndex'
 import type { HelpTopicKey } from '../../data/helpTopics'
 
@@ -134,7 +131,7 @@ export default function TopHeader({
             /* Mobile expanded search */
             <div className="flex items-center gap-2 flex-1">
               <div className="relative flex-1">
-                <div className="flex items-center gap-3 bg-white border border-border-default rounded-lg px-4 py-2 w-full">
+                <div className="flex items-center gap-3 bg-white border border-border-default rounded-[8px] px-4 py-2 w-full">
                   <SearchOutlined className="text-text-tertiary text-sm shrink-0" />
                   <input
                     ref={searchInputRef}
@@ -151,7 +148,7 @@ export default function TopHeader({
               </div>
               <button
                 onClick={() => { setSearchOpen(false); setSearchValue('') }}
-                className="text-text-tertiary hover:text-text-primary transition-colors p-1"
+                className="text-text-tertiary p-1"
                 aria-label="Close search"
               >
                 <CloseOutlined style={{ fontSize: 16 }} />
@@ -162,7 +159,7 @@ export default function TopHeader({
               <UoiLogo />
               <button
                 onClick={() => setSearchOpen(true)}
-                className="text-text-tertiary hover:text-text-primary transition-colors p-1"
+                className="text-text-tertiary p-1"
                 aria-label="Open search"
               >
                 <SearchOutlined style={{ fontSize: 18 }} />
@@ -179,7 +176,7 @@ export default function TopHeader({
 
           {/* Desktop search bar */}
           <div className="hidden lg:block relative w-[360px] shrink-0">
-            <div className="flex items-center gap-3 bg-white border border-border-default rounded-lg px-4 py-2 w-full cursor-text">
+            <div className="flex items-center gap-3 bg-white border border-border-default rounded-[8px] px-4 py-2 w-full cursor-text">
               <SearchOutlined className="text-text-tertiary shrink-0" style={{ fontSize: 14 }} />
               <input
                 type="text"
@@ -209,12 +206,13 @@ export default function TopHeader({
                   {userInitials}
                 </span>
               </div>
-              <DownOutlined
+              <ChevronDownIcon
+                size={12}
                 className={[
                   'transition-transform duration-200',
                   userMenuOpen ? 'rotate-180' : '',
                 ].join(' ')}
-                style={{ fontSize: 12, color: '#6E6E6E' }}
+                style={{ color: '#6E6E6E' }}
               />
             </button>
 
@@ -222,14 +220,14 @@ export default function TopHeader({
             {userMenuOpen && (
               <div className="absolute right-0 top-full mt-2 w-[240px] bg-white rounded-[8px] drop-shadow-[0px_1px_4px_rgba(0,0,0,0.1)] z-50 p-[12px] flex flex-col gap-[8px]">
                 {/* Manage Account */}
-                <button className="flex items-center w-full px-[12px] py-[10px] rounded-[8px] border-0 bg-white hover:bg-[#fafafa] transition-colors cursor-pointer text-left">
+                <button className="flex items-center w-full px-[12px] py-[10px] rounded-[8px] border-0 bg-white hover:bg-[#f6f8fc] transition-colors cursor-pointer text-left">
                   <span className="text-base text-[rgba(0,0,0,0.87)] leading-[1.5] flex-1 min-w-0">
                     Manage Account
                   </span>
                 </button>
 
                 {/* Privacy Policy */}
-                <button className="flex items-center w-full px-[12px] py-[10px] rounded-[8px] border-0 bg-white hover:bg-[#fafafa] transition-colors cursor-pointer text-left">
+                <button className="flex items-center w-full px-[12px] py-[10px] rounded-[8px] border-0 bg-white hover:bg-[#f6f8fc] transition-colors cursor-pointer text-left">
                   <span className="text-base text-[rgba(0,0,0,0.87)] leading-[1.5] flex-1 min-w-0">
                     Privacy Policy
                   </span>
@@ -239,7 +237,7 @@ export default function TopHeader({
                 <div className="h-px w-full bg-border-default shrink-0" />
 
                 {/* Log Out */}
-                <button className="flex items-center gap-[10px] w-full px-[12px] py-[10px] rounded-[8px] border-0 bg-white hover:bg-[#fafafa] transition-colors cursor-pointer text-left text-[#dc2626]">
+                <button className="flex items-center gap-[10px] w-full px-[12px] py-[10px] rounded-[8px] border-0 bg-white hover:bg-[#f6f8fc] transition-colors cursor-pointer text-left text-[#dc2626]">
                   <LogoutIcon />
                   <span className="text-base font-medium leading-[1.5] flex-1 min-w-0">
                     Log Out

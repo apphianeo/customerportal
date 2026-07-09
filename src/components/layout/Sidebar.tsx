@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import uoiLogo from '../../assets/uoi-logo.svg'
 import shieldSvg from '../../assets/shield.svg'
-import { ShoppingCartOutlined } from '@ant-design/icons'
 import { PanelLeft } from 'lucide-react'
+import { CartIcon } from '../icons'
 
 export type NavKey = 'dashboard' | 'policies' | 'account' | 'help'
 
@@ -83,7 +83,7 @@ export default function Sidebar({
           <button
             onClick={onToggleCollapse}
             aria-label="Expand sidebar"
-            className="flex items-center justify-center w-[48px] h-[40px] text-[#8D8D8D] hover:text-primary transition-colors"
+            className="flex items-center justify-center w-[48px] h-[40px] text-[#8D8D8D]"
           >
             <PanelLeft size={18} />
           </button>
@@ -94,7 +94,7 @@ export default function Sidebar({
           <button
             onClick={onToggleCollapse}
             aria-label="Collapse sidebar"
-            className="text-[#8D8D8D] hover:text-primary transition-colors"
+            className="text-[#8D8D8D]"
           >
             <PanelLeft size={18} />
           </button>
@@ -147,11 +147,11 @@ function NavItem({
       onClick={onClick}
       title={collapsed ? label : undefined}
       className={[
-        'flex items-center w-full cursor-pointer border-0 transition-colors py-[10px] px-[12px]',
+        'flex items-center w-full cursor-pointer border-0 py-[10px] px-[12px]',
         collapsed ? 'justify-center' : 'gap-[12px]',
         isActive
           ? 'rounded-[4px] bg-[rgba(51,133,230,0.12)] text-primary'
-          : 'rounded-[8px] bg-transparent text-[#8D8D8D] hover:bg-grey-tag',
+          : 'rounded-[8px] bg-transparent text-[#8D8D8D]',
       ].join(' ')}
     >
       <span className="size-[20px] shrink-0 flex items-center justify-center">{icon}</span>
@@ -186,10 +186,10 @@ function PromoCard() {
           Protect your next trip from $10 onwards!
         </p>
         <button
-          className="flex items-center justify-center gap-2 w-full h-8 rounded-[8px] bg-white shadow-[0px_1px_2px_rgba(0,0,0,0.05)] text-primary text-sm font-medium cursor-pointer border-0 hover:bg-bg-info transition-colors"
+          className="flex items-center justify-center gap-2 w-full h-8 rounded-[8px] bg-white shadow-[0px_1px_2px_rgba(0,0,0,0.05)] text-primary text-sm font-medium cursor-pointer border-0"
           onClick={() => setDismissed(true)}
         >
-          Buy Now <ShoppingCartOutlined />
+          Buy Now <CartIcon size={16} />
         </button>
       </div>
     </div>

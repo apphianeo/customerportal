@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Tooltip } from 'antd'
-import { RightOutlined, ArrowRightOutlined } from '@ant-design/icons'
+import { ChevronRightIcon, ArrowForwardIcon } from '../icons'
 
 const AREA_1_COUNTRIES =
   'Area 1 includes Brunei, Cambodia, Indonesia, Laos, Malaysia, Myanmar, Philippines, Thailand and Vietnam.'
@@ -305,7 +305,7 @@ function PolicyCard({ policy, onClick }: { policy: PolicyDetail; onClick?: () =>
       </div>
 
       {/* Right chevron */}
-      <RightOutlined className="shrink-0 ml-2" style={{ fontSize: 16, color: '#6E6E6E' }} />
+      <ChevronRightIcon size={16} className="shrink-0 ml-2" style={{ color: '#6E6E6E' }} />
     </button>
   )
 }
@@ -327,9 +327,9 @@ function StatusTag({ status, label }: { status: PolicyStatus; label: string }) {
 /* ─── View All link ──────────────────────────────────────── */
 function ViewAll({ onClick }: { onClick?: () => void }) {
   return (
-    <button onClick={onClick} className="flex items-center gap-1.5 text-base font-medium text-text-link bg-transparent border-0 cursor-pointer p-0 shrink-0 hover:opacity-80 transition-opacity">
+    <button onClick={onClick} className="flex items-center gap-1.5 text-base font-medium text-text-link bg-transparent border-0 cursor-pointer p-0 shrink-0">
       View All
-      <ArrowRightOutlined style={{ fontSize: 13 }} />
+      <ArrowForwardIcon size={13} />
     </button>
   )
 }

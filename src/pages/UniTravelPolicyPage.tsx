@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Tooltip } from 'antd'
-import { RightOutlined, DownloadOutlined, PlusCircleOutlined } from '@ant-design/icons'
+import { DownloadOutlined, PlusCircleOutlined } from '@ant-design/icons'
+import { ChevronRightIcon } from '../components/icons'
 
 /* ─── Info icon — grey filled circle, matches design system ─ */
 function InfoIcon() {
@@ -197,14 +198,14 @@ export default function UniTravelPolicyPage({ onNavigateToDashboard, onNavigateT
 
         {/* Breadcrumbs */}
         <div className="flex items-center gap-[4px] flex-wrap">
-          <button onClick={onNavigateToDashboard} className="text-[12px] text-[#949494] leading-[1.4] bg-transparent border-0 p-0 cursor-pointer hover:text-[#6e6e6e] transition-colors">
+          <button onClick={onNavigateToDashboard} className="text-[12px] text-[#949494] leading-[1.4] bg-transparent border-0 p-0 cursor-pointer">
             Dashboard
           </button>
-          <RightOutlined style={{ fontSize: 10, color: '#6E6E6E' }} />
-          <button onClick={onNavigateToPolicies} className="text-[12px] text-[#949494] leading-[1.4] bg-transparent border-0 p-0 cursor-pointer hover:text-[#6e6e6e] transition-colors">
+          <ChevronRightIcon size={10} style={{ color: '#6E6E6E' }} />
+          <button onClick={onNavigateToPolicies} className="text-[12px] text-[#949494] leading-[1.4] bg-transparent border-0 p-0 cursor-pointer">
             Policies
           </button>
-          <RightOutlined style={{ fontSize: 10, color: '#6E6E6E' }} />
+          <ChevronRightIcon size={10} style={{ color: '#6E6E6E' }} />
           <span className="text-[12px] font-bold text-[#005eb8] leading-[1.4]">
             UniTravel (Single Trip) - DHOPF50050002500
           </span>
@@ -254,7 +255,7 @@ export default function UniTravelPolicyPage({ onNavigateToDashboard, onNavigateT
           </div>
           <button
             onClick={() => console.log('Download policy')}
-            className="flex items-center gap-2 border border-[#005eb8] text-[#005eb8] bg-white px-[24px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-medium text-[16px] shrink-0 h-fit cursor-pointer hover:bg-[#f0f7ff] transition-colors"
+            className="flex items-center justify-center gap-2 border border-[#005eb8] text-[#005eb8] bg-white px-[24px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-medium text-[16px] w-full sm:w-auto shrink-0 h-fit cursor-pointer"
           >
             Download Policy
             <DownloadOutlined style={{ fontSize: 20 }} />
@@ -271,8 +272,8 @@ export default function UniTravelPolicyPage({ onNavigateToDashboard, onNavigateT
                 key={tab.key}
                 onClick={() => goToTab(tab.key)}
                 className={[
-                  'px-[12px] pb-[12px] text-[14px] whitespace-nowrap bg-transparent border-0 border-b-2 -mb-px cursor-pointer transition-colors',
-                  activeTab === tab.key ? 'text-[#005eb8] font-medium border-b-[#005eb8]' : 'text-[#212121] border-b-transparent hover:text-[#005eb8]',
+                  'px-[12px] pb-[12px] text-[14px] whitespace-nowrap bg-transparent border-0 border-b-2 -mb-px cursor-pointer',
+                  activeTab === tab.key ? 'text-[#005eb8] font-medium border-b-[#005eb8]' : 'text-[#212121] border-b-transparent',
                 ].join(' ')}
               >
                 {tab.label}

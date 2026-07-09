@@ -26,8 +26,8 @@ export default function MobileBottomNav({ activeKey = 'dashboard', onNavigate }:
               <button
                 onClick={() => onNavigate?.(key)}
                 className={[
-                  'flex flex-col items-center justify-center gap-1 w-full py-2 border-0 cursor-pointer bg-transparent transition-colors',
-                  isActive ? 'text-primary' : 'text-text-tertiary hover:text-text-secondary',
+                  'flex flex-col items-center justify-center gap-1 w-full py-2 border-0 cursor-pointer bg-transparent',
+                  isActive ? 'text-primary' : 'text-text-tertiary',
                 ].join(' ')}
               >
                 <span className="text-[20px] leading-none">
