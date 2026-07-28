@@ -206,7 +206,7 @@ export default function UniTravelPolicyPage({ onNavigateToDashboard, onNavigateT
             Policies
           </button>
           <ChevronRightIcon size={10} style={{ color: '#6E6E6E' }} />
-          <span className="text-[12px] font-bold text-[#005eb8] leading-[1.4]">
+          <span className="text-[12px] font-semibold text-[#005eb8] leading-[1.4]">
             UniTravel (Single Trip) - DHOPF50050002500
           </span>
         </div>
@@ -215,7 +215,7 @@ export default function UniTravelPolicyPage({ onNavigateToDashboard, onNavigateT
         <div className="flex flex-col sm:flex-row gap-[16px] sm:items-start sm:justify-between">
           <div className="flex flex-col gap-[12px] flex-1 min-w-0">
             <div className="flex gap-[12px] items-center flex-wrap">
-              <h1 className="text-[28px] sm:text-[32px] font-bold text-[#212121] leading-[1.2] m-0">
+              <h1 className="text-[28px] sm:text-[32px] font-semibold text-[#212121] leading-[1.2] m-0">
                 UniTravel (Single Trip)
               </h1>
               <span className="inline-flex items-center px-[8px] py-[4px] rounded-[12px] text-xs font-medium bg-[#ecfdf5] text-[#08754f]">
@@ -307,7 +307,7 @@ export default function UniTravelPolicyPage({ onNavigateToDashboard, onNavigateT
           <div className="bg-[#eff6ff] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] rounded-[8px] px-[16px] py-[12px] flex flex-col sm:flex-row gap-[12px] sm:items-center">
             <div className="flex gap-[8px] items-center flex-1 min-w-0">
               <InfoIconBlue />
-              <p className="text-[14px] text-[#212121] m-0">Supercharge your plan with exclusive add-ons.</p>
+              <p className="text-[14px] text-[#212121] m-0">Supercharge your plan with exclusive add-ons</p>
             </div>
             <button
               onClick={() => console.log('Open add-ons')}
@@ -374,7 +374,7 @@ export default function UniTravelPolicyPage({ onNavigateToDashboard, onNavigateT
         <SectionCard
           id="section-contact"
           title="Contact Details"
-          subtitle="All policy documents will be sent to the contact information tied to this specific policy."
+          subtitle="All policy documents will be sent to the contact information tied to this specific policy"
           action={
             <button
               onClick={() => console.log('Edit contact details')}

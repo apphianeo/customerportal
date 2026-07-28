@@ -21,25 +21,29 @@ function MessagingIcon() {
   )
 }
 
+export const BUY_POLICY_URL = 'https://www.uoi.com.sg/uoi/personal/index.page'
+
 type QuickAction = {
   key: string
   icon: React.ReactNode
   title: string
   description: string
   onClick?: () => void
+  href?: string
 }
 
 const ACTIONS: QuickAction[] = [
   {
     key: 'buy',
     icon: <CartIcon />,
-    title: 'Buy New Policy',
+    title: 'Buy new policy',
     description: 'Explore a wide range of policies',
+    href: BUY_POLICY_URL,
   },
   {
     key: 'help',
     icon: <MessagingIcon />,
-    title: 'Help & Support',
+    title: 'Help & support',
     description: 'Learn more about our FAQs',
   },
 ]
@@ -54,12 +58,15 @@ export default function QuickActions() {
   )
 }
 
-function QuickActionCard({ icon, title, description, onClick }: QuickAction) {
+function QuickActionCard({ icon, title, description, onClick, href }: QuickAction) {
+  const cardClass =
+    'flex items-center gap-3 w-full bg-white rounded-lg p-4 shadow-card text-left cursor-pointer border-0 hover:shadow-pop transition-shadow'
+  const Tag = href ? 'a' : 'button'
+  const tagProps = href
+    ? { href, target: '_blank' as const, rel: 'noopener noreferrer' }
+    : { onClick }
   return (
-    <button
-      onClick={onClick}
-      className="flex items-center gap-3 w-full bg-white rounded-lg p-4 shadow-card text-left cursor-pointer border-0 hover:shadow-pop transition-shadow"
-    >
+    <Tag {...tagProps} className={cardClass}>
       {/* Icon container */}
       <span
         className="size-8 flex items-center justify-center shrink-0 text-primary"
@@ -77,6 +84,6 @@ function QuickActionCard({ icon, title, description, onClick }: QuickAction) {
           {description}
         </span>
       </span>
-    </button>
+    </Tag>
   )
 }

@@ -1,0 +1,3 @@
+Insurance portals don't have to look like insurance.
+
+Introducing the UOI Customer Portal — log in with Singpass or NRIC/FIN, and every active policy, renewal date and reward sits in one place. Built in React + TypeScript + Tailwind, on a proper design system.

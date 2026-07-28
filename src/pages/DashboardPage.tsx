@@ -3,13 +3,6 @@ import QuickActions from '../components/dashboard/QuickActions'
 import YourCoverage from '../components/dashboard/YourCoverage'
 import Rewards from '../components/dashboard/Rewards'
 
-function getGreeting() {
-  const h = new Date().getHours()
-  if (h < 12) return 'Good morning'
-  if (h < 18) return 'Good afternoon'
-  return 'Good evening'
-}
-
 type Props = {
   onNavigateToPolicies?: () => void
   onSelectPolicy?: (slug: string) => void
@@ -23,16 +16,20 @@ export default function DashboardPage({ onNavigateToPolicies, onSelectPolicy }: 
 
         {/* ── Notification banner ── */}
         <NotificationBanner
-          title="Your UniCar policy is expiring in 30 days — 12 April 2026."
-          description="Renew now to ensure continuous coverage and avoid any lapse in protection."
-          ctaLabel="Renew"
-          onCtaClick={() => console.log('Renew clicked')}
+          title="Your UniCar policy is expiring in 30 days — 12 April 2026"
+          description={
+            <>
+              Contact UOI at{' '}
+              <a href="tel:+6562227733" className="text-primary">(+65) 6222 7733</a>{' '}
+              to ensure continuous coverage and avoid any lapse in protection
+            </>
+          }
         />
 
         {/* ── Greeting + Quick Actions ── */}
         <div className="flex flex-col gap-4">
-          <h1 className="text-[28px] lg:text-[32px] font-bold text-text-primary leading-tight m-0">
-            {getGreeting()}, Chris! 👋
+          <h1 className="text-[32px] font-semibold text-text-primary leading-tight m-0">
+            Welcome, Chris 👋
           </h1>
           <QuickActions />
         </div>
@@ -41,7 +38,6 @@ export default function DashboardPage({ onNavigateToPolicies, onSelectPolicy }: 
         <YourCoverage onViewPolicies={onNavigateToPolicies} onSelectPolicy={onSelectPolicy} />
 
         {/* ── Rewards ── */}
-        <div className="h-px bg-border-default opacity-50" />
         <Rewards />
 
       </div>

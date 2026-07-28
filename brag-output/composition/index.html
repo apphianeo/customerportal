@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>UOI Customer Portal — Brag</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 1920px; height: 1080px; overflow: hidden;
+        background: #f6f8fc;
+      }
+      body {
+        /* Product font is Noto Sans; fall back to the closest system UI faces. */
+        font-family: "Noto Sans", -apple-system, "Helvetica Neue", Arial, sans-serif;
+        color: #212121;
+      }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+
+      /* Full-bleed page fill lives on a child, never on the root. */
+      #page-fill { position: absolute; inset: 0; background: #f6f8fc; }
+
+      .clip { position: absolute; inset: 0; }
+      .inner { position: absolute; inset: 0; opacity: 0; }
+
+      /* Screen captures from the running product */
+      .shot {
+        position: absolute; inset: 0;
+        width: 1920px; height: 1080px;
+        object-fit: cover; object-position: center;
+        display: block;
+      }
+
+      /* Caption chip — reuses the portal's own effect-pop shadow */
+      .caption {
+        position: absolute; left: 96px; bottom: 88px;
+        display: flex; align-items: center; gap: 18px;
+        background: #ffffff; border-radius: 14px;
+        padding: 20px 32px;
+        box-shadow: 0 10px 35px 0 rgba(0, 94, 184, 0.16);
+        opacity: 0;
+      }
+      .caption .dot { width: 14px; height: 14px; border-radius: 50%; background: #005eb8; }
+      .caption .txt { font-size: 36px; line-height: 1.3; font-weight: 500; color: #212121; white-space: nowrap; }
+
+      /* Simulated cursor + click ring for the sign-in beat */
+      #cursor { position: absolute; left: 0; top: 0; width: 44px; height: 44px; opacity: 0; }
+      #click-ring {
+        position: absolute; left: 456px; top: 734px;
+        width: 48px; height: 48px; border-radius: 50%;
+        border: 4px solid #005eb8; opacity: 0;
+      }
+      #btn-glow {
+        position: absolute; left: 200px; top: 726px;
+        width: 560px; height: 64px; border-radius: 11px;
+        box-shadow: 0 0 0 4px rgba(0, 94, 184, 0.35);
+        opacity: 0;
+      }
+
+      /* Scene 4 — the real dashboard, scrolled */
+      #dash-window { position: absolute; inset: 0; overflow: hidden; }
+      #dash-img {
+        position: absolute; left: 0; top: 0;
+        display: block; width: 1920px; height: 2044px;
+      }
+
+      /* End card */
+      #end-wrap {
+        position: absolute; inset: 0; background: #f6f8fc;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 44px;
+      }
+      #end-logo { display: block; width: 300px; height: 154px; opacity: 0; }
+      #end-line {
+        font-size: 68px; font-weight: 600; letter-spacing: -0.5px; color: #212121; opacity: 0;
+      }
+      #end-sub { font-size: 30px; font-weight: 400; color: #6e6e6e; opacity: 0; }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="20.5"
+      data-width="1920"
+      data-height="1080"
+      data-fps="30"
+    >
+      <div id="page-fill"></div>
+
+      <!-- ── Scene 1 — Login / hook ───────────────────────────── -->
+      <section id="s1" class="clip" data-start="0" data-duration="4.5" data-track-index="1">
+        <div class="inner" id="s1-inner">
+          <img id="s1-shot" class="shot" src="assets/img/01-login.png" alt="UOI Customer Portal login screen" />
+          <div class="caption" id="s1-cap">
+            <span class="dot"></span>
+            <span class="txt">UOI Customer Portal — Singapore</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Scene 2 — Sign in (cursor presses Login) ─────────── -->
+      <section id="s2" class="clip" data-start="4.2" data-duration="2.6" data-track-index="2">
+        <div class="inner" id="s2-inner">
+          <img id="s2-shot" class="shot" src="assets/img/02-login-filled.png" alt="NRIC and password entered" />
+          <div id="btn-glow"></div>
+          <div id="click-ring"></div>
+          <svg id="cursor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 2 L5 20 L10 15.5 L13 22 L16 20.5 L13 14.5 L19.5 14 Z"
+                  fill="#212121" stroke="#ffffff" stroke-width="1.4" stroke-linejoin="round" />
+          </svg>
+        </div>
+      </section>
+
+      <!-- ── Scene 3 — OTP fills digit by digit ───────────────── -->
+      <section id="s3" class="clip" data-start="6.6" data-duration="4.2" data-track-index="3">
+        <div class="inner" id="s3-inner">
+          <img id="otp0" class="shot" src="assets/img/otp-0.png" alt="OTP verification screen" />
+          <img id="otp1" class="shot" src="assets/img/otp-1.png" alt="OTP one digit entered" style="opacity: 0" />
+          <img id="otp2" class="shot" src="assets/img/otp-2.png" alt="OTP two digits entered" style="opacity: 0" />
+          <img id="otp3" class="shot" src="assets/img/otp-3.png" alt="OTP three digits entered" style="opacity: 0" />
+          <img id="otp4" class="shot" src="assets/img/otp-4.png" alt="OTP four digits entered" style="opacity: 0" />
+          <img id="otp5" class="shot" src="assets/img/otp-5.png" alt="OTP five digits entered" style="opacity: 0" />
+          <img id="otp6" class="shot" src="assets/img/otp-6.png" alt="OTP fully entered" style="opacity: 0" />
+        </div>
+      </section>
+
+      <!-- ── Scene 4 — Coverage → rewards, one continuous scroll ─ -->
+      <section id="s4" class="clip" data-start="10.5" data-duration="8.1" data-track-index="4">
+        <div class="inner" id="s4-inner">
+          <div id="dash-window" data-layout-allow-overflow>
+            <img id="dash-img" src="assets/img/dashboard-full.png" alt="UOI dashboard: active coverage and rewards" />
+          </div>
+          <div class="caption" id="s4-capA">
+            <span class="dot"></span>
+            <span class="txt">Every policy, one place</span>
+          </div>
+          <div class="caption" id="s4-capB">
+            <span class="dot"></span>
+            <span class="txt">Rewards, not just PDFs</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Scene 5 — End card ───────────────────────────────── -->
+      <section id="s5" class="clip" data-start="18.4" data-duration="2.1" data-track-index="5">
+        <div class="inner" id="s5-inner">
+          <div id="end-wrap">
+            <img id="end-logo" src="assets/img/uoi-logo.svg" alt="UOI" />
+            <div id="end-line">Every policy. One place.</div>
+            <div id="end-sub">Access your insurance policies in one place</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Audio ─────────────────────────────────────────────── -->
+      <audio id="music" data-start="0" data-duration="20.5" data-track-index="6" data-volume="0.28"
+             src="assets/music/happy-beats-business-moves-vol-9-by-ende-dot-app.mp3"></audio>
+
+      <audio id="sfx-click" data-start="5.4" data-duration="0.06" data-track-index="8" data-volume="0.5"
+             src="assets/sfx/click2.ogg"></audio>
+
+      <!-- beat-grid: OTP key ticks ride consecutive beats (0.526s apart) -->
+      <audio id="k1" data-start="7.40" data-duration="0.25" data-track-index="7" data-volume="0.32" src="assets/sfx/keypress-001.wav"></audio>
+      <audio id="k2" data-start="7.92" data-duration="0.25" data-track-index="7" data-volume="0.32" src="assets/sfx/keypress-002.wav"></audio>
+      <audio id="k3" data-start="8.44" data-duration="0.25" data-track-index="7" data-volume="0.32" src="assets/sfx/keypress-003.wav"></audio>
+      <audio id="k4" data-start="8.96" data-duration="0.25" data-track-index="7" data-volume="0.32" src="assets/sfx/keypress-004.wav"></audio>
+      <audio id="k5" data-start="9.50" data-duration="0.25" data-track-index="7" data-volume="0.32" src="assets/sfx/keypress-005.wav"></audio>
+      <audio id="k6" data-start="10.01" data-duration="0.25" data-track-index="7" data-volume="0.32" src="assets/sfx/keypress-006.wav"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      /* ── Scene 1 — login holds and breathes ───────────────── */
+      tl.to("#s1-inner", { opacity: 1, duration: 0.5, ease: "power2.out" }, 0);
+      tl.fromTo("#s1-shot", { scale: 1 }, { scale: 1.03, duration: 4.5, ease: "none" }, 0);
+      tl.fromTo("#s1-cap", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 2.6);
+      tl.to("#s1-inner", { opacity: 0, duration: 0.3, ease: "power1.inOut" }, 4.2);
+
+      /* ── Scene 2 — cursor presses Login ───────────────────── */
+      // beat-locked: 4.23s (strong cue) — cut into the sign-in action
+      tl.to("#s2-inner", { opacity: 1, duration: 0.3, ease: "power1.inOut" }, 4.23);
+      tl.fromTo("#cursor", { opacity: 0, x: 760, y: 940 }, { opacity: 1, duration: 0.25, ease: "power1.out" }, 4.5);
+      tl.to("#cursor", { x: 486, y: 764, duration: 0.75, ease: "power2.inOut" }, 4.6);
+      /* the press itself */
+      tl.to("#cursor", { scale: 0.86, duration: 0.09, ease: "power2.out" }, 5.4);
+      tl.to("#cursor", { scale: 1, duration: 0.16, ease: "power2.out" }, 5.49);
+      tl.fromTo("#btn-glow", { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power2.out" }, 5.4);
+      tl.to("#btn-glow", { opacity: 0, duration: 0.5, ease: "power1.out" }, 5.62);
+      tl.fromTo("#click-ring", { opacity: 0.85, scale: 0.5 }, { opacity: 0, scale: 2.1, duration: 0.6, ease: "power2.out" }, 5.4);
+      tl.to("#s2-inner", { opacity: 0, duration: 0.25, ease: "power1.inOut" }, 6.55);
+
+      /* ── Scene 3 — OTP digits land on the beat grid ───────── */
+      tl.to("#s3-inner", { opacity: 1, duration: 0.3, ease: "power1.inOut" }, 6.6);
+      /* beat-grid: digits at 7.40, 7.92, 8.44, 8.96, 9.50, 10.01 */
+      var otpBeats = [7.40, 7.92, 8.44, 8.96, 9.50, 10.01];
+      otpBeats.forEach(function (t, i) {
+        tl.to("#otp" + (i + 1), { opacity: 1, duration: 0.1, ease: "none" }, t);
+      });
+      /* the code is complete — a quiet lift, no fanfare */
+      tl.to("#s3-inner", { scale: 1.012, duration: 0.5, ease: "power2.out" }, 10.05);
+      tl.to("#s3-inner", { opacity: 0, duration: 0.3, ease: "power1.inOut" }, 10.5);
+
+      /* ── Scene 4 — one continuous scroll: coverage → rewards ── */
+      // beat-locked: 10.54s (strong cue) — the dashboard arrives
+      tl.to("#s4-inner", { opacity: 1, duration: 0.32, ease: "power1.inOut" }, 10.54);
+      tl.fromTo("#dash-img", { y: 0 }, { y: -890, duration: 4.8, ease: "power1.inOut" }, 12.2);
+      tl.fromTo("#s4-capA", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 11.0);
+      tl.to("#s4-capA", { opacity: 0, duration: 0.4, ease: "power1.inOut" }, 13.6);
+      // beat-locked: 15.81s — rewards caption
+      tl.fromTo("#s4-capB", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 15.81);
+      tl.to("#s4-capB", { opacity: 0, duration: 0.4, ease: "power1.inOut" }, 18.15);
+      tl.to("#s4-inner", { opacity: 0, duration: 0.35, ease: "power1.inOut" }, 18.25);
+
+      /* ── Scene 5 — end card ───────────────────────────────── */
+      tl.to("#s5-inner", { opacity: 1, duration: 0.35, ease: "power2.out" }, 18.4);
+      tl.fromTo("#end-logo", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 18.6);
+      tl.fromTo("#end-line", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.65, ease: "power3.out" }, 18.95);
+      tl.fromTo("#end-sub", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, 19.35);
+
+      /* ── Music: fade in, hold low, fade out under the last line ── */
+      var music = document.getElementById("music");
+      tl.fromTo(music, { volume: 0 }, { volume: 0.28, duration: 0.6, ease: "none" }, 0);
+      tl.to(music, { volume: 0, duration: 1.2, ease: "none" }, 19.3);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

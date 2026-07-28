@@ -1,26 +1,10 @@
 import { useState } from 'react'
-import { Tooltip } from 'antd'
-import { ChevronRightIcon, ArrowForwardIcon } from '../icons'
-
-const AREA_1_COUNTRIES =
-  'Area 1 includes Brunei, Cambodia, Indonesia, Laos, Malaysia, Myanmar, Philippines, Thailand and Vietnam.'
-
-/* ─── Info icon — grey filled circle, matches design system ─ */
-function InfoIcon() {
-  return (
-    <svg viewBox="0 0 16 16" className="shrink-0" style={{ width: 13, height: 13 }} aria-hidden="true">
-      <circle cx="8" cy="8" r="8" fill="#BDBDBD" />
-      <circle cx="8" cy="4.75" r="1" fill="white" />
-      <rect x="7.1" y="7" width="1.8" height="5" rx="0.9" fill="white" />
-    </svg>
-  )
-}
+import { ChevronRightIcon } from '../icons'
 import iconMotor      from '../../assets/icon-motor.svg'
 import iconTravel     from '../../assets/icon-travel.svg'
 import iconHelperBody from '../../assets/icon-helper-body.svg'
 import iconHelperHead from '../../assets/icon-helper-head.svg'
 import iconHome       from '../../assets/icon-home.svg'
-import iconHospital   from '../../assets/icon-hospital.svg'
 import iconAccident1  from '../../assets/icon-accident-1.svg'
 import iconAccident2  from '../../assets/icon-accident-2.svg'
 
@@ -58,13 +42,6 @@ function HomeIcon() {
     </div>
   )
 }
-function HospitalIcon() {
-  return (
-    <div className="flex items-center justify-center shrink-0 size-[20px]">
-      <img src={iconHospital} alt="" aria-hidden="true" style={{ width: 15, height: 15 }} />
-    </div>
-  )
-}
 function AccidentIcon() {
   return (
     <div className="relative shrink-0 size-[20px]">
@@ -87,12 +64,12 @@ type PolicyDetail = {
   policyNo: string
   status: PolicyStatus
   statusLabel: string
-  details: string[]         // each item separated by • in the UI
+  coveragePeriod: string
   category: FilterKey
   detailSlug?: string
 }
 
-type FilterKey = 'all' | 'motor' | 'travel' | 'helper' | 'home' | 'hospital' | 'accident'
+type FilterKey = 'all' | 'motor' | 'travel' | 'helper' | 'home' | 'accident'
 
 /* ─── Data ───────────────────────────────────────────────── */
 const POLICIES: PolicyDetail[] = [
@@ -101,8 +78,8 @@ const POLICIES: PolicyDetail[] = [
     name: 'UniCar',
     policyNo: 'PNF320104124A23',
     status: 'renewal-due',
-    statusLabel: 'Renewal Due in 30 Days',
-    details: ['Comprehensive Essential Plan', '2/1/2026 - 1/1/2027 (12 Months)'],
+    statusLabel: 'Renewal due in 30 days',
+    coveragePeriod: '2/1/2026 - 1/1/2027 (12 Months)',
     category: 'motor',
   },
   {
@@ -110,8 +87,8 @@ const POLICIES: PolicyDetail[] = [
     name: 'UniTravel (Single Trip)',
     policyNo: 'PNF320104124A23',
     status: 'in-force',
-    statusLabel: 'In Force',
-    details: ['Area 1', 'Value Plan', '8/4/2026 - 13/4/2026 (6 Days)'],
+    statusLabel: 'In force',
+    coveragePeriod: '8/4/2026 - 13/4/2026 (6 Days)',
     category: 'travel',
     detailSlug: 'unitravel',
   },
@@ -120,8 +97,8 @@ const POLICIES: PolicyDetail[] = [
     name: 'UniHelper',
     policyNo: 'PNF320104124A23',
     status: 'in-force',
-    statusLabel: 'In Force',
-    details: ['Value Plan', '2/1/2026 - 1/1/2027 (12 Months)'],
+    statusLabel: 'In force',
+    coveragePeriod: '2/1/2026 - 1/1/2027 (12 Months)',
     category: 'helper',
   },
 ]
@@ -137,9 +114,8 @@ const FILTERS: FilterOption[] = [
   { key: 'motor',    label: 'Motor',               icon: <MotorIcon /> },
   { key: 'travel',   label: 'Travel',              icon: <TravelIcon /> },
   { key: 'helper',   label: 'Helper',              icon: <HelperIcon /> },
-  { key: 'home',     label: 'Home',                icon: <HomeIcon /> },
-  { key: 'hospital', label: 'Hospital Protection', icon: <HospitalIcon /> },
-  { key: 'accident', label: 'Personal Accident',   icon: <AccidentIcon /> },
+  { key: 'home',     label: 'Home',              icon: <HomeIcon /> },
+  { key: 'accident', label: 'Personal Accident', icon: <AccidentIcon /> },
 ]
 
 /* ─── Main section ───────────────────────────────────────── */
@@ -159,14 +135,14 @@ export default function YourCoverage({ onViewPolicies, onSelectPolicy }: Props) 
     : POLICIES.filter(p => p.category === activeFilter)
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       {/* ── Header ── */}
       <div className="flex items-center gap-7">
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          <h2 className="text-h2-mob lg:text-h2 font-bold text-text-primary m-0 leading-relaxed">
-            Your Coverage
+          <h2 className="text-[18px] font-semibold text-text-primary m-0 leading-relaxed">
+            Your active coverage
           </h2>
-          <span className="text-h2-mob lg:text-h2 text-text-tertiary leading-relaxed">
+          <span className="text-[18px] text-text-tertiary leading-relaxed">
             ({POLICIES.length})
           </span>
         </div>
@@ -232,7 +208,7 @@ export default function YourCoverage({ onViewPolicies, onSelectPolicy }: Props) 
       <div className="flex flex-col gap-4">
         {visible.length === 0 ? (
           <p className="text-sm text-text-tertiary py-4 text-center">
-            No policies in this category.
+            No policies in this category
           </p>
         ) : (
           visible.map(policy => (
@@ -251,62 +227,37 @@ export default function YourCoverage({ onViewPolicies, onSelectPolicy }: Props) 
 /* ─── Policy Card ────────────────────────────────────────── */
 function PolicyCard({ policy, onClick }: { policy: PolicyDetail; onClick?: () => void }) {
   return (
-    <button onClick={onClick} className="flex items-center gap-1 w-full bg-white rounded-xl p-4 shadow-card text-left cursor-pointer border-0 hover:shadow-pop transition-shadow">
-      {/* Details */}
-      <div className="flex flex-col gap-[4px] flex-1 min-w-0">
-        {/* Name + status tag */}
-        <div className="flex items-center gap-2 flex-wrap">
+    <button onClick={onClick} className="w-full bg-white rounded-[8px] shadow-card text-left cursor-pointer border-0 overflow-hidden hover:shadow-pop transition-shadow">
+      {/* Header: name + status tag + chevron */}
+      <div className="flex items-center gap-2 px-4 pt-4 pb-4">
+        <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
           <span className="text-base font-medium text-text-primary leading-relaxed">
             {policy.name}
           </span>
           <StatusTag status={policy.status} label={policy.statusLabel} />
         </div>
-
-        {/* Policy number */}
-        <span className="text-sm text-text-secondary leading-relaxed">
-          Policy No: {policy.policyNo}
-        </span>
-
-        {/* Detail metadata — bullet-separated, wraps on mobile */}
-        <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5">
-          {policy.details.map((detail, i) => (
-            <span key={i} className="flex items-center gap-2">
-              {i > 0 && <span className="text-text-secondary text-xs">•</span>}
-              {detail.startsWith('Area') ? (
-                <span className="flex items-center">
-                  <span className="text-sm text-text-secondary leading-relaxed">{detail}</span>
-                  <Tooltip
-                    title={AREA_1_COUNTRIES}
-                    color="white"
-                    placement="top"
-                    styles={{
-                      root: { maxWidth: 265 },
-                      container: {
-                        color: '#212121',
-                        fontSize: 14,
-                        lineHeight: 1.5,
-                        padding: 12,
-                        borderRadius: 8,
-                        boxShadow: '0px 0px 4.5px rgba(0, 0, 0, 0.12)',
-                      },
-                    }}
-                  >
-                    <span className="cursor-help flex items-center" style={{ marginLeft: 4 }}>
-                      <InfoIcon />
-                    </span>
-                  </Tooltip>
-                </span>
-              ) : (
-                <span className="text-sm text-text-secondary leading-relaxed">{detail}</span>
-              )}
-            </span>
-          ))}
-        </div>
+        <ChevronRightIcon size={20} className="shrink-0" style={{ color: '#6E6E6E' }} />
       </div>
 
-      {/* Right chevron */}
-      <ChevronRightIcon size={16} className="shrink-0 ml-2" style={{ color: '#6E6E6E' }} />
+      {/* Divider */}
+      <div className="h-px bg-[rgba(0,0,0,0.09)] mx-4" />
+
+      {/* Labelled detail rows */}
+      <div className="flex flex-col gap-3 px-4 py-4">
+        <DetailRow label="Policy no." value={policy.policyNo} />
+        <DetailRow label="Coverage period" value={policy.coveragePeriod} />
+      </div>
     </button>
+  )
+}
+
+/* ─── Label + value row ──────────────────────────────────── */
+function DetailRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex gap-2 text-sm leading-relaxed">
+      <span className="w-[110px] sm:w-[142px] shrink-0 text-text-secondary">{label}</span>
+      <span className="flex-1 min-w-0 text-text-primary">{value}</span>
+    </div>
   )
 }
 
@@ -318,7 +269,7 @@ function StatusTag({ status, label }: { status: PolicyStatus; label: string }) {
     'expired':     'bg-grey-tag text-text-secondary',
   }
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-pill text-xs font-medium ${styles[status]}`}>
+    <span className={`inline-flex items-center px-[8px] py-[4px] rounded-pill text-xs font-medium ${styles[status]}`}>
       {label}
     </span>
   )
@@ -327,9 +278,8 @@ function StatusTag({ status, label }: { status: PolicyStatus; label: string }) {
 /* ─── View All link ──────────────────────────────────────── */
 function ViewAll({ onClick }: { onClick?: () => void }) {
   return (
-    <button onClick={onClick} className="flex items-center gap-1.5 text-base font-medium text-text-link bg-transparent border-0 cursor-pointer p-0 shrink-0">
+    <button onClick={onClick} className="text-base font-medium text-text-link bg-transparent border-0 cursor-pointer p-0 shrink-0">
       View All
-      <ArrowForwardIcon size={13} />
     </button>
   )
 }

@@ -1,10 +1,11 @@
-import { useState } from 'react'
-import { ExclamationCircleFilled, CloseOutlined } from '@ant-design/icons'
+import { useState, type ReactNode } from 'react'
+import { ExclamationCircleFilled } from '@ant-design/icons'
 import { ArrowForwardIcon } from '../icons'
+import closeIcon from '../../assets/icons/close.svg'
 
 type Props = {
   title: string
-  description: string
+  description: ReactNode
   ctaLabel?: string
   onCtaClick?: () => void
 }
@@ -54,9 +55,9 @@ export default function NotificationBanner({ title, description, ctaLabel, onCta
           <button
             onClick={() => setDismissed(true)}
             aria-label="Dismiss notification"
-            className="shrink-0 size-4 flex items-center justify-center text-text-tertiary bg-transparent border-0 cursor-pointer p-0"
+            className="shrink-0 size-4 flex items-center justify-center bg-transparent border-0 cursor-pointer p-0"
           >
-            <CloseOutlined style={{ fontSize: 12 }} />
+            <img src={closeIcon} alt="" className="w-3 h-3" />
           </button>
 
         </div>

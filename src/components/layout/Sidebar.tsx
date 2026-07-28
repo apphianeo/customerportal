@@ -1,8 +1,5 @@
-import { useState } from 'react'
 import uoiLogo from '../../assets/uoi-logo.svg'
-import shieldSvg from '../../assets/shield.svg'
 import { PanelLeft } from 'lucide-react'
-import { CartIcon } from '../icons'
 
 export type NavKey = 'dashboard' | 'policies' | 'account' | 'help'
 
@@ -79,7 +76,9 @@ export default function Sidebar({
       {/* ── Logo + toggle ── */}
       {collapsed ? (
         <div className="flex flex-col gap-[16px] items-start shrink-0 mb-[16px]">
-          <img src={uoiLogo} alt="UOI" width={48} height={24} className="object-contain" />
+          <button onClick={() => onNavigate?.('dashboard')} aria-label="Go to dashboard" className="bg-transparent border-0 p-0 cursor-pointer">
+            <img src={uoiLogo} alt="UOI" width={48} height={24} className="object-contain" />
+          </button>
           <button
             onClick={onToggleCollapse}
             aria-label="Expand sidebar"
@@ -90,7 +89,9 @@ export default function Sidebar({
         </div>
       ) : (
         <div className="flex items-center justify-between shrink-0 mb-[24px]">
-          <img src={uoiLogo} alt="UOI" width={100} height={51} className="object-contain shrink-0" />
+          <button onClick={() => onNavigate?.('dashboard')} aria-label="Go to dashboard" className="bg-transparent border-0 p-0 cursor-pointer shrink-0">
+            <img src={uoiLogo} alt="UOI" width={100} height={51} className="object-contain shrink-0" />
+          </button>
           <button
             onClick={onToggleCollapse}
             aria-label="Collapse sidebar"
@@ -117,13 +118,6 @@ export default function Sidebar({
           ))}
         </ul>
       </nav>
-
-      {/* ── Promo card ── */}
-      {!collapsed && (
-        <div className="mt-[16px] shrink-0">
-          <PromoCard />
-        </div>
-      )}
     </aside>
   )
 }
@@ -169,29 +163,3 @@ function NavItem({
   )
 }
 
-/* ─── Promo Card ───────────────────────────────────────────── */
-function PromoCard() {
-  const [dismissed, setDismissed] = useState(false)
-  if (dismissed) return null
-
-  return (
-    <div className="relative rounded-[8px] px-[12px] py-[16px] bg-gradient-to-r from-primary to-regal overflow-hidden shadow-[0px_1px_4px_0px_rgba(0,0,0,0.05)]">
-      <img src={shieldSvg} alt="" aria-hidden="true" className="absolute -right-3 top-0 h-full w-auto pointer-events-none select-none" />
-
-      <div className="relative flex flex-col gap-[8px]">
-        <span className="self-start bg-white/20 rounded-full px-[10px] py-[3px] text-[11px] text-white font-medium">
-          Recommended
-        </span>
-        <p className="text-sm text-white font-medium leading-relaxed m-0">
-          Protect your next trip from $10 onwards!
-        </p>
-        <button
-          className="flex items-center justify-center gap-2 w-full h-8 rounded-[8px] bg-white shadow-[0px_1px_2px_rgba(0,0,0,0.05)] text-primary text-sm font-medium cursor-pointer border-0"
-          onClick={() => setDismissed(true)}
-        >
-          Buy Now <CartIcon size={16} />
-        </button>
-      </div>
-    </div>
-  )
-}

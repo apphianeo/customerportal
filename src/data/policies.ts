@@ -1,5 +1,5 @@
 export type PolicyStatus = 'in-force' | 'renewal-due' | 'lapsed'
-export type FilterKey = 'all' | 'motor' | 'travel' | 'helper' | 'home' | 'hospital' | 'accident'
+export type FilterKey = 'all' | 'motor' | 'travel' | 'helper' | 'home' | 'accident'
 
 export type PolicyData = {
   id: string
@@ -24,10 +24,10 @@ export const POLICIES: PolicyData[] = [
     name: 'UniCar',
     policyNo: 'PNF320104124A23',
     status: 'renewal-due',
-    statusLabel: 'Renewal Due in 30 Days',
+    statusLabel: 'Renewal due in 30 days',
     category: 'motor',
     insuredPerson: 'Chris Wong',
-    coveragePeriod: '12/12/2026 - 15/12/2026',
+    coveragePeriod: '13/2/2025 - 13/2/2026 (12 Months)',
     premiumAmount: '$265.20',
     premiumDueDate: 'NA (Non-Renewal)',
     recurringPayment: 'No (Non-Renewal)',
@@ -39,10 +39,10 @@ export const POLICIES: PolicyData[] = [
     name: 'UniTravel (Single Trip)',
     policyNo: 'PNF320104124A23',
     status: 'in-force',
-    statusLabel: 'In Force',
+    statusLabel: 'In force',
     category: 'travel',
     insuredPerson: 'Chris Wong',
-    coveragePeriod: '8/10/2026 - 13/10/2026',
+    coveragePeriod: '8/4/2026 - 13/4/2026 (6 Days)',
     premiumAmount: '$265.20',
     premiumDueDate: 'NA (Non-Renewal)',
     recurringPayment: 'No (Non-Renewal)',
@@ -55,10 +55,10 @@ export const POLICIES: PolicyData[] = [
     name: 'UniHelper',
     policyNo: 'PNF320104124A23',
     status: 'in-force',
-    statusLabel: 'In Force',
+    statusLabel: 'In force',
     category: 'helper',
     insuredPerson: 'Chris Wong',
-    coveragePeriod: '12/11/2026 - 15/11/2026',
+    coveragePeriod: '2/1/2026 - 1/1/2027 (12 Months)',
     premiumAmount: '$35.20',
     premiumDueDate: 'NA (Non-Renewal)',
     recurringPayment: 'No (Non-Renewal)',
@@ -70,10 +70,10 @@ export const POLICIES: PolicyData[] = [
     name: 'UniHelper',
     policyNo: 'PNF320104124A23',
     status: 'lapsed',
-    statusLabel: 'Lapsed',
+    statusLabel: 'Expired',
     category: 'helper',
     insuredPerson: 'Chris Wong',
-    coveragePeriod: '12/11/2025 - 15/11/2025',
+    coveragePeriod: '12/11/2025 - 15/11/2025 (12 Months)',
     premiumAmount: '$35.20',
     premiumDueDate: 'NA (Non-Renewal)',
     recurringPayment: 'No (Non-Renewal)',
