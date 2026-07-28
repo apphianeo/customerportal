@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>UOI Customer Portal — brag</title>
+    <!-- GSAP vendored locally: the render environment has no outbound CDN access,
+         and render-time network fetches are banned by the determinism contract. -->
+    <script src="assets/js/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Noto Sans";
+        src: url("assets/fonts/NotoSans.woff2") format("woff2");
+        font-weight: 100 900;
+        font-style: normal;
+        font-display: block;
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      html, body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #000;
+      }
+
+      body {
+        font-family: "Noto Sans", "Inter", sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ── Design tokens, lifted from src/index.css ── */
+      :root {
+        --primary:        #005EB8;
+        --regal:          #5C55EB;
+        --bg-page:        #F6F8FC;
+        --bg-white:       #FFFFFF;
+        --bg-success:     #ECFDF5;
+        --bg-caution:     #FFF8EC;
+        --text-primary:   #212121;
+        --text-secondary: #6E6E6E;
+        --success:        #065F46;
+        --caution:        #A56300;
+        --navy:           #0A1A2F;
+        --border-default: rgba(0, 0, 0, 0.09);
+      }
+
+      .clip { position: absolute; inset: 0; overflow: hidden; }
+
+      /* Full-bleed fill lives on a child, never on the composition root */
+      .fill { position: absolute; inset: 0; }
+      .fill-navy { background: var(--navy); }
+      .fill-page { background: var(--bg-page); }
+
+      /* ── Screen captures ── */
+      .stage { position: absolute; inset: 0; will-change: transform; }
+      .shot {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center center;
+        display: block;
+      }
+
+      /* ── Scene 1: title field ── */
+      .title-wrap {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 34px;
+        padding: 0 160px;
+        text-align: center;
+      }
+      .title-line {
+        display: block;
+        font-size: 86px;
+        font-weight: 700;
+        line-height: 1.14;
+        letter-spacing: 0.045em;
+        color: #FFFFFF;
+        max-width: 1520px;
+      }
+      .title-line.dim { color: rgba(255, 255, 255, 0.66); }
+
+      /* ── Lower-left caption block (scenes 2, 5a) ── */
+      .scrim {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to top,
+          rgba(6, 18, 33, 0.90) 0%,
+          rgba(6, 18, 33, 0.72) 20%,
+          rgba(6, 18, 33, 0) 46%
+        );
+      }
+      .caption-block {
+        position: absolute;
+        left: 96px;
+        bottom: 88px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+        max-width: 1240px;
+      }
+      /* Scene 5a shows the reward cards themselves, so it can't afford a full
+         scrim — the caption gets its own contained chip instead. */
+      .caption-chip {
+        display: inline-block;
+        background: rgba(10, 26, 47, 0.88);
+        padding: 16px 30px;
+        border-radius: 10px;
+      }
+      .eyebrow {
+        display: block;
+        font-size: 26px;
+        font-weight: 600;
+        letter-spacing: 0.22em;
+        color: #FFFFFF;
+      }
+      .caption-lead {
+        display: block;
+        font-size: 52px;
+        font-weight: 600;
+        line-height: 1.25;
+        color: #FFFFFF;
+      }
+
+      /* ── Scene 4: coverage ── */
+      .coverage-wrap {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 40px;
+        padding: 72px 120px;
+      }
+      .coverage-title {
+        display: block;
+        font-size: 44px;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        color: var(--text-primary);
+      }
+      .card-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        width: 100%;
+        max-width: 1320px;
+      }
+      .policy-card {
+        display: block;
+        width: 100%;
+        background: var(--bg-white);
+        border: 1px solid var(--border-default);
+        border-radius: 16px;
+        padding: 30px 40px;
+        box-shadow: 0px 10px 35px 0px rgba(0, 94, 184, 0.07);
+      }
+      .policy-head {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+      .policy-name {
+        font-size: 36px;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+      .pill {
+        font-size: 22px;
+        font-weight: 500;
+        padding: 8px 20px;
+        border-radius: 24px;
+        white-space: nowrap;
+      }
+      .pill-caution { background: var(--bg-caution); color: var(--caution); }
+      .pill-success { background: var(--bg-success); color: var(--success); }
+      .policy-meta {
+        display: flex;
+        gap: 72px;
+      }
+      .meta-item { display: flex; flex-direction: column; gap: 6px; }
+      .meta-label { font-size: 20px; color: var(--text-secondary); }
+      .meta-value { font-size: 24px; font-weight: 500; color: var(--text-primary); }
+
+      /* ── Scene 5b: end card ── */
+      .end-wrap {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 46px;
+      }
+      .end-logo { display: block; width: 300px; height: auto; }
+      .end-line {
+        display: block;
+        font-size: 66px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        color: var(--text-primary);
+        text-align: center;
+      }
+      .end-rule {
+        display: block;
+        width: 132px;
+        height: 4px;
+        background: var(--primary);
+        border-radius: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="22.93"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- ═══ Scene 1 — Hook / title field — 0 → 4.39 ═══ -->
+      <section id="scene-1-hook" class="clip" data-start="0" data-duration="4.39" data-track-index="1">
+        <div class="fill fill-navy"></div>
+        <div class="title-wrap">
+          <span id="s1-line1" class="title-line dim">EVERYONE OWNS INSURANCE.</span>
+          <span id="s1-line2" class="title-line">ALMOST NO ONE CAN FIND IT.</span>
+        </div>
+      </section>
+
+      <!-- ═══ Scene 2 — Login hero shot — 4.39 → 8.74 ═══ -->
+      <section id="scene-2-login" class="clip" data-start="4.39" data-duration="4.35" data-track-index="1">
+        <div class="fill fill-page"></div>
+        <div id="s2-stage" class="stage" data-layout-allow-overflow>
+          <img class="shot" src="assets/img/login.png" alt="" />
+        </div>
+        <div id="s2-scrim" class="scrim"></div>
+        <div class="caption-block">
+          <span id="s2-eyebrow" class="eyebrow">UOI CUSTOMER PORTAL — SINGAPORE</span>
+          <span id="s2-lead" class="caption-lead">Access your insurance policies in one place</span>
+        </div>
+      </section>
+
+      <!-- ═══ Scene 3 — Authentication / OTP — 8.74 → 13.11 ═══ -->
+      <section id="scene-3-otp" class="clip" data-start="8.74" data-duration="4.37" data-track-index="1">
+        <div class="fill fill-page"></div>
+        <div id="s3-stage" class="stage" data-layout-allow-overflow>
+          <img class="shot otp-frame" id="otp-0" src="assets/img/otp-0.png" alt="" />
+          <img class="shot otp-frame" id="otp-1" src="assets/img/otp-1.png" alt="" />
+          <img class="shot otp-frame" id="otp-2" src="assets/img/otp-2.png" alt="" />
+          <img class="shot otp-frame" id="otp-3" src="assets/img/otp-3.png" alt="" />
+          <img class="shot otp-frame" id="otp-4" src="assets/img/otp-4.png" alt="" />
+          <img class="shot otp-frame" id="otp-5" src="assets/img/otp-5.png" alt="" />
+          <img class="shot otp-frame" id="otp-6" src="assets/img/otp-6.png" alt="" />
+        </div>
+      </section>
+
+      <!-- ═══ Scene 4 — Every policy, one place — 13.11 → 18.56 ═══ -->
+      <section id="scene-4-coverage" class="clip" data-start="13.11" data-duration="5.45" data-track-index="1">
+        <div class="fill fill-page"></div>
+        <div class="coverage-wrap">
+          <span id="s4-title" class="coverage-title">YOUR ACTIVE COVERAGE</span>
+          <div class="card-stack">
+            <div id="s4-card1" class="policy-card">
+              <div class="policy-head">
+                <span class="policy-name">UniCar</span>
+                <span class="pill pill-caution">Renewal due in 30 days</span>
+              </div>
+              <div class="policy-meta">
+                <div class="meta-item">
+                  <span class="meta-label">Policy no.</span>
+                  <span class="meta-value">PNF320104124A23</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Coverage period</span>
+                  <span class="meta-value">2/1/2026 - 1/1/2027 (12 Months)</span>
+                </div>
+              </div>
+            </div>
+
+            <div id="s4-card2" class="policy-card">
+              <div class="policy-head">
+                <span class="policy-name">UniTravel (Single Trip)</span>
+                <span class="pill pill-success">In force</span>
+              </div>
+              <div class="policy-meta">
+                <div class="meta-item">
+                  <span class="meta-label">Policy no.</span>
+                  <span class="meta-value">PNF320104124A23</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Coverage period</span>
+                  <span class="meta-value">8/4/2026 - 13/4/2026 (6 Days)</span>
+                </div>
+              </div>
+            </div>
+
+            <div id="s4-card3" class="policy-card">
+              <div class="policy-head">
+                <span class="policy-name">UniHelper</span>
+                <span class="pill pill-success">In force</span>
+              </div>
+              <div class="policy-meta">
+                <div class="meta-item">
+                  <span class="meta-label">Policy no.</span>
+                  <span class="meta-value">PNF320104124A23</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Coverage period</span>
+                  <span class="meta-value">2/1/2026 - 1/1/2027 (12 Months)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Scene 5a — Rewards drift — 18.56 → 20.75 ═══ -->
+      <section id="scene-5-rewards" class="clip" data-start="18.56" data-duration="2.19" data-track-index="1">
+        <div class="fill fill-page"></div>
+        <div id="s5-stage" class="stage" data-layout-allow-overflow>
+          <img class="shot" src="assets/img/rewards.png" alt="" />
+        </div>
+        <div class="caption-block">
+          <span id="s5-eyebrow" class="eyebrow caption-chip">REWARDS INCLUDED.</span>
+        </div>
+      </section>
+
+      <!-- ═══ Scene 5b — End card — 20.75 → 22.93 ═══ -->
+      <section id="scene-6-endcard" class="clip" data-start="20.75" data-duration="2.18" data-track-index="1">
+        <div class="fill fill-page"></div>
+        <div class="end-wrap">
+          <img id="s6-logo" class="end-logo" src="assets/img/uoi-logo.svg" alt="UOI" />
+          <span id="s6-rule" class="end-rule"></span>
+          <span id="s6-line" class="end-line">EVERY POLICY. ONE PLACE.</span>
+        </div>
+      </section>
+
+      <!-- ═══ Audio ═══ -->
+      <audio id="bgm" src="assets/music/bed.mp3" data-start="0" data-duration="22.93"
+             data-volume="0.25" data-track-index="10"></audio>
+
+      <!-- Title-line sub-hits -->
+      <audio id="sfx-t1" src="assets/sfx/hit-heavy.ogg" data-start="0.30" data-duration="0.57"
+             data-volume="0.5" data-track-index="11"></audio>
+      <audio id="sfx-t2" src="assets/sfx/hit-heavy.ogg" data-start="2.19" data-duration="0.57"
+             data-volume="0.6" data-track-index="12"></audio>
+
+      <!-- OTP key ticks — one per digit, fired with the visual (beat grid) -->
+      <audio id="sfx-k1" src="assets/sfx/key.ogg" data-start="9.29" data-duration="0.06"
+             data-volume="0.42" data-track-index="13"></audio>
+      <audio id="sfx-k2" src="assets/sfx/key.ogg" data-start="9.83" data-duration="0.06"
+             data-volume="0.42" data-track-index="14"></audio>
+      <audio id="sfx-k3" src="assets/sfx/key.ogg" data-start="10.37" data-duration="0.06"
+             data-volume="0.42" data-track-index="15"></audio>
+      <audio id="sfx-k4" src="assets/sfx/key.ogg" data-start="10.93" data-duration="0.06"
+             data-volume="0.42" data-track-index="16"></audio>
+      <audio id="sfx-k5" src="assets/sfx/key.ogg" data-start="11.46" data-duration="0.06"
+             data-volume="0.42" data-track-index="17"></audio>
+      <audio id="sfx-k6" src="assets/sfx/key.ogg" data-start="12.02" data-duration="0.06"
+             data-volume="0.42" data-track-index="18"></audio>
+      <audio id="sfx-verify" src="assets/sfx/verify.ogg" data-start="12.55" data-duration="0.01"
+             data-volume="0.5" data-track-index="19"></audio>
+
+      <!-- Policy-card arrivals -->
+      <audio id="sfx-c1" src="assets/sfx/hit-card.ogg" data-start="13.64" data-duration="0.18"
+             data-volume="0.45" data-track-index="20"></audio>
+      <audio id="sfx-c2" src="assets/sfx/hit-card.ogg" data-start="14.73" data-duration="0.18"
+             data-volume="0.45" data-track-index="21"></audio>
+      <audio id="sfx-c3" src="assets/sfx/hit-card.ogg" data-start="15.84" data-duration="0.18"
+             data-volume="0.45" data-track-index="22"></audio>
+
+      <!-- End-card slam -->
+      <audio id="sfx-end" src="assets/sfx/hit-heavy.ogg" data-start="20.75" data-duration="0.57"
+             data-volume="0.62" data-track-index="23"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      /* ── Scene 1 — two title lines, fast in then long hold ── */
+      tl.from("#s1-line1", { y: 42, opacity: 0, duration: 0.35, ease: "power3.out" }, 0.30);
+      tl.from("#s1-line2", { y: 42, opacity: 0, duration: 0.35, ease: "power3.out" }, 2.19); // beat-grid: 2.19s
+      // Line 1 holds 3.74s, line 2 holds 1.85s — both clear the ~1.5s floor for a 4-5 word line.
+
+      /* ── Scene 2 — slow cinematic push-in on the login capture ── */
+      tl.fromTo("#s2-stage", { scale: 1.02 }, { scale: 1.10, duration: 4.35, ease: "none" }, 4.39);
+      tl.from("#s2-scrim", { opacity: 0, duration: 0.5, ease: "power2.out" }, 4.60);
+      tl.from("#s2-eyebrow", { y: 26, opacity: 0, duration: 0.42, ease: "power3.out" }, 5.34); // beat-grid: 5.34s
+      tl.from("#s2-lead", { y: 30, opacity: 0, duration: 0.46, ease: "power3.out" }, 6.56); // beat-grid: 6.56s
+
+      /* ── Scene 3 — OTP frames swap on consecutive beats ──
+         Seven stacked captures. Only otp-0 is visible at scene start; each
+         subsequent frame is switched on with a zero-duration set at its beat.
+         Digits are single glyphs, not lines of copy, so consecutive-beat
+         spacing (0.545s) is safe for readability. */
+      tl.set(".otp-frame", { opacity: 0 }, 8.74);
+      tl.set("#otp-0", { opacity: 1 }, 8.74);
+      // beat-grid: digit 1 at 9.29s, 2 at 9.83s, 3 at 10.37s, 4 at 10.93s, 5 at 11.46s, 6 at 12.02s
+      tl.set("#otp-1", { opacity: 1 }, 9.29);
+      tl.set("#otp-2", { opacity: 1 }, 9.83);
+      tl.set("#otp-3", { opacity: 1 }, 10.37);
+      tl.set("#otp-4", { opacity: 1 }, 10.93);
+      tl.set("#otp-5", { opacity: 1 }, 11.46);
+      tl.set("#otp-6", { opacity: 1 }, 12.02);
+      // Framed tight on the form column, with a slow push and a small punctuation on Verify.
+      tl.fromTo(
+        "#s3-stage",
+        { scale: 1.40, transformOrigin: "25% 50%" },
+        { scale: 1.45, duration: 3.81, ease: "none" },
+        8.74
+      );
+      tl.to("#s3-stage", { scale: 1.48, duration: 0.28, ease: "power2.out" }, 12.55); // Verify emphasis
+
+      /* ── Scene 4 — three policy cards on every other beat ── */
+      tl.from("#s4-title", { y: 28, opacity: 0, duration: 0.42, ease: "power3.out" }, 13.26);
+      // beat-grid: card 1 at 13.64s, card 2 at 14.73s, card 3 at 15.84s (every other beat, ~1.09s apart)
+      tl.from("#s4-card1", { y: 54, opacity: 0, duration: 0.46, ease: "power3.out" }, 13.64);
+      tl.from("#s4-card2", { y: 54, opacity: 0, duration: 0.46, ease: "power3.out" }, 14.73);
+      tl.from("#s4-card3", { y: 54, opacity: 0, duration: 0.46, ease: "power3.out" }, 15.84);
+      // All three then hold together until 18.56 — 2.26s settled, the longest hold in the video.
+
+      /* ── Scene 5a — rewards drift ── */
+      /* Framed on the rewards grid itself: origin sits at the grid's centre
+         (58%, 69% of frame), then translated so that centre lands mid-frame.
+         Scale/translate pairs are chosen to keep the capture edge-to-edge —
+         at 1.52/-150 the image still covers all four frame edges. */
+      tl.fromTo(
+        "#s5-stage",
+        { scale: 1.52, x: -157, y: -150, transformOrigin: "58% 69%" },
+        { scale: 1.56, x: -157, y: -175, duration: 2.19, ease: "none" },
+        18.56
+      );
+      tl.from("#s5-eyebrow", { y: 22, opacity: 0, duration: 0.4, ease: "power3.out" }, 18.86);
+
+      /* ── Scene 5b — end card slam ── beat-locked: 20.75s */
+      tl.from("#s6-logo", { y: 30, opacity: 0, duration: 0.44, ease: "power3.out" }, 20.80);
+      tl.from("#s6-rule", { scaleX: 0, opacity: 0, duration: 0.44, ease: "power3.out" }, 20.98);
+      tl.from("#s6-line", { y: 26, opacity: 0, duration: 0.48, ease: "power3.out" }, 21.10);
+      // Closing line holds 1.35s settled — clears the floor for a 4-word line.
+
+      /* ── Music: fade in under the hook, lift across the cards, fade under the closing line ── */
+      tl.fromTo("#bgm", { volume: 0 }, { volume: 0.25, duration: 0.8, ease: "power1.out" }, 0);
+      tl.to("#bgm", { volume: 0.30, duration: 1.2, ease: "power1.inOut" }, 13.64);
+      tl.to("#bgm", { volume: 0, duration: 1.4, ease: "power2.in" }, 21.53);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

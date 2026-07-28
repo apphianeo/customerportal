@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# /brag run artifacts: raw captures and review snapshots are regenerable and
+# bulky. The composition under brag-output*/composition/ is self-contained —
+# it carries every asset index.html references — so runs stay reproducible.
+brag-output*/source-shots/
+brag-output*/composition/snapshots/
