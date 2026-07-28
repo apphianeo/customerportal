@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>UOIConnect — brag</title>
+    <!-- GSAP vendored locally: no CDN access in the render environment, and
+         render-time network fetches are banned by the determinism contract. -->
+    <script src="assets/js/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Noto Sans";
+        src: url("assets/fonts/NotoSans.woff2") format("woff2");
+        font-weight: 100 900;
+        font-style: normal;
+        font-display: block;
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      html, body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #000;
+      }
+
+      body {
+        font-family: "Noto Sans", "Inter", sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      :root {
+        --primary:      #005EB8;
+        --bg-page:      #F6F8FC;
+        --text-primary: #212121;
+        --text-second:  #6E6E6E;
+      }
+
+      .clip { position: absolute; inset: 0; overflow: hidden; }
+
+      /* Full-bleed fill lives on a child, never on the composition root */
+      .fill { position: absolute; inset: 0; }
+      .fill-page { background: var(--bg-page); }
+
+      /* ── Footage ── */
+      .shot {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      /* ── Caption bar (scenes 2-5) ── */
+      .bar {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 176px;
+        background: var(--primary);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 12px;
+        padding: 0 88px;
+      }
+      .bar-eyebrow {
+        display: block;
+        font-size: 24px;
+        font-weight: 600;
+        letter-spacing: 0.24em;
+        color: rgba(255, 255, 255, 0.92);
+      }
+      .bar-lead {
+        display: block;
+        font-size: 48px;
+        font-weight: 600;
+        line-height: 1.18;
+        color: #FFFFFF;
+      }
+
+      /* ── Brand lockup (scenes 1 and 6) ── */
+      .lockup {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 34px;
+      }
+      /* Background-image, not <img>: two identical <img> nodes trip
+         duplicate media discovery, and the logo needs no framework timing. */
+      .lockup-logo {
+        display: block;
+        width: 268px;
+        height: 137px;
+        background: url("assets/img/uoi-logo.svg") no-repeat center center;
+        background-size: contain;
+      }
+      .lockup-name {
+        display: block;
+        font-size: 92px;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        color: var(--text-primary);
+      }
+      .lockup-rule {
+        display: block;
+        width: 128px;
+        height: 4px;
+        background: var(--primary);
+        border-radius: 2px;
+      }
+      .lockup-triad {
+        display: block;
+        font-size: 44px;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        color: var(--text-second);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="22.37"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- ═══ Scene 1 — Hook / brand field — 0 → 3.55 ═══ -->
+      <section id="scene-1-hook" class="clip" data-start="0" data-duration="3.55" data-track-index="1">
+        <div class="fill fill-page"></div>
+        <div class="lockup">
+          <span id="s1-logo" class="lockup-logo" role="img" aria-label="UOI"></span>
+          <span id="s1-name" class="lockup-name">UOIConnect</span>
+          <span id="s1-rule" class="lockup-rule"></span>
+          <span id="s1-triad" class="lockup-triad">Quote. Policy. Claims.</span>
+        </div>
+      </section>
+
+      <!-- ═══ Scene 2 — Products & Downloads — 3.55 → 7.79 ═══ -->
+      <video id="v-products" class="clip shot" src="assets/video/products.mp4"
+             data-start="3.55" data-duration="4.24" data-track-index="1" muted playsinline></video>
+      <div id="bar-products" class="clip" data-start="3.55" data-duration="4.24" data-track-index="2">
+        <div class="bar">
+          <span id="s2-eyebrow" class="bar-eyebrow">PRODUCTS &amp; DOWNLOADS</span>
+          <span id="s2-lead" class="bar-lead">Every product, quote-ready</span>
+        </div>
+      </div>
+
+      <!-- ═══ Scene 3 — Get a quote — 7.79 → 12.02 ═══ -->
+      <video id="v-quote" class="clip shot" src="assets/video/quote.mp4"
+             data-start="7.79" data-duration="4.23" data-track-index="1" muted playsinline></video>
+      <div id="bar-quote" class="clip" data-start="7.79" data-duration="4.23" data-track-index="2">
+        <div class="bar">
+          <span id="s3-eyebrow" class="bar-eyebrow">GET A QUOTE</span>
+          <span id="s3-lead" class="bar-lead">Travel, Motor, Personal Accident</span>
+        </div>
+      </div>
+
+      <!-- ═══ Scene 4 — Policy Query — 12.02 → 15.82 ═══ -->
+      <video id="v-policy" class="clip shot" src="assets/video/policy.mp4"
+             data-start="12.02" data-duration="3.80" data-track-index="1" muted playsinline></video>
+      <div id="bar-policy" class="clip" data-start="12.02" data-duration="3.80" data-track-index="2">
+        <div class="bar">
+          <span id="s4-eyebrow" class="bar-eyebrow">POLICY QUERY</span>
+          <span id="s4-lead" class="bar-lead">My Quotations. My Policies. My Renewals.</span>
+        </div>
+      </div>
+
+      <!-- ═══ Scene 5 — Claims Search — 15.82 → 18.55 ═══ -->
+      <video id="v-claims" class="clip shot" src="assets/video/claims.mp4"
+             data-start="15.82" data-duration="2.73" data-track-index="1" muted playsinline></video>
+      <div id="bar-claims" class="clip" data-start="15.82" data-duration="2.73" data-track-index="2">
+        <div class="bar">
+          <span id="s5-eyebrow" class="bar-eyebrow">CLAIMS QUERY</span>
+          <span id="s5-lead" class="bar-lead">By name, claim ref, or policy no.</span>
+        </div>
+      </div>
+
+      <!-- ═══ Scene 6 — End card — 18.55 → 22.37 ═══ -->
+      <section id="scene-6-endcard" class="clip" data-start="18.55" data-duration="3.82" data-track-index="1">
+        <div class="fill fill-page"></div>
+        <div class="lockup">
+          <span id="s6-logo" class="lockup-logo" role="img" aria-label="UOI"></span>
+          <span id="s6-name" class="lockup-name">UOIConnect</span>
+          <span id="s6-rule" class="lockup-rule"></span>
+          <span id="s6-triad" class="lockup-triad">Quote. Policy. Claims.</span>
+        </div>
+      </section>
+
+      <!-- ═══ Audio ═══ -->
+      <audio id="bgm" src="assets/music/bed.mp3" data-start="0" data-duration="22.37"
+             data-volume="0.28" data-track-index="10"></audio>
+
+      <!-- One soft UI click per scene cut — each stands in for the tab change it represents -->
+      <audio id="sfx-c1" src="assets/sfx/click.ogg" data-start="3.55" data-duration="0.06"
+             data-volume="0.45" data-track-index="11"></audio>
+      <audio id="sfx-c2" src="assets/sfx/click.ogg" data-start="7.79" data-duration="0.06"
+             data-volume="0.45" data-track-index="12"></audio>
+      <audio id="sfx-c3" src="assets/sfx/click.ogg" data-start="12.02" data-duration="0.06"
+             data-volume="0.45" data-track-index="13"></audio>
+      <audio id="sfx-c4" src="assets/sfx/click.ogg" data-start="15.82" data-duration="0.06"
+             data-volume="0.45" data-track-index="14"></audio>
+      <audio id="sfx-c5" src="assets/sfx/click.ogg" data-start="18.55" data-duration="0.06"
+             data-volume="0.45" data-track-index="15"></audio>
+      <audio id="sfx-end" src="assets/sfx/accent.ogg" data-start="19.10" data-duration="0.18"
+             data-volume="0.5" data-track-index="16"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      /* ── Scene 1 — brand lockup builds, then holds ── */
+      tl.from("#s1-logo",  { y: 26, opacity: 0, duration: 0.42, ease: "power3.out" }, 0.25);
+      tl.from("#s1-name",  { y: 30, opacity: 0, duration: 0.44, ease: "power3.out" }, 0.82); // beat-grid: 0.82s
+      tl.from("#s1-rule",  { scaleX: 0, opacity: 0, duration: 0.40, ease: "power3.out" }, 1.37); // beat-grid: 1.37s
+      tl.from("#s1-triad", { y: 24, opacity: 0, duration: 0.44, ease: "power3.out" }, 1.90); // beat-grid: 1.90s
+      // Triad holds 1.21s settled; wordmark holds 2.29s. Both clear the reading floor.
+
+      /* ── Scenes 2-5 — caption bar rises, footage plays underneath ──
+         The bar slides up from below the frame on each cut, then holds for the
+         whole scene. Leads are the longest read, so they enter first and stay. */
+      function captionIn(barEyebrow, barLead, at) {
+        tl.from(barEyebrow, { y: 22, opacity: 0, duration: 0.36, ease: "power3.out" }, at + 0.18);
+        tl.from(barLead,    { y: 28, opacity: 0, duration: 0.40, ease: "power3.out" }, at + 0.30);
+      }
+      captionIn("#s2-eyebrow", "#s2-lead", 3.55);
+      captionIn("#s3-eyebrow", "#s3-lead", 7.79);
+      captionIn("#s4-eyebrow", "#s4-lead", 12.02); // beat-grid: 12.02s
+      // beat-locked: 15.82s (strong cue) — scene 5 is the tightest at 2.73s, so its
+      // lead settles by 16.52s and holds 2.03s, clearing the ~1.8s floor for six words.
+      captionIn("#s5-eyebrow", "#s5-lead", 15.82);
+
+      /* ── Scene 6 — the opening lockup returns as the close ── beat-locked: 18.55s */
+      tl.from("#s6-logo",  { y: 26, opacity: 0, duration: 0.42, ease: "power3.out" }, 18.75);
+      tl.from("#s6-name",  { y: 30, opacity: 0, duration: 0.44, ease: "power3.out" }, 19.10); // beat-grid: 19.10s
+      tl.from("#s6-rule",  { scaleX: 0, opacity: 0, duration: 0.40, ease: "power3.out" }, 19.64); // beat-grid: 19.64s
+      tl.from("#s6-triad", { y: 24, opacity: 0, duration: 0.44, ease: "power3.out" }, 20.19); // beat-locked: 20.19s (strong cue)
+      // Closing triad holds 1.74s settled.
+
+      /* ── Music: fade in under the hook, fade out under the closing lockup ── */
+      tl.fromTo("#bgm", { volume: 0 }, { volume: 0.28, duration: 0.6, ease: "power1.out" }, 0);
+      tl.to("#bgm", { volume: 0, duration: 1.3, ease: "power2.in" }, 21.07);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
