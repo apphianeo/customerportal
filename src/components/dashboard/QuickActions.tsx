@@ -48,11 +48,15 @@ const ACTIONS: QuickAction[] = [
   },
 ]
 
-export default function QuickActions() {
+export default function QuickActions({ onHelp }: { onHelp?: () => void }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-5">
       {ACTIONS.map(({ key, ...action }) => (
-        <QuickActionCard key={key} {...action} />
+        <QuickActionCard
+          key={key}
+          {...action}
+          onClick={key === 'help' ? onHelp : action.onClick}
+        />
       ))}
     </div>
   )

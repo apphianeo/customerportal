@@ -22,7 +22,7 @@ function Field({
     <label className="flex flex-col gap-[8px] w-full">
       <span className="text-[14px] text-[#212121] leading-[1.5]">{label}</span>
       {disabled ? (
-        <div className="bg-[#f5f5f5] border border-[rgba(0,0,0,0.09)] rounded-[8px] px-[16px] py-[12px] w-full">
+        <div aria-disabled="true" className="bg-[#f5f5f5] border border-[rgba(0,0,0,0.09)] rounded-[8px] px-[16px] py-[12px] w-full">
           <span className="text-[16px] text-[#949494] leading-[1.5]">{value}</span>
         </div>
       ) : (
@@ -133,10 +133,10 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
         </div>
       )}
 
-      <div className="w-full max-w-[980px] mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-[32px]">
+      <div className="w-full max-w-[1044px] mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-[32px]">
 
-        {/* Breadcrumb + title */}
-        <div className="flex flex-col gap-[16px]">
+        {/* Breadcrumb + title — 32px rhythm between breadcrumb, header and content */}
+        <div className="flex flex-col gap-[32px]">
           <div className="flex items-center gap-[4px] flex-wrap">
             <button onClick={onNavigateToDashboard} className="text-[12px] text-[#949494] leading-[1.4] bg-transparent border-0 p-0 cursor-pointer">
               Dashboard

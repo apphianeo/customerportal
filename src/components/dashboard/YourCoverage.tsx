@@ -81,6 +81,7 @@ const POLICIES: PolicyDetail[] = [
     statusLabel: 'Renewal due in 30 days',
     coveragePeriod: '2/1/2026 - 1/1/2027 (12 Months)',
     category: 'motor',
+    detailSlug: 'unicar',
   },
   {
     id: '2',
@@ -100,6 +101,7 @@ const POLICIES: PolicyDetail[] = [
     statusLabel: 'In force',
     coveragePeriod: '2/1/2026 - 1/1/2027 (12 Months)',
     category: 'helper',
+    detailSlug: 'unihelper',
   },
 ]
 

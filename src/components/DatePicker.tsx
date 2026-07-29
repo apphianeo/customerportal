@@ -88,7 +88,7 @@ export default function DatePicker({ label, value, onChange, error, disabled, pl
     return (
       <label className="flex flex-col gap-[8px] w-full">
         {label && <span className="text-[14px] text-[#212121] leading-[1.5]">{label}</span>}
-        <div className="bg-[#f5f5f5] border border-[rgba(0,0,0,0.09)] rounded-[8px] px-[16px] py-[12px] w-full flex items-center justify-between gap-[8px]">
+        <div aria-disabled="true" className="bg-[#f5f5f5] border border-[rgba(0,0,0,0.09)] rounded-[8px] px-[16px] py-[12px] w-full flex items-center justify-between gap-[8px]">
           <span className="text-[16px] text-[#949494] leading-[1.5]">{value || placeholder}</span>
           <CalIcon size={18} className="text-[#bdbdbd] shrink-0" />
         </div>

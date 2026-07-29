@@ -128,7 +128,7 @@ const CATEGORIES: Category[] = [
 function FaqItem({ item, isLast }: { item: Faq; isLast: boolean }) {
   const [open, setOpen] = useState(false)
   return (
-    <div className={isLast ? '' : 'border-b border-[rgba(0,0,0,0.09)]'}>
+    <div>
       <button
         onClick={() => setOpen(o => !o)}
         className="flex items-center gap-[16px] w-full px-[24px] py-[16px] bg-transparent border-0 cursor-pointer text-left"
@@ -143,6 +143,8 @@ function FaqItem({ item, isLast }: { item: Faq; isLast: boolean }) {
           {item.a}
         </div>
       )}
+      {/* Divider is inset to the text column, not full-bleed */}
+      {!isLast && <div className="h-px bg-[rgba(0,0,0,0.09)] mx-[24px]" />}
     </div>
   )
 }
@@ -168,10 +170,10 @@ type Props = {
 export default function HelpSupportPage({ onNavigateToDashboard }: Props) {
   return (
     <div className="bg-bg-page min-h-full">
-      <div className="w-full max-w-[980px] mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-[24px]">
+      <div className="w-full max-w-[1044px] mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-[32px]">
 
-        {/* Breadcrumb + title */}
-        <div className="flex flex-col gap-[16px]">
+        {/* Breadcrumb + title — 32px rhythm between breadcrumb, header and content */}
+        <div className="flex flex-col gap-[32px]">
           <div className="flex items-center gap-[4px]">
             <button onClick={onNavigateToDashboard} className="text-[12px] text-[#949494] leading-[1.4] bg-transparent border-0 p-0 cursor-pointer">
               Dashboard
@@ -182,8 +184,10 @@ export default function HelpSupportPage({ onNavigateToDashboard }: Props) {
           <h1 className="text-[32px] font-semibold text-[#212121] leading-[1.2] m-0">Help &amp; Support</h1>
         </div>
 
-        {/* FAQ categories */}
-        {CATEGORIES.map(cat => <CategoryCard key={cat.title} category={cat} />)}
+        {/* FAQ categories — cards keep their own 24px rhythm */}
+        <div className="flex flex-col gap-[24px]">
+          {CATEGORIES.map(cat => <CategoryCard key={cat.title} category={cat} />)}
+        </div>
 
         {/* Still have questions? */}
         <div className="rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] overflow-hidden bg-white w-full">

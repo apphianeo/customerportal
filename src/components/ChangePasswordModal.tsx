@@ -100,7 +100,7 @@ export default function ChangePasswordModal({ onClose, onSignIn }: { onClose: ()
             </p>
           </div>
           <button onClick={onClose} aria-label="Close" className="bg-transparent border-0 p-0 cursor-pointer shrink-0">
-            <img src={closeIcon} alt="" className="w-[24px] h-[24px]" />
+            <img src={closeIcon} alt="" className="w-[20px] h-[20px]" />
           </button>
         </div>
 

@@ -540,19 +540,27 @@ function PasswordSetup({
 function ForgotPassword({ onBack, onSent }: { onBack: () => void; onSent: () => void }) {
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
+  const [sent, setSent] = useState(false)
+
+  // Confirm on this screen, then hand the user back to login (which shows no toast).
+  useEffect(() => {
+    if (!sent) return
+    const t = setTimeout(onSent, 1800)
+    return () => clearTimeout(t)
+  }, [sent, onSent])
 
   function send() {
+    if (sent) return
     if (!/\S+@\S+\.\S+/.test(email)) {
       setError('Please enter a valid email address')
       return
     }
     setError('')
-    // Reset link is emailed; return the user to the login screen (no toast).
-    onSent()
+    setSent(true)
   }
 
   return (
-    <AuthShell onBack={onBack}>
+    <AuthShell onBack={onBack} toast={sent ? 'Password reset link sent' : undefined}>
       <AuthHeader
         title="Forgot Password"
         subtitle="Enter your account email and we'll send you a password reset link"

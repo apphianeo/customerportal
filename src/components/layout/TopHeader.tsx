@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import uoiLogo from '../../assets/uoi-logo.svg'
 import { ChevronDownIcon } from '../icons'
+import { Menu, X } from 'lucide-react'
 
 /* ─── Logout icon — inline so its color can follow currentColor ─ */
 function LogoutIcon() {
@@ -17,12 +18,16 @@ type Props = {
   userInitials?: string
   onLogout?: () => void
   onHome?: () => void
+  menuOpen?: boolean
+  onToggleMenu?: () => void
 }
 
 export default function TopHeader({
   userInitials = 'CW',
   onLogout,
   onHome,
+  menuOpen = false,
+  onToggleMenu,
 }: Props) {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const userMenuRef = useRef<HTMLDivElement>(null)
@@ -42,8 +47,16 @@ export default function TopHeader({
     <header className="sticky top-0 z-10 h-[61px] bg-white border-b border-border-default shrink-0">
       <div className="flex items-center justify-between h-full px-6">
 
-        {/* ── Left: logo (mobile only; sidebar carries it on desktop) ── */}
-        <div className="flex items-center lg:hidden">
+        {/* ── Left: menu toggle + logo (mobile only; sidebar carries it on desktop) ── */}
+        <div className="flex items-center gap-[12px] lg:hidden">
+          <button
+            onClick={onToggleMenu}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+            className="bg-transparent border-0 p-0 cursor-pointer flex items-center text-[#212121]"
+          >
+            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
           <button onClick={onHome} aria-label="Go to dashboard" className="bg-transparent border-0 p-0 cursor-pointer">
             <UoiLogo />
           </button>

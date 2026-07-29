@@ -99,3 +99,13 @@ body {
   width: 100%;
   min-height: 100svh;
 }
+
+/* Anything disabled shows it on hover — buttons, inputs, and read-only fields */
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled,
+[aria-disabled='true'],
+[data-disabled='true'] {
+  cursor: not-allowed;
+}

@@ -6,13 +6,14 @@ import Rewards from '../components/dashboard/Rewards'
 type Props = {
   onNavigateToPolicies?: () => void
   onSelectPolicy?: (slug: string) => void
+  onNavigateToHelp?: () => void
 }
 
-export default function DashboardPage({ onNavigateToPolicies, onSelectPolicy }: Props) {
+export default function DashboardPage({ onNavigateToPolicies, onSelectPolicy, onNavigateToHelp }: Props) {
   return (
     <div className="bg-bg-page min-h-full">
       {/* Max-width content area — centred, matches Figma's 980px body */}
-      <div className="w-full max-w-[980px] mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8">
+      <div className="w-full max-w-[1044px] mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8">
 
         {/* ── Notification banner ── */}
         <NotificationBanner
@@ -31,7 +32,7 @@ export default function DashboardPage({ onNavigateToPolicies, onSelectPolicy }: 
           <h1 className="text-[32px] font-semibold text-text-primary leading-tight m-0">
             Welcome, Chris 👋
           </h1>
-          <QuickActions />
+          <QuickActions onHelp={onNavigateToHelp} />
         </div>
 
         {/* ── Your Coverage ── */}
