@@ -172,20 +172,22 @@ const RECOMMENDATIONS: RecommendationItem[] = [
 ]
 
 function RecommendationCard({ item }: { item: RecommendationItem }) {
+  // Height follows the content — the fixed 143px cropped text on narrow screens
   return (
-    <div className="flex h-[143px] rounded-[8px] overflow-hidden shadow-[0px_1px_2px_rgba(0,0,0,0.05)] hover:shadow-pop transition-shadow">
-      <div className="w-[120px] shrink-0 h-full">
+    <div className="flex min-h-[143px] rounded-[8px] overflow-hidden shadow-[0px_1px_2px_rgba(0,0,0,0.05)] hover:shadow-pop transition-shadow">
+      <div className="w-[96px] sm:w-[120px] shrink-0">
         <img src={item.image} alt="" aria-hidden="true" className="w-full h-full object-cover" />
       </div>
       <div className="flex-1 bg-white p-[16px] flex flex-col gap-[12px] justify-center min-w-0">
         <div className="flex flex-col gap-[4px]">
-          <div className="flex items-center justify-between gap-[12px]">
+          {/* Title and price share a row when there's room, and stack when there isn't */}
+          <div className="flex flex-wrap items-center justify-between gap-x-[12px] gap-y-[4px]">
             <div className="flex items-center gap-[12px] min-w-0">
               <div className="flex items-center justify-center size-[32px] rounded-[8px] shrink-0"
                 style={{ background: 'linear-gradient(90deg, rgba(0,94,184,0.1) 0.618%, rgba(92,85,235,0.1) 100%)' }}>
                 {item.icon}
               </div>
-              <span className="text-[16px] font-medium text-[#212121] leading-[1.5] whitespace-nowrap">{item.title}</span>
+              <span className="text-[16px] font-medium text-[#212121] leading-[1.5]">{item.title}</span>
             </div>
             <span className="text-[12px] text-[#6e6e6e] leading-[1.4] shrink-0 whitespace-nowrap">{item.price}</span>
           </div>

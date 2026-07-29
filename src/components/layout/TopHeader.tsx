@@ -53,7 +53,7 @@ export default function TopHeader({
             onClick={onToggleMenu}
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={menuOpen}
-            className="bg-transparent border-0 p-0 cursor-pointer flex items-center text-[#212121]"
+            className="bg-transparent border-0 p-0 cursor-pointer flex items-center text-[#6E6E6E]"
           >
             {menuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>

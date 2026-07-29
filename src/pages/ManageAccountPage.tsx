@@ -56,21 +56,27 @@ function Checkbox({ checked, onChange, label }: { checked: boolean; onChange: ()
 /* ─── "Save Changes" CTA, separated from the fields by a rule ─── */
 function SaveButton({ onClick }: { onClick?: () => void }) {
   return (
-    <>
-      {/* Full-bleed rule: cancels the card's 24px padding so the line meets both edges */}
-      <div className="h-px bg-[rgba(0,0,0,0.09)] -mx-[24px]" />
-      <button
-        onClick={onClick}
-        className="self-end border border-[#005eb8] text-[#005eb8] bg-white px-[24px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-medium text-[16px] cursor-pointer"
-      >
-        Save Changes
-      </button>
-    </>
+    <button
+      onClick={onClick}
+      className="border border-[#005eb8] text-[#005eb8] bg-white px-[24px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-medium text-[16px] cursor-pointer"
+    >
+      Save Changes
+    </button>
   )
 }
 
 /* ─── Card ─── */
-function Card({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
+function Card({
+  title,
+  subtitle,
+  children,
+  footer,
+}: {
+  title: string
+  subtitle?: string
+  children: React.ReactNode
+  footer?: React.ReactNode
+}) {
   return (
     <div className="rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] overflow-hidden bg-white w-full">
       <div className="border-b border-[rgba(0,0,0,0.09)] px-[24px] py-[16px] flex flex-col gap-[4px]">
@@ -78,6 +84,12 @@ function Card({ title, subtitle, children }: { title: string; subtitle?: string;
         {subtitle && <p className="text-[14px] text-[#6e6e6e] m-0 leading-[1.5]">{subtitle}</p>}
       </div>
       <div className="p-[24px] flex flex-col gap-[24px]">{children}</div>
+      {/* Action row — rule meets both card edges, 16px above and below */}
+      {footer && (
+        <div className="border-t border-[rgba(0,0,0,0.09)] px-[24px] py-[16px] flex justify-end">
+          {footer}
+        </div>
+      )}
     </div>
   )
 }
@@ -148,7 +160,10 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
         </div>
 
         {/* Personal details */}
-        <Card title="Personal details">
+        <Card
+          title="Personal details"
+          footer={!singpass && <SaveButton onClick={() => setToast('Personal details updated successfully')} />}
+        >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
             <Field label="First name" value={first} onChange={setFirst} disabled={singpass} />
             <Field label="Last name" value={last} onChange={setLast} disabled={singpass} />
@@ -157,11 +172,13 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
             <DatePicker label="Date of birth" value={dob} onChange={setDob} disabled={singpass} />
             <Field label="NRIC/FIN" value={nric} onChange={setNric} disabled={singpass} />
           </div>
-          {!singpass && <SaveButton onClick={() => setToast('Personal details updated successfully')} />}
         </Card>
 
         {/* Address */}
-        <Card title="Address">
+        <Card
+          title="Address"
+          footer={<SaveButton onClick={() => setToast('Address updated successfully')} />}
+        >
           <div className="flex flex-col gap-[16px] w-full">
             <span className="text-[14px] font-medium text-[#212121] leading-[1.5]">Residential address</span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
@@ -185,20 +202,19 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
             )}
           </div>
 
-          <SaveButton onClick={() => setToast('Address updated successfully')} />
         </Card>
 
         {/* Contact information */}
         <Card
           title="Contact information"
           subtitle="This is for marketing communications only. To update your contact info for your policy, please update in policy page."
+          footer={<SaveButton onClick={() => setToast('Contact information updated successfully')} />}
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
             <Field label="Contact number" value={contact} onChange={setContact} />
             <Field label="Email address" value={email} onChange={setEmail} />
           </div>
           <Checkbox checked={consent} onChange={() => setConsent(v => !v)} label="I consent to receiving marketing communications" />
-          <SaveButton onClick={() => setToast('Contact information updated successfully')} />
         </Card>
 
         {/* Login & security */}

@@ -55,6 +55,11 @@ export function AuthShell({
           <div className="w-full max-w-[420px] flex flex-col items-center gap-8 my-auto py-8">
             {children}
           </div>
+
+          {/* Mobile: the footer travels with the content instead of being pinned */}
+          <div className="w-full lg:hidden -mx-6 mt-auto">
+            <FooterShort />
+          </div>
         </div>
 
         {/* Right hero image */}
@@ -62,7 +67,11 @@ export function AuthShell({
           <img src={authHero} alt="" className="h-full w-full object-cover" />
         </div>
       </div>
-      <FooterShort />
+
+      {/* Desktop: anchored beneath the split panels */}
+      <div className="hidden lg:block">
+        <FooterShort />
+      </div>
     </div>
   )
 }

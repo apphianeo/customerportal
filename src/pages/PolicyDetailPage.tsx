@@ -98,7 +98,7 @@ function SectionCard({
     <div
       id={id}
       className="rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] overflow-hidden bg-white"
-      style={{ scrollMarginTop: 250 }}
+      style={{ scrollMarginTop: 110 }}
     >
       <div className="border-b border-[rgba(0,0,0,0.09)] px-[24px] py-[16px] flex flex-col gap-[4px]">
         <h2 className="text-[18px] font-semibold text-[#212121] m-0">{title}</h2>
@@ -267,8 +267,8 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
 
   return (
     <div className="bg-bg-page min-h-full">
-      {/* ── Sticky header: breadcrumb + title + tabs (pt-48 / pb-24, 32px rhythm) ── */}
-      <div className="sticky top-0 z-10 bg-bg-page pt-[48px] pb-[24px] px-4 sm:px-6 lg:px-8">
+      {/* ── Breadcrumb + title — scroll away normally ── */}
+      <div className="bg-bg-page pt-[48px] px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-[980px] mx-auto flex flex-col gap-[32px]">
 
         {/* ── Breadcrumbs ── */}
@@ -303,7 +303,12 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
           </button>
         </div>
 
-        {/* ── Tabs ── */}
+        </div>
+      </div>
+
+      {/* ── Tabs — anchored to the top while the content scrolls ── */}
+      <div className="sticky top-0 z-10 bg-bg-page pt-[32px] pb-[24px] px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-[980px] mx-auto">
         <div className="flex gap-[4px] overflow-x-auto scrollbar-hide border-b border-[rgba(0,0,0,0.09)]">
           {TABS.map(tab => (
             <button
