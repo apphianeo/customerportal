@@ -3,6 +3,22 @@ import { Check } from 'lucide-react'
 import singpassBtn from '../../assets/singpass-btn.png'
 import singpassLogin from '../../assets/singpass-login.png'
 import singpassLogo from '../../assets/singpass-logo.png'
+import { useDebouncedValue } from '../../hooks/useDebouncedValue'
+import { useInlineValidation } from '../../hooks/useInlineValidation'
+import { accountExists, draftAccount, findAccount, type Account } from '../../data/accounts'
+import type { CountryCode } from 'libphonenumber-js'
+import {
+  MESSAGES,
+  PASSWORD_RULES,
+  attemptLogin,
+  passwordMeetsRules,
+  validateEmail,
+  validateNric,
+  validateOtp,
+  validatePasswordContent,
+  validatePasswordHistory,
+  validatePhone,
+} from './validation'
 import {
   AuthShell,
   AuthHeader,
@@ -31,7 +47,9 @@ type Screen =
   | 'reset'
 
 const SUBTITLE = 'Access your insurance policies in one place'
-const NRIC_RE = /^[STFGM]\d{7}[A-Z]$/i
+
+/** Signing in with Singpass lands on the Singpass-created demo profile. */
+const SINGPASS_DEMO_NRIC = 'S8912345A'
 
 /** Mask an email like ch*****@gmail.com for OTP display. */
 function maskEmail(email: string) {
@@ -41,10 +59,30 @@ function maskEmail(email: string) {
   return `${head}${'*'.repeat(Math.max(name.length - 2, 3))}@${domain}`
 }
 
-export default function AuthFlow({ onAuthenticated }: { onAuthenticated: (method?: 'singpass' | 'account') => void }) {
+export default function AuthFlow({
+  onAuthenticated,
+}: {
+  /** The account carries its own authMethod — Singpass profiles stay locked. */
+  onAuthenticated: (account: Account) => void
+}) {
   const [screen, setScreen] = useState<Screen>('landing')
   const [email, setEmail] = useState('')
+  /** Carried from Create Account into the password screens for the content/history rules. */
+  const [nric, setNric] = useState('')
+  /** Registration details, so a new user is greeted by their own name. */
+  const [first, setFirst] = useState('')
+  const [last, setLast] = useState('')
+  const [phone, setPhone] = useState('')
+  const [dob, setDob] = useState('')
   const [loginToast, setLoginToast] = useState<string | null>(null)
+
+  /** The account behind the current NRIC, or a draft built from the sign-up form. */
+  function currentAccount(): Account {
+    return (
+      findAccount(nric) ??
+      draftAccount({ nric, firstName: first || 'there', lastName: last, email, phone, dob })
+    )
+  }
 
   function goLogin(toast?: string) {
     setLoginToast(toast ?? null)
@@ -55,6 +93,8 @@ export default function AuthFlow({ onAuthenticated }: { onAuthenticated: (method
     case 'nric':
       return (
         <NricLogin
+          nric={nric}
+          setNric={setNric}
           toast={loginToast}
           onBack={() => { setLoginToast(null); setScreen('landing') }}
           onLogin={() => setScreen('nric-otp')}
@@ -67,7 +107,7 @@ export default function AuthFlow({ onAuthenticated }: { onAuthenticated: (method
         <OtpVerification
           email="user@gmail.com"
           onBack={() => setScreen('nric')}
-          onVerify={() => onAuthenticated('account')}
+          onVerify={() => onAuthenticated(currentAccount())}
         />
       )
     case 'register':
@@ -75,6 +115,16 @@ export default function AuthFlow({ onAuthenticated }: { onAuthenticated: (method
         <CreateAccount
           email={email}
           setEmail={setEmail}
+          nric={nric}
+          setNric={setNric}
+          first={first}
+          setFirst={setFirst}
+          last={last}
+          setLast={setLast}
+          phone={phone}
+          setPhone={setPhone}
+          dob={dob}
+          setDob={setDob}
           onBack={() => setScreen('landing')}
           onRequestOtp={() => setScreen('register-otp')}
           onLogin={() => setScreen('nric')}
@@ -94,8 +144,9 @@ export default function AuthFlow({ onAuthenticated }: { onAuthenticated: (method
           title="Set Password"
           subtitle="Create a password to finish setting up your account"
           buttonLabel="Create Account"
+          nric={nric}
           onBack={() => setScreen('register-otp')}
-          onSubmit={() => onAuthenticated('account')}
+          onSubmit={() => onAuthenticated(currentAccount())}
         />
       )
     case 'singpass-qr':
@@ -113,25 +164,30 @@ export default function AuthFlow({ onAuthenticated }: { onAuthenticated: (method
           title="Create Password"
           subtitle="A password is required to complete your setup. Once set, you can also log in using your NRIC/FIN."
           buttonLabel="Complete Setup"
+          nric={nric}
           onBack={() => setScreen('landing')}
-          onSubmit={() => onAuthenticated('singpass')}
+          onSubmit={() =>
+            onAuthenticated(
+              findAccount(SINGPASS_DEMO_NRIC) ?? { ...currentAccount(), authMethod: 'singpass' },
+            )
+          }
         />
       )
     case 'forgot':
-      // Send reset link → return to login (reset itself happens via the emailed link).
+      // Send reset link → straight on to setting the new password.
       return (
         <ForgotPassword
           onBack={() => setScreen('nric')}
-          onSent={() => setScreen('nric')}
+          onSent={() => setScreen('reset')}
         />
       )
     case 'reset':
-      // Reached via the emailed reset link (not wired to an in-app button).
       return (
         <PasswordSetup
           title="Reset Password"
           subtitle="Enter your new password"
           buttonLabel="Reset Password"
+          nric={nric}
           onBack={() => setScreen('nric')}
           onSubmit={() => goLogin('Password updated, login again')}
         />
@@ -254,28 +310,46 @@ function SingpassApprove({ onCancel, onAgree }: { onCancel: () => void; onAgree:
 /* ─────────────────────── NRIC/FIN login ──────────────────────── */
 function NricLogin({
   toast,
+  nric,
+  setNric,
   onBack,
   onLogin,
   onForgot,
   onRegister,
 }: {
+  nric: string
+  setNric: (v: string) => void
   toast: string | null
   onBack: () => void
   onLogin: () => void
   onForgot: () => void
   onRegister: () => void
 }) {
-  const [nric, setNric] = useState('')
   const [password, setPassword] = useState('')
   const [show, setShow] = useState(false)
-  const [error, setError] = useState('')
+  /** Errors raised by submitting — cleared as soon as the field is edited. */
+  const [nricSubmitError, setNricSubmitError] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+
+  // Quiet until the user pauses on a full-length NRIC, or leaves the field
+  const nricInline = useInlineValidation({
+    value: nric,
+    validate: validateNric,
+    requiredMessage: MESSAGES.nricInvalid,
+  })
+  const nricError = nricSubmitError || nricInline.error
 
   function submit() {
-    if (!NRIC_RE.test(nric.trim())) {
-      setError('Please enter a valid NRIC/FIN format (e.g. S1234567A)')
+    nricInline.show()
+    if (!nricInline.isValid) return
+    const result = attemptLogin(nric, password)
+    if (!result.ok) {
+      if (result.field === 'nric') setNricSubmitError(result.message)
+      else setPasswordError(result.message)
       return
     }
-    setError('')
+    setNricSubmitError('')
+    setPasswordError('')
     onLogin()
   }
 
@@ -286,17 +360,19 @@ function NricLogin({
         <Field
           label="NRIC/FIN"
           value={nric}
-          onChange={(v) => { setNric(v); setError('') }}
+          onChange={(v) => { setNric(v); setNricSubmitError(''); nricInline.reset() }}
+          onBlur={nricInline.onBlur}
           placeholder="Enter NRIC/FIN"
-          error={error}
+          error={nricError}
         />
         <PasswordField
           label="Password"
           value={password}
-          onChange={setPassword}
+          onChange={(v) => { setPassword(v); setPasswordError('') }}
           show={show}
           onToggle={() => setShow((s) => !s)}
           placeholder="Enter password"
+          error={passwordError}
         />
         <div className="self-start text-[14px]">
           <LinkButton onClick={onForgot}>Forgot password?</LinkButton>
@@ -316,29 +392,72 @@ function NricLogin({
 function CreateAccount({
   email,
   setEmail,
+  nric,
+  setNric,
+  first,
+  setFirst,
+  last,
+  setLast,
+  phone,
+  setPhone,
+  dob,
+  setDob,
   onBack,
   onRequestOtp,
   onLogin,
 }: {
   email: string
   setEmail: (v: string) => void
+  nric: string
+  setNric: (v: string) => void
+  first: string
+  setFirst: (v: string) => void
+  last: string
+  setLast: (v: string) => void
+  phone: string
+  setPhone: (v: string) => void
+  dob: string
+  setDob: (v: string) => void
   onBack: () => void
   onRequestOtp: () => void
   onLogin: () => void
 }) {
-  const [first, setFirst] = useState('')
-  const [last, setLast] = useState('')
-  const [dob, setDob] = useState('')
-  const [nric, setNric] = useState('')
-  const [phone, setPhone] = useState('')
-  const [nricError, setNricError] = useState('')
+  const [country, setCountry] = useState<CountryCode>('SG')
+  const [nricSubmitError, setNricSubmitError] = useState('')
+
+  // Each field stays quiet until the user pauses on a finished-looking value,
+  // or leaves the field. Submitting forces every error into view.
+  const nricInline = useInlineValidation({
+    value: nric,
+    validate: validateNric,
+    requiredMessage: MESSAGES.nricInvalid,
+  })
+  const emailInline = useInlineValidation({
+    value: email,
+    validate: validateEmail,
+    requiredMessage: MESSAGES.emailInvalid,
+  })
+  const phoneInline = useInlineValidation({
+    value: phone,
+    validate: v => validatePhone(v, country),
+    requiredMessage: MESSAGES.phoneInvalid,
+  })
+
+  const nricError = nricSubmitError || nricInline.error
 
   function submit() {
-    if (!NRIC_RE.test(nric.trim())) {
-      setNricError('Please enter a valid NRIC/FIN format (e.g. S1234567A)')
+    nricInline.show()
+    emailInline.show()
+    phoneInline.show()
+
+    if (!nricInline.isValid) return
+    // Registering an NRIC that already has an account
+    if (accountExists(nric)) {
+      setNricSubmitError(MESSAGES.accountExists)
       return
     }
-    setNricError('')
+    if (!emailInline.isValid || !phoneInline.isValid) return
+    setNricSubmitError('')
     onRequestOtp()
   }
 
@@ -354,12 +473,30 @@ function CreateAccount({
         <Field
           label="NRIC/FIN"
           value={nric}
-          onChange={(v) => { setNric(v); setNricError('') }}
+          onChange={(v) => { setNric(v); setNricSubmitError(''); nricInline.reset() }}
+          onBlur={nricInline.onBlur}
           placeholder="Enter NRIC/FIN"
           error={nricError}
         />
-        <Field label="Email address" value={email} onChange={setEmail} placeholder="Enter email address" type="email" inputMode="email" />
-        <PhoneField label="Phone number" value={phone} onChange={setPhone} />
+        <Field
+          label="Email address"
+          value={email}
+          onChange={(v) => { setEmail(v); emailInline.reset() }}
+          onBlur={emailInline.onBlur}
+          placeholder="Enter email address"
+          type="email"
+          inputMode="email"
+          error={emailInline.error}
+        />
+        <PhoneField
+          label="Phone number"
+          value={phone}
+          onChange={(v) => { setPhone(v); phoneInline.reset() }}
+          onBlur={phoneInline.onBlur}
+          country={country}
+          onCountryChange={setCountry}
+          error={phoneInline.error}
+        />
         <PrimaryButton onClick={submit}>
           Request OTP
         </PrimaryButton>
@@ -382,15 +519,16 @@ function OtpVerification({
   onVerify: () => void
 }) {
   const [code, setCode] = useState('')
-  const [error, setError] = useState(false)
+  const [error, setError] = useState('')
 
   function verify() {
-    // Mock: incomplete code or the all-nines placeholder trips the error state.
-    if (code.length < 6 || code === '999999') {
-      setError(true)
+    // Mock: an incomplete code or the all-nines placeholder fails verification.
+    const otpError = validateOtp(code)
+    if (otpError) {
+      setError(otpError)
       return
     }
-    setError(false)
+    setError('')
     onVerify()
   }
 
@@ -402,8 +540,8 @@ function OtpVerification({
       />
       <div className="flex flex-col gap-4 w-full">
         <label className="text-[14px] font-medium leading-[1.5] text-[#212121]">Enter code</label>
-        <OtpBoxes value={code} onChange={(v) => { setCode(v); setError(false) }} error={error} />
-        {error && <FieldError message="Incorrect OTP" />}
+        <OtpBoxes value={code} onChange={(v) => { setCode(v); setError('') }} error={Boolean(error)} />
+        {error && <FieldError message={error} />}
         <ResendRow />
         <PrimaryButton onClick={verify}>
           Verify
@@ -435,18 +573,13 @@ function ResendRow() {
   )
 }
 
-/* ─────── Shared password screen (Set / Reset / Singpass setup) ─── */
-const RULES = [
-  { label: '8 to 24 characters', test: (v: string) => v.length >= 8 && v.length <= 24 },
-  { label: '1 letter', test: (v: string) => /[A-Za-z]/.test(v) },
-  { label: '1 number', test: (v: string) => /[0-9]/.test(v) },
-]
 
 function PasswordSetup({
   toast,
   title,
   subtitle,
   buttonLabel,
+  nric,
   onBack,
   onSubmit,
 }: {
@@ -454,6 +587,8 @@ function PasswordSetup({
   title: string
   subtitle: string
   buttonLabel: string
+  /** Drives the "cannot contain NRIC" and password-history checks. */
+  nric?: string
   onBack: () => void
   onSubmit: () => void
 }) {
@@ -462,13 +597,26 @@ function PasswordSetup({
   const [showPw, setShowPw] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [attempted, setAttempted] = useState(false)
+  const [passwordError, setPasswordError] = useState('')
 
-  const allRulesMet = RULES.every((r) => r.test(password))
-  const mismatch = confirm !== '' && confirm !== password
+  // Checkmarks tick as the user types, once typing settles
+  const debouncedPassword = useDebouncedValue(password)
+
+  const allRulesMet = passwordMeetsRules(password)
+  // Only flag a mismatch once the confirm entry is at least as long as the
+  // password — otherwise every prefix reads as "does not match".
+  const confirmInline = useInlineValidation({
+    value: confirm,
+    validate: v => (v !== debouncedPassword ? MESSAGES.passwordMismatch : undefined),
+    // Silent only while the entry could still turn into the password. The moment
+    // it diverges it can never match, so flag it as soon as typing settles.
+    isComplete: v => Boolean(debouncedPassword) && !debouncedPassword.startsWith(v),
+  })
+  const mismatch = Boolean(confirmInline.error)
 
   // Confirm-field error: live mismatch, or empty/mismatch surfaced after a submit attempt.
   const confirmError = mismatch
-    ? 'Passwords do not match'
+    ? MESSAGES.passwordMismatch
     : attempted && confirm === ''
       ? 'Please re-enter your password'
       : undefined
@@ -476,8 +624,22 @@ function PasswordSetup({
   function submit() {
     if (!allRulesMet || confirm !== password) {
       setAttempted(true)
+      confirmInline.show()
       return
     }
+    // Content policy — no NRIC/FIN, no "pass"/"pwd"
+    const contentError = validatePasswordContent(password, nric)
+    if (contentError) {
+      setPasswordError(contentError)
+      return
+    }
+    // Reuse policy — checked against the last 5 passwords on file
+    const historyError = validatePasswordHistory(password, nric)
+    if (historyError) {
+      setPasswordError(historyError)
+      return
+    }
+    setPasswordError('')
     onSubmit()
   }
 
@@ -489,15 +651,16 @@ function PasswordSetup({
           <PasswordField
             label="Password"
             value={password}
-            onChange={setPassword}
+            onChange={(v) => { setPassword(v); setPasswordError('') }}
             show={showPw}
             onToggle={() => setShowPw((s) => !s)}
             placeholder="Enter password"
+            error={passwordError}
           />
           <div className="flex flex-col gap-2">
             <span className="text-[12px] leading-[1.4] text-[#6e6e6e]">Your password must contain at least:</span>
-            {RULES.map((rule) => {
-              const met = rule.test(password)
+            {PASSWORD_RULES.map((rule) => {
+              const met = rule.test(debouncedPassword)
               const failed = attempted && !met
               return (
                 <div key={rule.label} className="flex items-center gap-2">
@@ -519,7 +682,8 @@ function PasswordSetup({
         <PasswordField
           label="Confirm password"
           value={confirm}
-          onChange={setConfirm}
+          onChange={(v) => { setConfirm(v); confirmInline.reset() }}
+          onBlur={confirmInline.onBlur}
           show={showConfirm}
           onToggle={() => setShowConfirm((s) => !s)}
           placeholder="Re-enter password"
@@ -541,6 +705,12 @@ function ForgotPassword({ onBack, onSent }: { onBack: () => void; onSent: () => 
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
   const [sent, setSent] = useState(false)
+  const emailInline = useInlineValidation({
+    value: email,
+    validate: validateEmail,
+    requiredMessage: MESSAGES.emailInvalid,
+  })
+  const emailError = error || emailInline.error
 
   // Confirm on this screen, then hand the user back to login (which shows no toast).
   useEffect(() => {
@@ -551,10 +721,8 @@ function ForgotPassword({ onBack, onSent }: { onBack: () => void; onSent: () => 
 
   function send() {
     if (sent) return
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      setError('Please enter a valid email address')
-      return
-    }
+    emailInline.show()
+    if (!emailInline.isValid) return
     setError('')
     setSent(true)
   }
@@ -569,11 +737,12 @@ function ForgotPassword({ onBack, onSent }: { onBack: () => void; onSent: () => 
         <Field
           label="Email address"
           value={email}
-          onChange={(v) => { setEmail(v); setError('') }}
+          onChange={(v) => { setEmail(v); setError(''); emailInline.reset() }}
+          onBlur={emailInline.onBlur}
           placeholder="Enter email address"
           type="email"
           inputMode="email"
-          error={error}
+          error={emailError}
         />
         <PrimaryButton onClick={send}>
           Send Reset Link

@@ -4,12 +4,13 @@ import YourCoverage from '../components/dashboard/YourCoverage'
 import Rewards from '../components/dashboard/Rewards'
 
 type Props = {
+  firstName?: string
   onNavigateToPolicies?: () => void
   onSelectPolicy?: (slug: string) => void
   onNavigateToHelp?: () => void
 }
 
-export default function DashboardPage({ onNavigateToPolicies, onSelectPolicy, onNavigateToHelp }: Props) {
+export default function DashboardPage({ firstName = 'there', onNavigateToPolicies, onSelectPolicy, onNavigateToHelp }: Props) {
   return (
     <div className="bg-bg-page min-h-full">
       {/* Max-width content area — centred, matches Figma's 980px body */}
@@ -30,7 +31,7 @@ export default function DashboardPage({ onNavigateToPolicies, onSelectPolicy, on
         {/* ── Greeting + Quick Actions ── */}
         <div className="flex flex-col gap-4">
           <h1 className="text-[32px] font-semibold text-text-primary leading-tight m-0">
-            Welcome, Chris 👋
+            Welcome, {firstName} 👋
           </h1>
           <QuickActions onHelp={onNavigateToHelp} />
         </div>

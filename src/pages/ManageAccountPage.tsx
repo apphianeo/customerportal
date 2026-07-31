@@ -3,6 +3,7 @@ import { ChevronRightIcon } from '../components/icons'
 import successCircle from '../assets/icons/success-circle.svg'
 import ChangePasswordModal from '../components/ChangePasswordModal'
 import DatePicker from '../components/DatePicker'
+import { ACCOUNTS, type Account } from '../data/accounts'
 
 /* ─── Field — editable or locked (grey) ─── */
 function Field({
@@ -98,29 +99,31 @@ type Props = {
   onNavigateToDashboard?: () => void
   onLogout?: () => void
   authMethod?: 'singpass' | 'account'
+  account?: Account
 }
 
-export default function ManageAccountPage({ onNavigateToDashboard, onLogout, authMethod = 'account' }: Props) {
+export default function ManageAccountPage({ onNavigateToDashboard, onLogout, authMethod = 'account', account }: Props) {
   const singpass = authMethod === 'singpass'
+  const seed = account ?? ACCOUNTS[0]
 
   // Personal (editable only for account-created users)
-  const [first, setFirst] = useState('Chris')
-  const [last, setLast] = useState('Wong')
-  const [dob, setDob] = useState('01/01/1989')
-  const [nric, setNric] = useState('S89234567D')
+  const [first, setFirst] = useState(seed.firstName)
+  const [last, setLast] = useState(seed.lastName)
+  const [dob, setDob] = useState(seed.dob)
+  const [nric, setNric] = useState(seed.nric)
 
   // Address
-  const [resPostal, setResPostal] = useState('645123')
-  const [resAddr, setResAddr] = useState('123 Pasir Ris St 21')
-  const [resUnit, setResUnit] = useState('#03-21')
-  const [mailingSame, setMailingSame] = useState(true)
-  const [mailPostal, setMailPostal] = useState('')
-  const [mailAddr, setMailAddr] = useState('')
-  const [mailUnit, setMailUnit] = useState('')
+  const [resPostal, setResPostal] = useState(seed.residentialPostal)
+  const [resAddr, setResAddr] = useState(seed.residentialAddress)
+  const [resUnit, setResUnit] = useState(seed.residentialUnit)
+  const [mailingSame, setMailingSame] = useState(seed.mailingSameAsResidential)
+  const [mailPostal, setMailPostal] = useState(seed.mailingPostal)
+  const [mailAddr, setMailAddr] = useState(seed.mailingAddress)
+  const [mailUnit, setMailUnit] = useState(seed.mailingUnit)
 
   // Contact
-  const [contact, setContact] = useState('+65 9123 4567')
-  const [email, setEmail] = useState('chriswong@gmail.com')
+  const [contact, setContact] = useState(`+65 ${seed.phone}`)
+  const [email, setEmail] = useState(seed.email)
   const [consent, setConsent] = useState(true)
 
   const [toast, setToast] = useState<string | null>(null)
@@ -234,6 +237,7 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
 
       {showChangePw && (
         <ChangePasswordModal
+          nric={nric}
           onClose={() => setShowChangePw(false)}
           onSignIn={() => { setShowChangePw(false); onLogout?.() }}
         />

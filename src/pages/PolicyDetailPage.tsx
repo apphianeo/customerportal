@@ -286,7 +286,7 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
           </span>
         </div>
 
-        {/* ── Title + download ── */}
+        {/* ── Title + actions ── */}
         <div className="flex flex-col sm:flex-row gap-[16px] sm:items-center sm:justify-between">
           <div className="flex gap-[12px] items-center flex-wrap min-w-0">
             <h1 className="text-[28px] sm:text-[32px] font-semibold text-[#212121] leading-[1.2] m-0">
@@ -294,13 +294,23 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
             </h1>
             <PolicyStatusTag status={policy.status} label={policy.statusLabel} />
           </div>
-          <button
-            onClick={() => console.log('Download policy', policy.slug)}
-            className="flex items-center justify-center gap-2 bg-[#005eb8] text-white px-[24px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-medium text-[16px] border-0 w-full sm:w-auto shrink-0 cursor-pointer"
-          >
-            Download Policy
-            <DownloadOutlined style={{ fontSize: 20 }} />
-          </button>
+          <div className="flex flex-col sm:flex-row gap-[16px] sm:items-center shrink-0">
+            <a
+              href="https://www.uoi.com.sg/claims-assistance.page"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center bg-white border border-[#005eb8] text-[#005eb8] px-[24px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-medium text-[16px] no-underline whitespace-nowrap cursor-pointer"
+            >
+              Submit Claim
+            </a>
+            <button
+              onClick={() => console.log('Download policy', policy.slug)}
+              className="flex items-center justify-center gap-2 bg-[#005eb8] text-white px-[24px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-medium text-[16px] border-0 whitespace-nowrap cursor-pointer"
+            >
+              Download Policy
+              <DownloadOutlined style={{ fontSize: 20 }} />
+            </button>
+          </div>
         </div>
 
         </div>

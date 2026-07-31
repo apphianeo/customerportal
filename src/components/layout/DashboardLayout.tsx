@@ -3,6 +3,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import Sidebar, { type NavKey } from './Sidebar'
 import MobileNavDrawer from './MobileNavDrawer'
 import TopHeader from './TopHeader'
+import { initials, type Account } from '../../data/accounts'
 import FooterShort from './FooterShort'
 import WhatsappWidget from '../WhatsappWidget'
 import LogoutConfirmModal from '../LogoutConfirmModal'
@@ -22,7 +23,13 @@ function navKeyForPath(pathname: string): NavKey {
   return 'dashboard'
 }
 
-export default function DashboardLayout({ onLogout }: { onLogout?: () => void }) {
+export default function DashboardLayout({
+  account,
+  onLogout,
+}: {
+  account?: Account
+  onLogout?: () => void
+}) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [confirmLogout, setConfirmLogout] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -56,6 +63,7 @@ export default function DashboardLayout({ onLogout }: { onLogout?: () => void })
       {/* ── Main column ── */}
       <div className="flex flex-col flex-1 min-w-0 h-full">
         <TopHeader
+          userInitials={account ? initials(account) : undefined}
           onHome={() => go('dashboard')}
           onLogout={() => setConfirmLogout(true)}
           menuOpen={menuOpen}

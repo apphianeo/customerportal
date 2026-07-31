@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { ChevronLeft, Eye, EyeOff } from 'lucide-react'
+import { ChevronDown, ChevronLeft, Eye, EyeOff } from 'lucide-react'
 import DatePicker from '../../components/DatePicker'
 import uoiLogo from '../../assets/uoi-logo.svg'
 import authHero from '../../assets/auth-hero.png'
 import successCircle from '../../assets/icons/success-circle.svg'
 import errorNotice from '../../assets/icons/error-notice.svg'
 import FooterShort from '../../components/layout/FooterShort'
+import { COUNTRIES } from './validation'
+import type { CountryCode } from 'libphonenumber-js'
 
 /* ── Split-screen shell: form panel + hero image + footer ── */
 export function AuthShell({
@@ -120,6 +122,7 @@ export function Field({
   error,
   inputMode,
   maxLength,
+  onBlur,
 }: {
   label?: string
   value: string
@@ -131,6 +134,7 @@ export function Field({
   error?: string
   inputMode?: 'text' | 'numeric' | 'tel' | 'email'
   maxLength?: number
+  onBlur?: () => void
 }) {
   return (
     <label className="flex flex-col gap-2 w-full">
@@ -144,6 +148,7 @@ export function Field({
             inputMode={inputMode}
             maxLength={maxLength}
             onChange={(e) => onChange(e.target.value)}
+            onBlur={onBlur}
             className={`${inputBase} ${borderClasses(error)}`}
             style={suffix ? { paddingRight: 44 } : undefined}
           />
@@ -173,6 +178,7 @@ export function PasswordField({
   onToggle,
   placeholder,
   error,
+  onBlur,
 }: {
   label: string
   value: string
@@ -181,6 +187,7 @@ export function PasswordField({
   onToggle: () => void
   placeholder?: string
   error?: string
+  onBlur?: () => void
 }) {
   return (
     <Field
@@ -192,6 +199,7 @@ export function PasswordField({
       suffix={show ? <EyeOff size={18} /> : <Eye size={18} />}
       onSuffixClick={onToggle}
       error={error}
+      onBlur={onBlur}
     />
   )
 }
@@ -211,31 +219,54 @@ export function DateField({
   return <DatePicker label={label} value={value} onChange={onChange} error={error} />
 }
 
-/* ── Phone number field with +65 prefix ── */
+/* ── Phone number field — country code drives validation ── */
 export function PhoneField({
   label,
   value,
   onChange,
+  country,
+  onCountryChange,
   error,
+  onBlur,
 }: {
   label: string
   value: string
   onChange: (v: string) => void
+  country: CountryCode
+  onCountryChange: (c: CountryCode) => void
   error?: string
+  onBlur?: () => void
 }) {
   return (
     <div className="flex flex-col gap-3 w-full">
       <span className="text-[14px] font-normal leading-[1.5] text-[#212121]">{label}</span>
       <div className="flex gap-2 w-full">
-        <div className="flex items-center justify-center bg-white border border-[rgba(0,0,0,0.09)] rounded-[8px] px-[16px] py-[12px] text-[16px] text-[#212121] leading-[1.5] shrink-0">
-          +65
+        {/* Native select, but with the platform arrow swapped for the design's chevron */}
+        <div className="relative shrink-0">
+          <select
+            value={country}
+            onChange={e => onCountryChange(e.target.value as CountryCode)}
+            aria-label="Country code"
+            className="appearance-none bg-white border border-[rgba(0,0,0,0.09)] rounded-[8px] pl-[16px] pr-[44px] py-[12px] text-[16px] text-[#212121] leading-[1.5] w-full outline-none cursor-pointer focus:border-[#005eb8] focus:shadow-[0px_0px_0px_3px_rgba(0,94,184,0.2)]"
+          >
+            {COUNTRIES.map(c => (
+              <option key={c.code} value={c.code}>{c.dial}</option>
+            ))}
+          </select>
+          <ChevronDown
+            size={20}
+            aria-hidden="true"
+            className="pointer-events-none absolute right-[16px] top-1/2 -translate-y-1/2 text-[#6e6e6e]"
+          />
         </div>
         <input
           type="tel"
           inputMode="numeric"
           value={value}
           placeholder="Enter phone number"
-          onChange={(e) => onChange(e.target.value.replace(/[^\d]/g, '').slice(0, 8))}
+          /* No fixed length — each country's own digit range is enforced on validate */
+          onChange={(e) => onChange(e.target.value.replace(/[^\d]/g, '').slice(0, 15))}
+          onBlur={onBlur}
           className={`${inputBase} ${borderClasses(error)}`}
         />
       </div>

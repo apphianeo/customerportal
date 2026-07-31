@@ -1,12 +1,16 @@
 import { useState } from 'react'
 import { Eye, EyeOff, Check } from 'lucide-react'
 import closeIcon from '../assets/icons/close.svg'
-
-const RULES = [
-  { label: '8 to 24 characters', test: (v: string) => v.length >= 8 && v.length <= 24 },
-  { label: '1 letter', test: (v: string) => /[A-Za-z]/.test(v) },
-  { label: '1 number', test: (v: string) => /[0-9]/.test(v) },
-]
+import errorNotice from '../assets/icons/error-notice.svg'
+import { useDebouncedValue } from '../hooks/useDebouncedValue'
+import { useInlineValidation } from '../hooks/useInlineValidation'
+import {
+  MESSAGES,
+  PASSWORD_RULES as RULES,
+  passwordMeetsRules,
+  validatePasswordContent,
+  validatePasswordHistory,
+} from '../pages/auth/validation'
 
 function PasswordInput({
   value,
@@ -15,6 +19,7 @@ function PasswordInput({
   show,
   onToggle,
   error,
+  onBlur,
 }: {
   value: string
   onChange: (v: string) => void
@@ -22,6 +27,7 @@ function PasswordInput({
   show: boolean
   onToggle: () => void
   error?: boolean
+  onBlur?: () => void
 }) {
   return (
     <div className="relative w-full">
@@ -30,6 +36,7 @@ function PasswordInput({
         value={value}
         placeholder={placeholder}
         onChange={e => onChange(e.target.value)}
+        onBlur={onBlur}
         style={{ paddingRight: 44 }}
         className={`bg-white border rounded-[8px] px-[16px] py-[12px] w-full text-[16px] text-[#212121] leading-[1.5] outline-none placeholder:text-[#949494] ${
           error ? 'border-[#dc2626]' : 'border-[rgba(0,0,0,0.09)] focus:border-[#005eb8] focus:shadow-[0px_0px_0px_3px_rgba(0,94,184,0.2)]'
@@ -47,22 +54,51 @@ function PasswordInput({
   )
 }
 
-export default function ChangePasswordModal({ onClose, onSignIn }: { onClose: () => void; onSignIn: () => void }) {
+export default function ChangePasswordModal({
+  nric,
+  onClose,
+  onSignIn,
+}: {
+  nric?: string
+  onClose: () => void
+  onSignIn: () => void
+}) {
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [showPw, setShowPw] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [attempted, setAttempted] = useState(false)
+  const [passwordError, setPasswordError] = useState('')
   const [done, setDone] = useState(false)
 
-  const allRulesMet = RULES.every(r => r.test(password))
-  const mismatch = confirm !== '' && confirm !== password
+  // Checkmarks tick once typing settles
+  const debouncedPassword = useDebouncedValue(password)
+  const confirmInline = useInlineValidation({
+    value: confirm,
+    validate: v => (v !== debouncedPassword ? MESSAGES.passwordMismatch : undefined),
+    // Silent only while the entry could still turn into the password. The moment
+    // it diverges it can never match, so flag it as soon as typing settles.
+    isComplete: v => Boolean(debouncedPassword) && !debouncedPassword.startsWith(v),
+  })
+  const mismatch = Boolean(confirmInline.error)
 
   function submit() {
-    if (!allRulesMet || confirm !== password) {
+    if (!passwordMeetsRules(password) || confirm !== password) {
       setAttempted(true)
+      confirmInline.show()
       return
     }
+    const contentError = validatePasswordContent(password, nric)
+    if (contentError) {
+      setPasswordError(contentError)
+      return
+    }
+    const historyError = validatePasswordHistory(password, nric)
+    if (historyError) {
+      setPasswordError(historyError)
+      return
+    }
+    setPasswordError('')
     setDone(true)
   }
 
@@ -107,11 +143,24 @@ export default function ChangePasswordModal({ onClose, onSignIn }: { onClose: ()
         {/* New password */}
         <div className="flex flex-col gap-[8px] w-full">
           <label className="text-[14px] text-[#212121] leading-[1.5]">Enter new password</label>
-          <PasswordInput value={password} onChange={setPassword} placeholder="Enter password" show={showPw} onToggle={() => setShowPw(s => !s)} />
+          <PasswordInput
+            value={password}
+            onChange={v => { setPassword(v); setPasswordError('') }}
+            placeholder="Enter password"
+            show={showPw}
+            onToggle={() => setShowPw(s => !s)}
+            error={Boolean(passwordError)}
+          />
+          {passwordError && (
+            <span className="flex items-center gap-2 text-[12px] leading-[1.4] text-[#dc2626]">
+              <img src={errorNotice} alt="" className="w-4 h-4 shrink-0" />
+              {passwordError}
+            </span>
+          )}
           <div className="flex flex-col gap-[8px] pt-[4px]">
             <span className="text-[12px] leading-[1.4] text-[#6e6e6e]">Your password must contain at least:</span>
             {RULES.map(rule => {
-              const met = rule.test(password)
+              const met = rule.test(debouncedPassword)
               const failed = attempted && !met
               return (
                 <div key={rule.label} className="flex items-center gap-[8px]">
@@ -128,8 +177,13 @@ export default function ChangePasswordModal({ onClose, onSignIn }: { onClose: ()
         {/* Confirm password */}
         <div className="flex flex-col gap-[8px] w-full">
           <label className="text-[14px] text-[#212121] leading-[1.5]">Confirm new password</label>
-          <PasswordInput value={confirm} onChange={setConfirm} placeholder="Re-enter new password" show={showConfirm} onToggle={() => setShowConfirm(s => !s)} error={mismatch} />
-          {mismatch && <span className="text-[12px] leading-[1.4] text-[#dc2626]">Passwords do not match</span>}
+          <PasswordInput value={confirm} onChange={v => { setConfirm(v); confirmInline.reset() }} onBlur={confirmInline.onBlur} placeholder="Re-enter new password" show={showConfirm} onToggle={() => setShowConfirm(s => !s)} error={mismatch} />
+          {mismatch && (
+            <span className="flex items-center gap-2 text-[12px] leading-[1.4] text-[#dc2626]">
+              <img src={errorNotice} alt="" className="w-4 h-4 shrink-0" />
+              {MESSAGES.passwordMismatch}
+            </span>
+          )}
         </div>
 
         {/* Action */}

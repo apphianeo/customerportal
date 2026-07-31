@@ -1,5 +1,12 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Calendar as CalIcon, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react'
+
+const CAL_WIDTH = 320
+/** Only used for the very first frame, before the popup can be measured. */
+const CAL_EST_HEIGHT = 300
+/** Distance between the input and the calendar. */
+const CAL_GAP = 8
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const MONTHS = [
@@ -40,15 +47,50 @@ export default function DatePicker({ label, value, onChange, error, disabled, pl
   const [open, setOpen] = useState(false)
   const [menu, setMenu] = useState<'month' | 'year' | null>(null)
   const ref = useRef<HTMLDivElement>(null)
+  const popRef = useRef<HTMLDivElement>(null)
+  /** Viewport coords — the calendar is portalled out so cards can't clip it. */
+  const [pos, setPos] = useState({ top: 0, left: 0 })
 
   const today = new Date()
   const parsed = parseDate(value)
   const [viewY, setViewY] = useState(parsed ? parsed.y : today.getFullYear())
   const [viewM, setViewM] = useState(parsed ? parsed.m - 1 : today.getMonth())
 
+  const place = useCallback(() => {
+    const anchor = ref.current
+    if (!anchor) return
+    const r = anchor.getBoundingClientRect()
+    // Measure the rendered popup — a guessed height leaves it floating away
+    // from the field when it flips, since months are 5 or 6 rows tall.
+    const h = popRef.current?.offsetHeight || CAL_EST_HEIGHT
+    const fitsBelow = r.bottom + CAL_GAP + h <= window.innerHeight
+    const opensUp = !fitsBelow && r.top - CAL_GAP - h >= 0
+    const top = opensUp ? r.top - CAL_GAP - h : r.bottom + CAL_GAP
+    const left = Math.min(Math.max(8, r.left), window.innerWidth - CAL_WIDTH - 8)
+    setPos({ top, left })
+  }, [])
+
+  useLayoutEffect(() => {
+    if (!open) return
+    // Twice: once to mount at an estimate, once with the measured height.
+    place()
+    const id = requestAnimationFrame(place)
+    window.addEventListener('scroll', place, true)
+    window.addEventListener('resize', place)
+    return () => {
+      cancelAnimationFrame(id)
+      window.removeEventListener('scroll', place, true)
+      window.removeEventListener('resize', place)
+    }
+    // viewM/viewY change the row count, so the popup has to be re-measured
+  }, [open, place, viewM, viewY])
+
   useEffect(() => {
     function handle(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) { setOpen(false); setMenu(null) }
+      const t = e.target as Node
+      if (ref.current?.contains(t) || popRef.current?.contains(t)) return
+      setOpen(false)
+      setMenu(null)
     }
     document.addEventListener('mousedown', handle)
     return () => document.removeEventListener('mousedown', handle)
@@ -121,8 +163,12 @@ export default function DatePicker({ label, value, onChange, error, disabled, pl
           <CalIcon size={18} />
         </button>
 
-        {open && (
-          <div className="absolute z-30 top-full mt-[8px] left-0 w-[320px] max-w-full bg-white border border-[rgba(0,0,0,0.09)] rounded-[8px] shadow-[0px_10px_35px_0px_rgba(0,94,184,0.12)]">
+        {open && createPortal(
+          <div
+            ref={popRef}
+            style={{ position: 'fixed', top: pos.top, left: pos.left, width: CAL_WIDTH }}
+            className="z-[100] bg-white border border-[rgba(0,0,0,0.09)] rounded-[8px] shadow-[0px_10px_35px_0px_rgba(0,94,184,0.12)]"
+          >
             {/* Header */}
             <div className="bg-[#005eb8] flex items-center justify-between px-[12px] py-[10px] gap-[8px] rounded-t-[8px]">
               <button type="button" onClick={prevMonth} aria-label="Previous month" className="text-white bg-transparent border-0 p-[2px] cursor-pointer flex items-center">
@@ -212,7 +258,8 @@ export default function DatePicker({ label, value, onChange, error, disabled, pl
                 })}
               </div>
             </div>
-          </div>
+          </div>,
+          document.body,
         )}
       </div>
       {error && (

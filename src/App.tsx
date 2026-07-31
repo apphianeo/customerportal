@@ -15,14 +15,16 @@ import PoliciesPage from './pages/PoliciesPage'
 import PolicyDetailPage from './pages/PolicyDetailPage'
 import ManageAccountPage from './pages/ManageAccountPage'
 import HelpSupportPage from './pages/HelpSupportPage'
+import { type Account } from './data/accounts'
 
 export type AuthMethod = 'singpass' | 'account'
 
 /* ─── Route-aware page wrappers ───────────────────────────── */
-function DashboardRoute() {
+function DashboardRoute({ account }: { account: Account }) {
   const navigate = useNavigate()
   return (
     <DashboardPage
+      firstName={account.firstName}
       onNavigateToPolicies={() => navigate('/policies')}
       onSelectPolicy={slug => navigate(`/policies/${slug}`)}
       onNavigateToHelp={() => navigate('/help')}
@@ -47,13 +49,15 @@ function PolicyDetailRoute() {
   )
 }
 
-function AccountRoute({ authMethod, onLogout }: { authMethod: AuthMethod; onLogout: () => void }) {
+function AccountRoute({ account, onLogout }: { account: Account; onLogout: () => void }) {
   const navigate = useNavigate()
   return (
     <ManageAccountPage
+      key={account.nric}
+      account={account}
       onNavigateToDashboard={() => navigate('/dashboard')}
       onLogout={onLogout}
-      authMethod={authMethod}
+      authMethod={account.authMethod}
     />
   )
 }
@@ -64,12 +68,12 @@ function HelpRoute() {
 }
 
 /* ─── Auth screen — redirects into the app once signed in ── */
-function LoginRoute({ onAuthenticated }: { onAuthenticated: (method?: AuthMethod) => void }) {
+function LoginRoute({ onAuthenticated }: { onAuthenticated: (account: Account) => void }) {
   const navigate = useNavigate()
   return (
     <AuthFlow
-      onAuthenticated={method => {
-        onAuthenticated(method)
+      onAuthenticated={account => {
+        onAuthenticated(account)
         navigate('/dashboard', { replace: true })
       }}
     />
@@ -77,19 +81,18 @@ function LoginRoute({ onAuthenticated }: { onAuthenticated: (method?: AuthMethod
 }
 
 function AppRoutes() {
-  const [authed, setAuthed] = useState(false)
-  const [authMethod, setAuthMethod] = useState<AuthMethod>('account')
+  /** The signed-in account, or null when signed out. */
+  const [account, setAccount] = useState<Account | null>(null)
 
-  function authenticate(method: AuthMethod = 'account') {
-    setAuthMethod(method)
-    setAuthed(true)
+  function authenticate(signedIn: Account) {
+    setAccount(signedIn)
   }
 
   function logout() {
-    setAuthed(false)
+    setAccount(null)
   }
 
-  if (!authed) {
+  if (!account) {
     return (
       <Routes>
         <Route path="/login" element={<LoginRoute onAuthenticated={authenticate} />} />
@@ -101,11 +104,11 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route element={<DashboardLayout onLogout={logout} />}>
-        <Route path="/dashboard" element={<DashboardRoute />} />
+      <Route element={<DashboardLayout account={account} onLogout={logout} />}>
+        <Route path="/dashboard" element={<DashboardRoute account={account} />} />
         <Route path="/policies" element={<PoliciesRoute />} />
         <Route path="/policies/:slug" element={<PolicyDetailRoute />} />
-        <Route path="/account" element={<AccountRoute authMethod={authMethod} onLogout={logout} />} />
+        <Route path="/account" element={<AccountRoute account={account} onLogout={logout} />} />
         <Route path="/help" element={<HelpRoute />} />
       </Route>
       <Route path="*" element={<Navigate to="/dashboard" replace />} />

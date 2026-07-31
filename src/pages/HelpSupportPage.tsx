@@ -70,6 +70,16 @@ const CATEGORIES: Category[] = [
         q: 'How do I view my payment history for a policy?',
         a: "Payment history is available under each policy's detail page. Navigate to 'Policies', select your policy, and tap the 'Payment History' tab. You will see a list of past transactions including payment dates, amounts, and payment methods.",
       },
+      {
+        q: 'How do I make a claim?',
+        a: (
+          <>
+            Simply follow the steps{' '}
+            <Link href="https://www.uoi.com.sg/claims-assistance.page">here</Link> to file for your
+            claims or directly through your individual policy page.
+          </>
+        ),
+      },
     ],
   },
   {
@@ -189,38 +199,45 @@ export default function HelpSupportPage({ onNavigateToDashboard }: Props) {
           {CATEGORIES.map(cat => <CategoryCard key={cat.title} category={cat} />)}
         </div>
 
-        {/* Still have questions? */}
-        <div className="rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] overflow-hidden bg-white w-full">
-          <div className="px-[24px] py-[16px] flex flex-col gap-[4px] border-b border-[rgba(0,0,0,0.09)]">
-            <h2 className="text-[16px] font-semibold text-[#212121] m-0">Still have questions?</h2>
-            <p className="text-[14px] text-[#6e6e6e] m-0 leading-[1.5]">Cannot find what you're looking for? Reach out to our support team.</p>
-          </div>
-          <div className="p-[24px] flex flex-col gap-[16px]">
-            {/* Operating hours */}
-            <div className="border border-[rgba(0,0,0,0.09)] rounded-[8px] px-[16px] py-[12px] flex flex-col gap-[4px]">
-              <span className="text-[14px] font-medium text-[#212121] leading-[1.5]">Operating Hours</span>
-              <span className="text-[14px] text-[#6e6e6e] leading-[1.5]">Monday - Thursday: 8.45am to 5.45pm, Friday: 8.45am to 4.45pm</span>
-              <span className="text-[14px] text-[#6e6e6e] leading-[1.5]">Closed on weekends and public holidays</span>
+        {/* Still need help? */}
+        <div className="rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] bg-white w-full px-[24px] py-[16px] flex flex-col gap-[16px]">
+          <h2 className="text-[18px] font-semibold text-[#212121] leading-[1.5] m-0">Still need help?</h2>
+
+          {/* Operating hours */}
+          <div className="border border-[rgba(0,0,0,0.09)] rounded-[8px] p-[16px] flex flex-col gap-[8px]">
+            <span className="text-[16px] font-medium text-[#212121] leading-[1.5]">Operating Hours</span>
+            <div className="text-[14px] text-[#6e6e6e] leading-[1.5]">
+              <p className="m-0">Monday - Thursday: 8.45am to 5.45pm, Friday: 8.45am to 4.45pm</p>
+              <p className="m-0">Close on weekends and public holidays</p>
             </div>
-            {/* Contact channels */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[16px]">
-              <div className="border border-[rgba(0,0,0,0.09)] rounded-[8px] px-[16px] py-[12px] flex flex-col gap-[8px]">
-                <div className="flex items-center gap-[8px]">
-                  <img src={whatsappIcon} alt="" aria-hidden="true" className="size-[16px] shrink-0" />
-                  <span className="text-[14px] font-medium text-[#212121] leading-[1.5]">WhatsApp</span>
-                </div>
-                <span className="text-[14px] text-[#6e6e6e] leading-[1.5]">Chat instantly</span>
-                <span className="text-[14px] leading-[1.5]">
-                  <Link href="https://api.whatsapp.com/send/?phone=6580814843&text&type=phone_number&app_absent=0">(+65) 8081 4843</Link>
-                </span>
+          </div>
+
+          {/* Contact channels */}
+          <div className="flex flex-col sm:flex-row gap-[16px] items-stretch">
+            <div className="flex-1 min-w-0 border border-[rgba(0,0,0,0.09)] rounded-[8px] p-[16px] flex flex-col gap-[8px]">
+              <div className="flex items-center gap-[8px]">
+                <img src={whatsappIcon} alt="" aria-hidden="true" className="size-[16px] shrink-0" />
+                <span className="text-[16px] font-medium text-[#212121] leading-[1.5]">WhatsApp</span>
               </div>
-              <div className="border border-[rgba(0,0,0,0.09)] rounded-[8px] px-[16px] py-[12px] flex flex-col gap-[8px]">
-                <div className="flex items-center gap-[8px]">
-                  <img src={phoneIcon} alt="" aria-hidden="true" className="size-[16px] shrink-0" />
-                  <span className="text-[14px] font-medium text-[#212121] leading-[1.5]">Phone</span>
+              <div className="flex flex-wrap items-center gap-[8px] text-[14px] leading-[1.5]">
+                <span className="text-[#6e6e6e]">Chat instantly:</span>
+                <Link href="https://api.whatsapp.com/send/?phone=6580814843&text&type=phone_number&app_absent=0">(+65) 8081 4843</Link>
+              </div>
+            </div>
+            <div className="flex-1 min-w-0 border border-[rgba(0,0,0,0.09)] rounded-[8px] p-[16px] flex flex-col gap-[8px]">
+              <div className="flex items-center gap-[8px]">
+                <img src={phoneIcon} alt="" aria-hidden="true" className="size-[16px] shrink-0" />
+                <span className="text-[16px] font-medium text-[#212121] leading-[1.5]">Phone</span>
+              </div>
+              <div className="flex flex-col gap-[4px] text-[14px] leading-[1.5]">
+                <div className="flex flex-wrap items-center gap-[8px]">
+                  <span className="text-[#6e6e6e]">General Hotline:</span>
+                  <Link href="tel:+6562227733">(+65) 6222 7733</Link>
                 </div>
-                <span className="text-[14px] text-[#6e6e6e] leading-[1.5]">General Hotline: <Link href="tel:+6562227733">(+65) 6222 7733</Link></span>
-                <span className="text-[14px] text-[#6e6e6e] leading-[1.5]">24 Hours Emergency Assist Hotline: <Link href="tel:+6562227737">(+65) 6222 7737</Link></span>
+                <div className="flex flex-wrap items-center gap-[8px]">
+                  <span className="text-[#6e6e6e]">24 Hours Emergency Assist Hotline:</span>
+                  <Link href="tel:+6562227737">(+65) 6222 7737</Link>
+                </div>
               </div>
             </div>
           </div>
