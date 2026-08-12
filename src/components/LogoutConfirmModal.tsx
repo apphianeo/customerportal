@@ -24,7 +24,7 @@ export default function LogoutConfirmModal({
           <div className="flex gap-[8px] items-start w-full">
             <h2
               id="logout-title"
-              className="flex-1 min-w-0 text-[20px] font-semibold leading-[1.2] text-[#212121] m-0"
+              className="flex-1 min-w-0 font-h2-title font-semibold text-[#212121] m-0"
             >
               Are you sure you want to log out?
             </h2>

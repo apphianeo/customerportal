@@ -5,39 +5,53 @@ import Rewards from '../components/dashboard/Rewards'
 
 type Props = {
   firstName?: string
+  /** False → prospect dashboard: no policies matched this NRIC/FIN. */
+  hasPolicies?: boolean
   onNavigateToPolicies?: () => void
   onSelectPolicy?: (slug: string) => void
   onNavigateToHelp?: () => void
 }
 
-export default function DashboardPage({ firstName = 'there', onNavigateToPolicies, onSelectPolicy, onNavigateToHelp }: Props) {
+export default function DashboardPage({
+  firstName = 'there',
+  hasPolicies = true,
+  onNavigateToPolicies,
+  onSelectPolicy,
+  onNavigateToHelp,
+}: Props) {
   return (
     <div className="bg-bg-page min-h-full">
       {/* Max-width content area — centred, matches Figma's 980px body */}
-      <div className="w-full max-w-[1044px] mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8">
+      <div className="screen-container flex flex-col gap-8">
 
-        {/* ── Notification banner ── */}
+        {/* ── Notification banner — renewal notices only apply to policyholders ── */}
+        {hasPolicies && (
         <NotificationBanner
           title="Your UniCar policy is expiring in 30 days — 12 April 2026"
           description={
             <>
               Contact UOI at{' '}
-              <a href="tel:+6562227733" className="text-primary">(+65) 6222 7733</a>{' '}
+              <a href="tel:+6562227733" className="text-text-secondary underline">(+65) 6222 7733</a>{' '}
               to ensure continuous coverage and avoid any lapse in protection
             </>
           }
         />
+        )}
 
         {/* ── Greeting + Quick Actions ── */}
         <div className="flex flex-col gap-4">
-          <h1 className="text-[32px] font-semibold text-text-primary leading-tight m-0">
+          <h1 className="font-h1-title font-semibold text-text-primary m-0">
             Welcome, {firstName} 👋
           </h1>
           <QuickActions onHelp={onNavigateToHelp} />
         </div>
 
-        {/* ── Your Coverage ── */}
-        <YourCoverage onViewPolicies={onNavigateToPolicies} onSelectPolicy={onSelectPolicy} />
+        {/* ── Your Coverage — the empty state keeps the header and chips ── */}
+        <YourCoverage
+          hasPolicies={hasPolicies}
+          onViewPolicies={onNavigateToPolicies}
+          onSelectPolicy={onSelectPolicy}
+        />
 
         {/* ── Rewards ── */}
         <Rewards />

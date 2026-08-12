@@ -60,7 +60,7 @@ function FieldValueView({ value }: { value: FieldValue }) {
   if (value.kind === 'payment') return <PaymentMethodValue last4={value.last4} />
   if (value.kind === 'link') {
     return (
-      <a href={value.href} className="text-[16px] text-[#005eb8] underline leading-[1.5] truncate">
+      <a href={value.href} className="text-[16px] text-text-secondary underline leading-[1.5] truncate">
         {value.text}
       </a>
     )
@@ -101,7 +101,7 @@ function SectionCard({
       style={{ scrollMarginTop: 110 }}
     >
       <div className="border-b border-[rgba(0,0,0,0.09)] px-[24px] py-[16px] flex flex-col gap-[4px]">
-        <h2 className="text-[18px] font-semibold text-[#212121] m-0">{title}</h2>
+        <h2 className="font-h3-title font-semibold text-[#212121] m-0">{title}</h2>
         {subtitle && <p className="text-[14px] text-[#6e6e6e] m-0 leading-[1.5]">{subtitle}</p>}
       </div>
       <div className="p-[24px] flex flex-col gap-[24px]">{children}</div>
@@ -251,8 +251,8 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
   if (!policy) {
     return (
       <div className="bg-bg-page min-h-full">
-        <div className="w-full max-w-[1044px] mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-[16px]">
-          <h1 className="text-[32px] font-semibold text-[#212121] leading-[1.2] m-0">Policy not found</h1>
+        <div className="screen-container flex flex-col gap-[16px]">
+          <h1 className="font-h1-title font-semibold text-[#212121] m-0">Policy not found</h1>
           <p className="text-[16px] text-[#6e6e6e] m-0">We couldn't find that policy</p>
           <button
             onClick={onNavigateToPolicies}
@@ -289,7 +289,7 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
         {/* ── Title + actions ── */}
         <div className="flex flex-col sm:flex-row gap-[16px] sm:items-center sm:justify-between">
           <div className="flex gap-[12px] items-center flex-wrap min-w-0">
-            <h1 className="text-[28px] sm:text-[32px] font-semibold text-[#212121] leading-[1.2] m-0">
+            <h1 className="font-h1-title font-semibold text-[#212121] m-0">
               {policy.name}
             </h1>
             <PolicyStatusTag status={policy.status} label={policy.statusLabel} />
@@ -346,7 +346,7 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
           <FieldGrid fields={policy.policyFields} />
           <p className="text-[14px] text-[#212121] leading-[1.5] m-0">
             If you'd like more information about policy, please refer to the{' '}
-            <a href="#" className="text-[#005eb8] underline">policy wording</a>.
+            <a href="#" className="text-text-secondary underline">policy wording</a>.
           </p>
         </SectionCard>
 
@@ -412,7 +412,7 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
           For any amendments to your policy, please contact us{' '}
           <a
             href="https://api.whatsapp.com/send/?phone=6580814843&text&type=phone_number&app_absent=0"
-            className="text-[#005eb8] underline"
+            className="text-text-secondary underline"
           >
             here
           </a>.

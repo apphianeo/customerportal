@@ -1,23 +1,24 @@
 /**
- * Stand-in for the accounts API. The prototype validates against this the way
- * the real form will validate against the backend, so the error states are
- * exercised end to end.
+ * Stand-in for the accounts API.
  *
- * Each account is shaped to exercise a different flow — see
- * docs/TEST-ACCOUNTS.md for the walkthrough.
+ * Email address is the account key, not NRIC/FIN. NRIC is still collected —
+ * it is what matches someone to their policies — but it is captured at the
+ * profile step and never used as a credential, so a PDPA-sensitive identifier
+ * is not typed into a login form on every visit.
  */
 export type Account = {
-  nric: string
+  /** The credential. Unique per account. */
+  email: string
   password: string
   /** Most recent first — the last 5 are rejected on change. */
   passwordHistory: string[]
-  /** How the account was created; Singpass locks the personal detail fields. */
   authMethod: 'account' | 'singpass'
   salutation: string
   firstName: string
   lastName: string
   dob: string
-  email: string
+  /** Collected at the profile step; matches the holder to their policies. */
+  nric: string
   phone: string
   residentialPostal: string
   residentialAddress: string
@@ -28,11 +29,27 @@ export type Account = {
   mailingUnit: string
 }
 
+/**
+ * NRIC/FIN of everyone holding a UOI policy. Stands in for the policy system.
+ * A portal account whose NRIC is absent here sees the prospect dashboard.
+ */
+export const POLICYHOLDER_NRICS = [
+  'S1234567D',
+  'S8912345A',
+  'S7654321B',
+  'G4567890X',
+  'S2244668E',
+  'F9988776Q',
+]
+
+export function isPolicyholder(nric: string) {
+  return POLICYHOLDER_NRICS.includes(normalise(nric))
+}
+
 export const ACCOUNTS: Account[] = [
   {
-    // Returning customer, created an account manually. Has a full password
-    // history, so the "last 5 passwords" rule can fire.
-    nric: 'S1234567D',
+    // Returning customer. Full password history, so the reuse rule fires.
+    email: 'chriswong@gmail.com',
     password: 'Chris2026',
     passwordHistory: ['Chris2026', 'Summer2025', 'Winter2024', 'Orchard88', 'Marina2023'],
     authMethod: 'account',
@@ -40,7 +57,7 @@ export const ACCOUNTS: Account[] = [
     firstName: 'Chris',
     lastName: 'Wong',
     dob: '01/01/1989',
-    email: 'chriswong@gmail.com',
+    nric: 'S1234567D',
     phone: '91234567',
     residentialPostal: '645123',
     residentialAddress: '123 Pasir Ris St 21',
@@ -51,9 +68,8 @@ export const ACCOUNTS: Account[] = [
     mailingUnit: '',
   },
   {
-    // Signed up through Singpass — personal details are read-only on Manage
-    // Account, and there is no Save Changes button on that card.
-    nric: 'S8912345A',
+    // Signed up through Singpass — personal details are read-only on Manage Account.
+    email: 'meiling.tan@gmail.com',
     password: 'Portal2026',
     passwordHistory: ['Portal2026', 'Portal2025', 'Portal2024', 'Portal2023', 'Portal2022'],
     authMethod: 'singpass',
@@ -61,7 +77,7 @@ export const ACCOUNTS: Account[] = [
     firstName: 'Mei Ling',
     lastName: 'Tan',
     dob: '14/07/1992',
-    email: 'meiling.tan@gmail.com',
+    nric: 'S8912345A',
     phone: '98765432',
     residentialPostal: '188024',
     residentialAddress: '55 Bras Basah Rd',
@@ -72,9 +88,8 @@ export const ACCOUNTS: Account[] = [
     mailingUnit: '#24-03',
   },
   {
-    // Newly created account — only one password on file, so nothing is
-    // rejected by the reuse rule. Separate mailing address.
-    nric: 'S7654321B',
+    // One password on file, so the reuse rule stays quiet.
+    email: 'ravi.kumar@gmail.com',
     password: 'Bedok2026',
     passwordHistory: ['Bedok2026'],
     authMethod: 'account',
@@ -82,7 +97,7 @@ export const ACCOUNTS: Account[] = [
     firstName: 'Ravi',
     lastName: 'Kumar',
     dob: '23/11/1978',
-    email: 'ravi.kumar@gmail.com',
+    nric: 'S7654321B',
     phone: '81234567',
     residentialPostal: '460022',
     residentialAddress: '22 Bedok South Ave 1',
@@ -93,9 +108,8 @@ export const ACCOUNTS: Account[] = [
     mailingUnit: '',
   },
   {
-    // Foreign identification number, and a phone number that is not Singaporean
-    // — useful for the country-code picker on Manage Account.
-    nric: 'G4567890X',
+    // FIN rather than NRIC.
+    email: 'aisyah.rahman@gmail.com',
     password: 'Sentosa2026',
     passwordHistory: ['Sentosa2026', 'Sentosa2025'],
     authMethod: 'account',
@@ -103,7 +117,7 @@ export const ACCOUNTS: Account[] = [
     firstName: 'Aisyah',
     lastName: 'Rahman',
     dob: '05/03/1985',
-    email: 'aisyah.rahman@gmail.com',
+    nric: 'G4567890X',
     phone: '71234567',
     residentialPostal: '098269',
     residentialAddress: '30 Sentosa Gateway',
@@ -113,20 +127,53 @@ export const ACCOUNTS: Account[] = [
     mailingAddress: '',
     mailingUnit: '',
   },
+  {
+    // Registered but holds no UOI product — lands on the prospect dashboard.
+    email: 'nadia.lim@gmail.com',
+    password: 'Marina2026',
+    passwordHistory: ['Marina2026'],
+    authMethod: 'singpass',
+    salutation: 'Ms',
+    firstName: 'Nadia',
+    lastName: 'Lim',
+    dob: '09/09/1995',
+    nric: 'T0011223J',
+    phone: '92220000',
+    residentialPostal: '018960',
+    residentialAddress: '8 Marina View',
+    residentialUnit: '#21-05',
+    mailingSameAsResidential: true,
+    mailingPostal: '',
+    mailingAddress: '',
+    mailingUnit: '',
+  },
 ]
 
-const normalise = (nric: string) => nric.trim().toUpperCase()
+const normalise = (value: string) => value.trim().toUpperCase()
+const normaliseEmail = (email: string) => email.trim().toLowerCase()
 
-export function findAccount(nric: string) {
+export function findAccount(email: string) {
+  return ACCOUNTS.find(a => a.email === normaliseEmail(email))
+}
+
+export function accountExists(email: string) {
+  return Boolean(findAccount(email))
+}
+
+export function findAccountByNric(nric: string) {
   return ACCOUNTS.find(a => a.nric === normalise(nric))
 }
 
-export function accountExists(nric: string) {
-  return Boolean(findAccount(nric))
+/** Registering adds the account for the rest of the session, so you can sign in again. */
+export function registerAccount(account: Account) {
+  const existing = findAccount(account.email)
+  if (existing) return existing
+  ACCOUNTS.push(account)
+  return account
 }
 
-/** A profile for someone who just registered — they aren't in ACCOUNTS yet. */
-export function draftAccount(input: Partial<Account> & { nric: string }): Account {
+/** A profile for someone mid-registration — not in ACCOUNTS yet. */
+export function draftAccount(input: Partial<Account> & { email: string }): Account {
   return {
     password: '',
     passwordHistory: [],
@@ -135,7 +182,7 @@ export function draftAccount(input: Partial<Account> & { nric: string }): Accoun
     firstName: 'there',
     lastName: '',
     dob: '',
-    email: '',
+    nric: '',
     phone: '',
     residentialPostal: '',
     residentialAddress: '',
@@ -145,6 +192,7 @@ export function draftAccount(input: Partial<Account> & { nric: string }): Accoun
     mailingAddress: '',
     mailingUnit: '',
     ...input,
+    email: normaliseEmail(input.email),
   }
 }
 
@@ -152,3 +200,20 @@ export const fullName = (a: Account) => `${a.firstName} ${a.lastName}`.trim()
 
 export const initials = (a: Account) =>
   `${a.firstName[0] ?? ''}${a.lastName[0] ?? ''}`.toUpperCase()
+
+/* ─── Singpass ───────────────────────────────────────────────────
+   What the Singpass App hands back after authentication. Grace holds
+   policies but has never registered, so the first Singpass sign-in runs
+   the first-time path; afterwards she is a returning user. */
+export const SINGPASS_IDENTITY = {
+  salutation: 'Mdm',
+  firstName: 'Grace',
+  lastName: 'Sim',
+  dob: '17/12/1971',
+  nric: 'S2244668E',
+  email: 'grace.sim@gmail.com',
+  phone: '93304488',
+  residentialPostal: '229832',
+  residentialAddress: '77 Bukit Timah Rd',
+  residentialUnit: '#14-02',
+}

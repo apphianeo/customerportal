@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ChevronRightIcon } from '../icons'
+import EmptyCoverage from '../EmptyCoverage'
 import iconMotor      from '../../assets/icon-motor.svg'
 import iconTravel     from '../../assets/icon-travel.svg'
 import iconHelperBody from '../../assets/icon-helper-body.svg'
@@ -124,28 +125,33 @@ const FILTERS: FilterOption[] = [
 type Props = {
   onViewPolicies?: () => void
   onSelectPolicy?: (slug: string) => void
+  /** False → no UOI products on file; show the empty state. */
+  hasPolicies?: boolean
 }
 
-export default function YourCoverage({ onViewPolicies, onSelectPolicy }: Props) {
+export default function YourCoverage({ onViewPolicies, onSelectPolicy, hasPolicies = true }: Props) {
   const [activeFilter, setActiveFilter] = useState<FilterKey>('all')
 
+  // No policies on file → the header, counts and chips all read zero
+  const policies = hasPolicies ? POLICIES : []
+
   const countFor = (key: FilterKey) =>
-    key === 'all' ? POLICIES.length : POLICIES.filter(p => p.category === key).length
+    key === 'all' ? policies.length : policies.filter(p => p.category === key).length
 
   const visible = activeFilter === 'all'
-    ? POLICIES
-    : POLICIES.filter(p => p.category === activeFilter)
+    ? policies
+    : policies.filter(p => p.category === activeFilter)
 
   return (
     <div className="flex flex-col gap-4">
       {/* ── Header ── */}
       <div className="flex items-center gap-7">
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          <h2 className="text-[18px] font-semibold text-text-primary m-0 leading-relaxed">
+          <h2 className="font-h3-title font-semibold text-text-primary m-0">
             Your active coverage
           </h2>
           <span className="text-[18px] text-text-tertiary leading-relaxed">
-            ({POLICIES.length})
+            ({policies.length})
           </span>
         </div>
         <ViewAll onClick={onViewPolicies} />
@@ -206,9 +212,11 @@ export default function YourCoverage({ onViewPolicies, onSelectPolicy }: Props) 
         })}
       </div>
 
-      {/* ── Policy cards ── */}
+      {/* ── Policy cards, or the empty state ── */}
       <div className="flex flex-col gap-4">
-        {visible.length === 0 ? (
+        {!hasPolicies ? (
+          <EmptyCoverage action={{ label: 'Browse Policies', onClick: onViewPolicies }} />
+        ) : visible.length === 0 ? (
           <p className="text-sm text-text-tertiary py-4 text-center">
             No policies in this category
           </p>

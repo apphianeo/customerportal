@@ -15,7 +15,7 @@ import PoliciesPage from './pages/PoliciesPage'
 import PolicyDetailPage from './pages/PolicyDetailPage'
 import ManageAccountPage from './pages/ManageAccountPage'
 import HelpSupportPage from './pages/HelpSupportPage'
-import { type Account } from './data/accounts'
+import { isPolicyholder, type Account } from './data/accounts'
 
 export type AuthMethod = 'singpass' | 'account'
 
@@ -25,6 +25,7 @@ function DashboardRoute({ account }: { account: Account }) {
   return (
     <DashboardPage
       firstName={account.firstName}
+      hasPolicies={isPolicyholder(account.nric)}
       onNavigateToPolicies={() => navigate('/policies')}
       onSelectPolicy={slug => navigate(`/policies/${slug}`)}
       onNavigateToHelp={() => navigate('/help')}
@@ -32,9 +33,15 @@ function DashboardRoute({ account }: { account: Account }) {
   )
 }
 
-function PoliciesRoute() {
+function PoliciesRoute({ account }: { account: Account }) {
   const navigate = useNavigate()
-  return <PoliciesPage onSelectPolicy={slug => navigate(`/policies/${slug}`)} />
+  return (
+    <PoliciesPage
+      hasPolicies={isPolicyholder(account.nric)}
+      onSelectPolicy={slug => navigate(`/policies/${slug}`)}
+      onNavigateToDashboard={() => navigate('/dashboard')}
+    />
+  )
 }
 
 function PolicyDetailRoute() {
@@ -106,7 +113,7 @@ function AppRoutes() {
     <Routes>
       <Route element={<DashboardLayout account={account} onLogout={logout} />}>
         <Route path="/dashboard" element={<DashboardRoute account={account} />} />
-        <Route path="/policies" element={<PoliciesRoute />} />
+        <Route path="/policies" element={<PoliciesRoute account={account} />} />
         <Route path="/policies/:slug" element={<PolicyDetailRoute />} />
         <Route path="/account" element={<AccountRoute account={account} onLogout={logout} />} />
         <Route path="/help" element={<HelpRoute />} />

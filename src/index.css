@@ -109,3 +109,44 @@ textarea:disabled,
 [data-disabled='true'] {
   cursor: not-allowed;
 }
+
+/* =========================================
+   Typography scale
+   Desktop by default; the sizes step down below 768px so headings
+   stay proportionate on small screens. Body, small and caption are
+   deliberately unchanged — only headings scale.
+==========================================*/
+.font-display   { font-size: 3.375rem; line-height: 1.2; }  /* 54px */
+.font-h1-title  { font-size: 2rem;     line-height: 1.2; }  /* 32px */
+.font-h2-title  { font-size: 1.25rem;  line-height: 1.2; }  /* 20px */
+.font-h3-title  { font-size: 1.125rem; line-height: 1.5; }  /* 18px */
+.font-body-normal { font-size: 1rem;     line-height: 1.5; } /* 16px */
+.font-body-small  { font-size: 0.875rem; line-height: 1.4; } /* 14px */
+.font-caption     { font-size: 0.75rem;  line-height: 1.4; } /* 12px */
+
+@media screen and (max-width: 767px) {
+  .font-display  { font-size: 2.25rem; }  /* 36px */
+  .font-h1-title { font-size: 1.75rem; }  /* 28px */
+  .font-h2-title { font-size: 1.125rem; } /* 18px */
+  .font-h3-title { font-size: 1rem; }     /* 16px */
+}
+
+/* =========================================
+   Page container
+   Standard page padding. Below 768px this is 24px vertical,
+   16px horizontal per the mobile spacing guideline.
+==========================================*/
+.screen-container {
+  width: 100%;
+  max-width: 1044px;
+  margin-inline: auto;
+  padding: 32px 24px;
+}
+
+@media screen and (max-width: 767px) {
+  .screen-container { padding: 24px 16px; }
+}
+
+@media screen and (min-width: 1024px) {
+  .screen-container { padding: 32px 32px; }
+}

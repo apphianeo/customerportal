@@ -4,7 +4,11 @@ import whatsappIcon from '../assets/icons/whatsapp.svg'
 import phoneIcon from '../assets/icons/phone.svg'
 
 function Link({ href, children }: { href: string; children: ReactNode }) {
-  return <a href={href} className="text-[#005eb8] hover:underline">{children}</a>
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" className="text-text-secondary underline">
+      {children}
+    </a>
+  )
 }
 
 type Faq = { q: string; a: ReactNode }
@@ -180,7 +184,7 @@ type Props = {
 export default function HelpSupportPage({ onNavigateToDashboard }: Props) {
   return (
     <div className="bg-bg-page min-h-full">
-      <div className="w-full max-w-[1044px] mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-[32px]">
+      <div className="screen-container flex flex-col gap-[32px]">
 
         {/* Breadcrumb + title — 32px rhythm between breadcrumb, header and content */}
         <div className="flex flex-col gap-[32px]">
@@ -191,7 +195,7 @@ export default function HelpSupportPage({ onNavigateToDashboard }: Props) {
             <ChevronRightIcon size={10} style={{ color: '#6E6E6E' }} />
             <span className="text-[12px] font-semibold text-[#005eb8] leading-[1.4]">Help &amp; Support</span>
           </div>
-          <h1 className="text-[32px] font-semibold text-[#212121] leading-[1.2] m-0">Help &amp; Support</h1>
+          <h1 className="font-h1-title font-semibold text-[#212121] m-0">Help &amp; Support</h1>
         </div>
 
         {/* FAQ categories — cards keep their own 24px rhythm */}
@@ -201,7 +205,7 @@ export default function HelpSupportPage({ onNavigateToDashboard }: Props) {
 
         {/* Still need help? */}
         <div className="rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] bg-white w-full px-[24px] py-[16px] flex flex-col gap-[16px]">
-          <h2 className="text-[18px] font-semibold text-[#212121] leading-[1.5] m-0">Still need help?</h2>
+          <h2 className="font-h3-title font-semibold text-[#212121] m-0">Still need help?</h2>
 
           {/* Operating hours */}
           <div className="border border-[rgba(0,0,0,0.09)] rounded-[8px] p-[16px] flex flex-col gap-[8px]">

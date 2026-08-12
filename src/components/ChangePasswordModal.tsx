@@ -7,6 +7,7 @@ import { useInlineValidation } from '../hooks/useInlineValidation'
 import {
   MESSAGES,
   PASSWORD_RULES as RULES,
+  attemptLogin,
   passwordMeetsRules,
   validatePasswordContent,
   validatePasswordHistory,
@@ -55,19 +56,25 @@ function PasswordInput({
 }
 
 export default function ChangePasswordModal({
+  email,
   nric,
   onClose,
   onSignIn,
 }: {
+  /** Identifies the account, so the current password can be checked. */
+  email?: string
   nric?: string
   onClose: () => void
   onSignIn: () => void
 }) {
+  const [current, setCurrent] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
+  const [showCurrent, setShowCurrent] = useState(false)
   const [showPw, setShowPw] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [attempted, setAttempted] = useState(false)
+  const [currentError, setCurrentError] = useState('')
   const [passwordError, setPasswordError] = useState('')
   const [done, setDone] = useState(false)
 
@@ -83,6 +90,14 @@ export default function ChangePasswordModal({
   const mismatch = Boolean(confirmInline.error)
 
   function submit() {
+    // Prove it is really them before anything else
+    if (email) {
+      const result = attemptLogin(email, current)
+      if (!result.ok) {
+        setCurrentError(MESSAGES.passwordIncorrect)
+        return
+      }
+    }
     if (!passwordMeetsRules(password) || confirm !== password) {
       setAttempted(true)
       confirmInline.show()
@@ -93,7 +108,7 @@ export default function ChangePasswordModal({
       setPasswordError(contentError)
       return
     }
-    const historyError = validatePasswordHistory(password, nric)
+    const historyError = validatePasswordHistory(password, email)
     if (historyError) {
       setPasswordError(historyError)
       return
@@ -108,7 +123,7 @@ export default function ChangePasswordModal({
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
         <div className="relative bg-white rounded-[12px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] p-[24px] w-[480px] max-w-full flex flex-col gap-[16px]">
           <div className="flex flex-col gap-[4px]">
-            <h2 className="text-[20px] font-semibold leading-[1.2] text-[#212121] m-0">Password updated</h2>
+            <h2 className="font-h2-title font-semibold text-[#212121] m-0">Password updated</h2>
             <p className="text-[14px] text-[#6e6e6e] leading-[1.5] m-0">
               You will be logged out of all active sessions as your password was changed
             </p>
@@ -130,7 +145,7 @@ export default function ChangePasswordModal({
         {/* Header */}
         <div className="flex items-start gap-[16px]">
           <div className="flex flex-col gap-[4px] flex-1 min-w-0">
-            <h2 className="text-[20px] font-semibold leading-[1.2] text-[#212121] m-0">Choose new password</h2>
+            <h2 className="font-h2-title font-semibold text-[#212121] m-0">Choose new password</h2>
             <p className="text-[14px] text-[#6e6e6e] leading-[1.5] m-0">
               You will be logged out of all active sessions after your password is changed
             </p>
@@ -140,13 +155,32 @@ export default function ChangePasswordModal({
           </button>
         </div>
 
+        {/* Current password */}
+        <div className="flex flex-col gap-[8px] w-full">
+          <label className="text-[14px] text-[#212121] leading-[1.5]">Current password</label>
+          <PasswordInput
+            value={current}
+            onChange={v => { setCurrent(v); setCurrentError('') }}
+            placeholder="Enter current password"
+            show={showCurrent}
+            onToggle={() => setShowCurrent(s => !s)}
+            error={Boolean(currentError)}
+          />
+          {currentError && (
+            <span className="flex items-center gap-2 text-[12px] leading-[1.4] text-[#dc2626]">
+              <img src={errorNotice} alt="" className="w-4 h-4 shrink-0" />
+              {currentError}
+            </span>
+          )}
+        </div>
+
         {/* New password */}
         <div className="flex flex-col gap-[8px] w-full">
-          <label className="text-[14px] text-[#212121] leading-[1.5]">Enter new password</label>
+          <label className="text-[14px] text-[#212121] leading-[1.5]">New password</label>
           <PasswordInput
             value={password}
             onChange={v => { setPassword(v); setPasswordError('') }}
-            placeholder="Enter password"
+            placeholder="Enter new password"
             show={showPw}
             onToggle={() => setShowPw(s => !s)}
             error={Boolean(passwordError)}

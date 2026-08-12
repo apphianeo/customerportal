@@ -3,9 +3,19 @@ import { Check } from 'lucide-react'
 import singpassBtn from '../../assets/singpass-btn.png'
 import singpassLogin from '../../assets/singpass-login.png'
 import singpassLogo from '../../assets/singpass-logo.png'
+import closeIcon from '../../assets/icons/close.svg'
 import { useDebouncedValue } from '../../hooks/useDebouncedValue'
 import { useInlineValidation } from '../../hooks/useInlineValidation'
-import { accountExists, draftAccount, findAccount, type Account } from '../../data/accounts'
+import { usePostalAutofill } from '../../hooks/usePostalAutofill'
+import {
+  SINGPASS_IDENTITY,
+  accountExists,
+  draftAccount,
+  findAccount,
+  findAccountByNric,
+  registerAccount,
+  type Account,
+} from '../../data/accounts'
 import type { CountryCode } from 'libphonenumber-js'
 import {
   MESSAGES,
@@ -31,25 +41,35 @@ import {
   PrimaryButton,
   OutlineButton,
   LinkButton,
+  LegalLine,
+  SupportLine,
+  ConsentCheckbox,
 } from './AuthUI'
+
+const MARKETING_CONSENT_LABEL = 'I consent to receiving marketing communications'
+
+const NRIC_TOOLTIP =
+  'NRIC/FIN is collected to securely match and display your existing or future UOI insurance policies'
 
 type Screen =
   | 'landing'
-  | 'nric'
-  | 'nric-otp'
-  | 'register'
-  | 'register-otp'
-  | 'set-password'
+  | 'login'
+  | 'login-otp'
+  /** Sign-up starts with the identifiers Singpass will verify. */
+  | 'register-details'
   | 'singpass-qr'
   | 'singpass-approve'
-  | 'singpass-setup'
+  /** Post-Singpass: set the login email and password. */
+  | 'register-credentials'
+  | 'register-otp'
+  | 'singpass-password'
   | 'forgot'
   | 'reset'
 
-const SUBTITLE = 'Access your insurance policies in one place'
+/** Why we sent the user to Singpass — decides where they land afterwards. */
+type SingpassIntent = 'login' | 'register'
 
-/** Signing in with Singpass lands on the Singpass-created demo profile. */
-const SINGPASS_DEMO_NRIC = 'S8912345A'
+const SUBTITLE = 'Access your insurance policies in one place'
 
 /** Mask an email like ch*****@gmail.com for OTP display. */
 function maskEmail(email: string) {
@@ -66,110 +86,200 @@ export default function AuthFlow({
   onAuthenticated: (account: Account) => void
 }) {
   const [screen, setScreen] = useState<Screen>('landing')
+  /** Email is the credential, so it is the one value that spans every screen. */
   const [email, setEmail] = useState('')
-  /** Carried from Create Account into the password screens for the content/history rules. */
+  const [password, setPassword] = useState('')
+  /** Captured up front, then verified by Singpass. */
   const [nric, setNric] = useState('')
-  /** Registration details, so a new user is greeted by their own name. */
+  const [dob, setDob] = useState('')
   const [first, setFirst] = useState('')
   const [last, setLast] = useState('')
   const [phone, setPhone] = useState('')
-  const [dob, setDob] = useState('')
+  const [postal, setPostal] = useState('')
+  const [line, setLine] = useState('')
+  const [unit, setUnit] = useState('')
+  const [mailingSame, setMailingSame] = useState(true)
+  const [mailPostal, setMailPostal] = useState('')
+  const [mailLine, setMailLine] = useState('')
+  const [mailUnit, setMailUnit] = useState('')
+  const [singpassIntent, setSingpassIntent] = useState<SingpassIntent>('login')
   const [loginToast, setLoginToast] = useState<string | null>(null)
-
-  /** The account behind the current NRIC, or a draft built from the sign-up form. */
-  function currentAccount(): Account {
-    return (
-      findAccount(nric) ??
-      draftAccount({ nric, firstName: first || 'there', lastName: last, email, phone, dob })
-    )
-  }
 
   function goLogin(toast?: string) {
     setLoginToast(toast ?? null)
-    setScreen('nric')
+    setScreen('login')
+  }
+
+  /** Existing account, or the profile Singpass just handed us. */
+  function currentAccount(): Account {
+    return (
+      findAccount(email) ??
+      draftAccount({
+        email,
+        password,
+        passwordHistory: password ? [password] : [],
+        // Registering manually: only what the user typed. Singpass verifies who
+        // they are, but the profile is theirs to fill in and edit later.
+        authMethod: 'account',
+        firstName: first || 'there',
+        lastName: last,
+        nric,
+        dob,
+        phone,
+        residentialPostal: postal,
+        residentialAddress: line,
+        residentialUnit: unit,
+        mailingSameAsResidential: mailingSame,
+        mailingPostal: mailingSame ? '' : mailPostal,
+        mailingAddress: mailingSame ? '' : mailLine,
+        mailingUnit: mailingSame ? '' : mailUnit,
+      })
+    )
+  }
+
+  /** Sign-up complete — keep the account so the user can sign in again. */
+  function finishRegistration(overrides: Partial<Account> = {}) {
+    onAuthenticated(registerAccount({ ...currentAccount(), ...overrides }))
+  }
+
+  /** Singpass hands back the verified identity and pre-fills the email. */
+  function onSingpassVerified() {
+    if (singpassIntent === 'login') {
+      const existing = findAccountByNric(SINGPASS_IDENTITY.nric)
+      if (existing) {
+        onAuthenticated(existing)
+        return
+      }
+      setEmail(SINGPASS_IDENTITY.email)
+      setNric(SINGPASS_IDENTITY.nric)
+      setDob(SINGPASS_IDENTITY.dob)
+      setFirst(SINGPASS_IDENTITY.firstName)
+      setLast(SINGPASS_IDENTITY.lastName)
+      setScreen('singpass-password')
+      return
+    }
+    // Registering — Singpass confirms identity only. There is no synced email
+    // to borrow, so the user sets their login address themselves.
+    setScreen('register-credentials')
+  }
+
+  function startSingpass(intent: SingpassIntent) {
+    setSingpassIntent(intent)
+    setScreen('singpass-qr')
   }
 
   switch (screen) {
-    case 'nric':
+    case 'login':
       return (
-        <NricLogin
-          nric={nric}
-          setNric={setNric}
+        <EmailLogin
+          email={email}
+          setEmail={setEmail}
           toast={loginToast}
           onBack={() => { setLoginToast(null); setScreen('landing') }}
-          onLogin={() => setScreen('nric-otp')}
+          onLogin={() => setScreen('login-otp')}
           onForgot={() => setScreen('forgot')}
-          onRegister={() => setScreen('register')}
+          onRegister={() => setScreen('register-details')}
         />
       )
-    case 'nric-otp':
+    case 'login-otp':
       return (
         <OtpVerification
-          email="user@gmail.com"
-          onBack={() => setScreen('nric')}
+          email={email}
+          onBack={() => setScreen('login')}
           onVerify={() => onAuthenticated(currentAccount())}
         />
       )
-    case 'register':
+    case 'register-details':
       return (
-        <CreateAccount
-          email={email}
-          setEmail={setEmail}
-          nric={nric}
-          setNric={setNric}
+        <RegisterDetails
           first={first}
           setFirst={setFirst}
           last={last}
           setLast={setLast}
-          phone={phone}
-          setPhone={setPhone}
+          nric={nric}
+          setNric={setNric}
           dob={dob}
           setDob={setDob}
+          phone={phone}
+          setPhone={setPhone}
+          postal={postal}
+          setPostal={setPostal}
+          line={line}
+          setLine={setLine}
+          unit={unit}
+          setUnit={setUnit}
+          mailingSame={mailingSame}
+          setMailingSame={setMailingSame}
+          mailPostal={mailPostal}
+          setMailPostal={setMailPostal}
+          mailLine={mailLine}
+          setMailLine={setMailLine}
+          mailUnit={mailUnit}
+          setMailUnit={setMailUnit}
           onBack={() => setScreen('landing')}
-          onRequestOtp={() => setScreen('register-otp')}
-          onLogin={() => setScreen('nric')}
+          onAuthenticate={() => startSingpass('register')}
+          onLogin={() => setScreen('login')}
+        />
+      )
+    case 'singpass-qr':
+      return (
+        <SingpassLogin
+          onScan={() =>
+            // Manual sign-up pulls no data from Singpass, so the consent screen
+            // listing the fields it would share does not apply.
+            singpassIntent === 'register' ? onSingpassVerified() : setScreen('singpass-approve')
+          }
+        />
+      )
+    case 'singpass-approve':
+      return (
+        <SingpassApprove
+          onCancel={() => setScreen(singpassIntent === 'login' ? 'landing' : 'register-details')}
+          onAgree={onSingpassVerified}
+        />
+      )
+    case 'register-credentials':
+      return (
+        <RegisterCredentials
+          email={email}
+          setEmail={setEmail}
+          password={password}
+          setPassword={setPassword}
+          onBack={() => setScreen('register-details')}
+          onNext={() => setScreen('register-otp')}
+          onLogin={() => setScreen('login')}
         />
       )
     case 'register-otp':
       return (
         <OtpVerification
-          email={email || 'user@gmail.com'}
-          onBack={() => setScreen('register')}
-          onVerify={() => setScreen('set-password')}
+          email={email}
+          onBack={() => setScreen('register-credentials')}
+          onVerify={() => finishRegistration()}
         />
       )
-    case 'set-password':
+    case 'singpass-password':
       return (
         <PasswordSetup
           title="Set Password"
-          subtitle="Create a password to finish setting up your account"
+          subtitle="Set a password to finish setup and enable future login with your email address"
           buttonLabel="Create Account"
-          nric={nric}
-          onBack={() => setScreen('register-otp')}
-          onSubmit={() => onAuthenticated(currentAccount())}
-        />
-      )
-    case 'singpass-qr':
-      return <SingpassLogin onScan={() => setScreen('singpass-approve')} />
-    case 'singpass-approve':
-      return (
-        <SingpassApprove
-          onCancel={() => setScreen('landing')}
-          onAgree={() => setScreen('singpass-setup')}
-        />
-      )
-    case 'singpass-setup':
-      return (
-        <PasswordSetup
-          title="Create Password"
-          subtitle="A password is required to complete your setup. Once set, you can also log in using your NRIC/FIN."
-          buttonLabel="Complete Setup"
-          nric={nric}
+          email={email}
+          setEmail={setEmail}
+          showEmail
+          showConsent
           onBack={() => setScreen('landing')}
-          onSubmit={() =>
-            onAuthenticated(
-              findAccount(SINGPASS_DEMO_NRIC) ?? { ...currentAccount(), authMethod: 'singpass' },
-            )
+          onSubmit={pw =>
+            finishRegistration({
+              password: pw,
+              passwordHistory: [pw],
+              authMethod: 'singpass',
+              salutation: SINGPASS_IDENTITY.salutation,
+              phone: SINGPASS_IDENTITY.phone,
+              residentialPostal: SINGPASS_IDENTITY.residentialPostal,
+              residentialAddress: SINGPASS_IDENTITY.residentialAddress,
+              residentialUnit: SINGPASS_IDENTITY.residentialUnit,
+            })
           }
         />
       )
@@ -177,7 +287,9 @@ export default function AuthFlow({
       // Send reset link → straight on to setting the new password.
       return (
         <ForgotPassword
-          onBack={() => setScreen('nric')}
+          email={email}
+          setEmail={setEmail}
+          onBack={() => setScreen('login')}
           onSent={() => setScreen('reset')}
         />
       )
@@ -187,17 +299,17 @@ export default function AuthFlow({
           title="Reset Password"
           subtitle="Enter your new password"
           buttonLabel="Reset Password"
-          nric={nric}
-          onBack={() => setScreen('nric')}
+          email={email}
+          onBack={() => setScreen('login')}
           onSubmit={() => goLogin('Password updated, login again')}
         />
       )
     default:
       return (
         <Landing
-          onSingpass={() => setScreen('singpass-qr')}
-          onNric={() => setScreen('nric')}
-          onRegister={() => setScreen('register')}
+          onSingpass={() => startSingpass('login')}
+          onLogin={() => setScreen('login')}
+          onRegister={() => setScreen('register-details')}
         />
       )
   }
@@ -206,11 +318,11 @@ export default function AuthFlow({
 /* ─────────────────────────── Landing ─────────────────────────── */
 function Landing({
   onSingpass,
-  onNric,
+  onLogin,
   onRegister,
 }: {
   onSingpass: () => void
-  onNric: () => void
+  onLogin: () => void
   onRegister: () => void
 }) {
   return (
@@ -226,12 +338,16 @@ function Landing({
           <span className="flex-1 h-px bg-[rgba(0,0,0,0.09)]" />
         </div>
         <div className="w-[228px]">
-          <OutlineButton onClick={onNric}>Log in with NRIC/FIN</OutlineButton>
+          <OutlineButton onClick={onLogin}>Log in with email</OutlineButton>
         </div>
       </div>
-      <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full">
-        New user? Get started with Singpass or <LinkButton onClick={onRegister}>register manually</LinkButton>
-      </p>
+      {/* Legal line always leads; the secondary action follows */}
+      <div className="flex flex-col gap-3 w-full">
+        <LegalLine />
+        <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full m-0">
+          New user? Get started with Singpass or <LinkButton onClick={onRegister}>register manually</LinkButton>
+        </p>
+      </div>
     </AuthShell>
   )
 }
@@ -247,7 +363,7 @@ function SingpassLogin({ onScan }: { onScan: () => void }) {
           onClick={onScan}
           aria-label="Scan QR code with Singpass app"
           className="absolute cursor-pointer"
-          style={{ left: '71%', top: '44%', width: '20%', height: '28%' }}
+          style={{ left: '57%', top: '23%', width: '14%', height: '20%' }}
         />
       </div>
     </div>
@@ -307,18 +423,18 @@ function SingpassApprove({ onCancel, onAgree }: { onCancel: () => void; onAgree:
   )
 }
 
-/* ─────────────────────── NRIC/FIN login ──────────────────────── */
-function NricLogin({
+/* ───────────────────────── Email login ───────────────────────── */
+function EmailLogin({
   toast,
-  nric,
-  setNric,
+  email,
+  setEmail,
   onBack,
   onLogin,
   onForgot,
   onRegister,
 }: {
-  nric: string
-  setNric: (v: string) => void
+  email: string
+  setEmail: (v: string) => void
   toast: string | null
   onBack: () => void
   onLogin: () => void
@@ -328,27 +444,26 @@ function NricLogin({
   const [password, setPassword] = useState('')
   const [show, setShow] = useState(false)
   /** Errors raised by submitting — cleared as soon as the field is edited. */
-  const [nricSubmitError, setNricSubmitError] = useState('')
+  const [emailSubmitError, setEmailSubmitError] = useState('')
   const [passwordError, setPasswordError] = useState('')
 
-  // Quiet until the user pauses on a full-length NRIC, or leaves the field
-  const nricInline = useInlineValidation({
-    value: nric,
-    validate: validateNric,
-    requiredMessage: MESSAGES.nricInvalid,
+  const emailInline = useInlineValidation({
+    value: email,
+    validate: validateEmail,
+    requiredMessage: MESSAGES.emailInvalid,
   })
-  const nricError = nricSubmitError || nricInline.error
+  const emailError = emailSubmitError || emailInline.error
 
   function submit() {
-    nricInline.show()
-    if (!nricInline.isValid) return
-    const result = attemptLogin(nric, password)
+    emailInline.show()
+    if (!emailInline.isValid) return
+    const result = attemptLogin(email, password)
     if (!result.ok) {
-      if (result.field === 'nric') setNricSubmitError(result.message)
+      if (result.field === 'email') setEmailSubmitError(result.message)
       else setPasswordError(result.message)
       return
     }
-    setNricSubmitError('')
+    setEmailSubmitError('')
     setPasswordError('')
     onLogin()
   }
@@ -358,12 +473,14 @@ function NricLogin({
       <AuthHeader title="Customer Portal" subtitle={SUBTITLE} />
       <div className="flex flex-col gap-4 w-full">
         <Field
-          label="NRIC/FIN"
-          value={nric}
-          onChange={(v) => { setNric(v); setNricSubmitError(''); nricInline.reset() }}
-          onBlur={nricInline.onBlur}
-          placeholder="Enter NRIC/FIN"
-          error={nricError}
+          label="Email address"
+          value={email}
+          onChange={(v) => { setEmail(v); setEmailSubmitError(''); emailInline.reset() }}
+          onBlur={emailInline.onBlur}
+          placeholder="Enter email address"
+          type="email"
+          inputMode="email"
+          error={emailError}
         />
         <PasswordField
           label="Password"
@@ -381,61 +498,88 @@ function NricLogin({
           Login
         </PrimaryButton>
       </div>
-      <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full">
-        New user? Get started with Singpass or <LinkButton onClick={onRegister}>register manually</LinkButton>
-      </p>
+      {/* Legal line always leads; the secondary action follows */}
+      <div className="flex flex-col gap-3 w-full">
+        <LegalLine />
+        <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full m-0">
+          New user? Get started with Singpass or <LinkButton onClick={onRegister}>register manually</LinkButton>
+        </p>
+      </div>
     </AuthShell>
   )
 }
 
-/* ───────────────────────── Create Account ────────────────────── */
-function CreateAccount({
-  email,
-  setEmail,
-  nric,
-  setNric,
+/* ────────────── Create Account — identifiers, then Singpass ──────
+   NRIC/FIN and date of birth are captured first, then Singpass verifies
+   the person behind them and supplies the rest of the profile. */
+function RegisterDetails({
   first,
   setFirst,
   last,
   setLast,
-  phone,
-  setPhone,
+  nric,
+  setNric,
   dob,
   setDob,
+  phone,
+  setPhone,
+  postal,
+  setPostal,
+  line,
+  setLine,
+  unit,
+  setUnit,
+  mailingSame,
+  setMailingSame,
+  mailPostal,
+  setMailPostal,
+  mailLine,
+  setMailLine,
+  mailUnit,
+  setMailUnit,
   onBack,
-  onRequestOtp,
+  onAuthenticate,
   onLogin,
 }: {
-  email: string
-  setEmail: (v: string) => void
-  nric: string
-  setNric: (v: string) => void
   first: string
   setFirst: (v: string) => void
   last: string
   setLast: (v: string) => void
-  phone: string
-  setPhone: (v: string) => void
+  nric: string
+  setNric: (v: string) => void
   dob: string
   setDob: (v: string) => void
+  phone: string
+  setPhone: (v: string) => void
+  postal: string
+  setPostal: (v: string) => void
+  line: string
+  setLine: (v: string) => void
+  unit: string
+  setUnit: (v: string) => void
+  mailingSame: boolean
+  setMailingSame: (v: boolean) => void
+  mailPostal: string
+  setMailPostal: (v: string) => void
+  mailLine: string
+  setMailLine: (v: string) => void
+  mailUnit: string
+  setMailUnit: (v: string) => void
   onBack: () => void
-  onRequestOtp: () => void
+  onAuthenticate: () => void
   onLogin: () => void
 }) {
   const [country, setCountry] = useState<CountryCode>('SG')
-  const [nricSubmitError, setNricSubmitError] = useState('')
+  const [showSingpass, setShowSingpass] = useState(false)
 
-  // Each field stays quiet until the user pauses on a finished-looking value,
-  // or leaves the field. Submitting forces every error into view.
+  // A six-digit postal code identifies a building, so the street fills itself
+  usePostalAutofill({ postal, address: line, setAddress: setLine })
+  usePostalAutofill({ postal: mailPostal, address: mailLine, setAddress: setMailLine })
+
   const nricInline = useInlineValidation({
     value: nric,
     validate: validateNric,
     requiredMessage: MESSAGES.nricInvalid,
-  })
-  const emailInline = useInlineValidation({
-    value: email,
-    validate: validateEmail,
-    requiredMessage: MESSAGES.emailInvalid,
   })
   const phoneInline = useInlineValidation({
     value: phone,
@@ -443,67 +587,250 @@ function CreateAccount({
     requiredMessage: MESSAGES.phoneInvalid,
   })
 
-  const nricError = nricSubmitError || nricInline.error
-
   function submit() {
     nricInline.show()
-    emailInline.show()
     phoneInline.show()
-
-    if (!nricInline.isValid) return
-    // Registering an NRIC that already has an account
-    if (accountExists(nric)) {
-      setNricSubmitError(MESSAGES.accountExists)
-      return
-    }
-    if (!emailInline.isValid || !phoneInline.isValid) return
-    setNricSubmitError('')
-    onRequestOtp()
+    if (!nricInline.isValid || !phoneInline.isValid) return
+    setShowSingpass(true)
   }
 
   return (
     <AuthShell onBack={onBack}>
-      <AuthHeader title="Create Account" subtitle="Provide the following details to proceed" />
-      <div className="flex flex-col gap-4 w-full">
-        <div className="flex gap-4 w-full">
+      <AuthHeader title="Create Account" subtitle="Enter your details to get started" />
+      <div className="flex flex-col gap-8 w-full">
+        {/* Personal details */}
+        <div className="flex flex-col gap-6 w-full">
           <Field label="First name" value={first} onChange={setFirst} placeholder="Enter first name" />
           <Field label="Last name" value={last} onChange={setLast} placeholder="Enter last name" />
+          <DateField label="Date of birth" value={dob} onChange={setDob} />
+          <Field
+            label="NRIC/FIN"
+            value={nric}
+            onChange={(v) => { setNric(v); nricInline.reset() }}
+            onBlur={nricInline.onBlur}
+            placeholder="Enter NRIC/FIN"
+            error={nricInline.error}
+            labelTooltip={NRIC_TOOLTIP}
+          />
+          <PhoneField
+            label="Mobile number"
+            value={phone}
+            onChange={(v) => { setPhone(v); phoneInline.reset() }}
+            onBlur={phoneInline.onBlur}
+            country={country}
+            onCountryChange={setCountry}
+            error={phoneInline.error}
+            placeholder="Enter Mobile number"
+          />
         </div>
-        <DateField label="Date of birth" value={dob} onChange={setDob} />
-        <Field
-          label="NRIC/FIN"
-          value={nric}
-          onChange={(v) => { setNric(v); setNricSubmitError(''); nricInline.reset() }}
-          onBlur={nricInline.onBlur}
-          placeholder="Enter NRIC/FIN"
-          error={nricError}
-        />
+
+        {/* Residential address */}
+        <div className="flex flex-col gap-6 w-full">
+          <h2 className="text-[14px] font-semibold leading-[1.5] text-[#212121] m-0">
+            Residential address
+          </h2>
+          <Field
+            label="Postal code"
+            value={postal}
+            onChange={setPostal}
+            placeholder="Enter postal code"
+            inputMode="numeric"
+            maxLength={6}
+          />
+          <Field label="Address" value={line} onChange={setLine} placeholder="Enter address" />
+          <Field label="Unit number" value={unit} onChange={setUnit} placeholder="Enter unit number" />
+          <ConsentCheckbox
+            checked={mailingSame}
+            onChange={setMailingSame}
+            label="Mailing address same as residential"
+          />
+        </div>
+
+        {/* Unticking reveals where post should go instead */}
+        {!mailingSame && (
+          <div className="flex flex-col gap-6 w-full">
+            <h2 className="text-[14px] font-semibold leading-[1.5] text-[#212121] m-0">
+              Mailing address
+            </h2>
+            <Field
+              label="Postal code"
+              value={mailPostal}
+              onChange={setMailPostal}
+              placeholder="Enter postal code"
+              inputMode="numeric"
+              maxLength={6}
+            />
+            <Field label="Address" value={mailLine} onChange={setMailLine} placeholder="Enter address" />
+            <Field label="Unit number" value={mailUnit} onChange={setMailUnit} placeholder="Enter unit number" />
+          </div>
+        )}
+
+        <PrimaryButton onClick={submit}>Continue</PrimaryButton>
+      </div>
+      <div className="flex flex-col gap-3 w-full">
+        <LegalLine />
+        <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full m-0">
+          Already have an account? <LinkButton onClick={onLogin}>Log in</LinkButton>
+        </p>
+      </div>
+      {showSingpass && (
+        <SingpassPrompt onClose={() => setShowSingpass(false)} onAuthenticate={onAuthenticate} />
+      )}
+    </AuthShell>
+  )
+}
+
+/** Hand-off dialog before the Singpass redirect. */
+function SingpassPrompt({
+  onClose,
+  onAuthenticate,
+}: {
+  onClose: () => void
+  onAuthenticate: () => void
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
+      <div
+        onClick={e => e.stopPropagation()}
+        className="relative bg-white rounded-[12px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] p-[24px] w-[600px] max-w-full flex flex-col gap-[32px]"
+      >
+        <button onClick={onClose} aria-label="Close" className="absolute right-[24px] top-[26px] bg-transparent border-0 p-0 cursor-pointer">
+          <img src={closeIcon} alt="" className="w-[20px] h-[20px]" />
+        </button>
+        <div className="flex flex-col gap-[12px] w-full pr-[32px]">
+          <h2 className="font-h2-title font-semibold text-[#212121] m-0">Authenticate with Singpass</h2>
+          <p className="text-[14px] leading-[1.5] text-[#6e6e6e] m-0">
+            Complete the registration process by authenticating your identity
+          </p>
+        </div>
+        <div className="flex flex-col items-center w-full">
+          <button onClick={onAuthenticate} className="w-[228px] bg-transparent border-0 p-0 cursor-pointer">
+            <img src={singpassBtn} alt="Log in with Singpass" className="w-full h-auto rounded-[8px]" />
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ────────────── Create Account — login details after Singpass ─────
+   Email and password only. NRIC comes later, at the profile step, so a
+   PDPA-sensitive identifier is never a login credential. */
+function RegisterCredentials({
+  email,
+  setEmail,
+  password,
+  setPassword,
+  onBack,
+  onNext,
+  onLogin,
+}: {
+  email: string
+  setEmail: (v: string) => void
+  password: string
+  setPassword: (v: string) => void
+  onBack: () => void
+  onNext: () => void
+  onLogin: () => void
+}) {
+  const [confirm, setConfirm] = useState('')
+  const [showPw, setShowPw] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
+  const [attempted, setAttempted] = useState(false)
+  const [emailSubmitError, setEmailSubmitError] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+  const debouncedPassword = useDebouncedValue(password)
+  const allRulesMet = passwordMeetsRules(password)
+
+  const emailInline = useInlineValidation({
+    value: email,
+    validate: validateEmail,
+    requiredMessage: MESSAGES.emailInvalid,
+  })
+  const emailError = emailSubmitError || emailInline.error
+
+  const confirmInline = useInlineValidation({
+    value: confirm,
+    validate: v => (v !== debouncedPassword ? MESSAGES.passwordMismatch : undefined),
+    isComplete: v => Boolean(debouncedPassword) && !debouncedPassword.startsWith(v),
+  })
+  const confirmError = confirmInline.error
+    ? MESSAGES.passwordMismatch
+    : attempted && confirm === ''
+      ? 'Please re-enter your password'
+      : undefined
+
+  function submit() {
+    emailInline.show()
+    if (!emailInline.isValid) return
+    // Signing up with an email that already has an account
+    if (accountExists(email)) {
+      setEmailSubmitError(MESSAGES.accountExists)
+      return
+    }
+    if (!allRulesMet || confirm !== password) {
+      setAttempted(true)
+      confirmInline.show()
+      return
+    }
+    // NRIC is not known yet, so only the banned-word rule can run here.
+    const contentError = validatePasswordContent(password)
+    if (contentError) {
+      setPasswordError(contentError)
+      return
+    }
+    setEmailSubmitError('')
+    setPasswordError('')
+    onNext()
+  }
+
+  return (
+    <AuthShell onBack={onBack}>
+      <AuthHeader title="Complete Profile" subtitle="Set up your login details" />
+      <div className="flex flex-col gap-4 w-full">
         <Field
           label="Email address"
           value={email}
-          onChange={(v) => { setEmail(v); emailInline.reset() }}
+          onChange={(v) => { setEmail(v); setEmailSubmitError(''); emailInline.reset() }}
           onBlur={emailInline.onBlur}
           placeholder="Enter email address"
           type="email"
           inputMode="email"
-          error={emailInline.error}
+          error={emailError}
         />
-        <PhoneField
-          label="Phone number"
-          value={phone}
-          onChange={(v) => { setPhone(v); phoneInline.reset() }}
-          onBlur={phoneInline.onBlur}
-          country={country}
-          onCountryChange={setCountry}
-          error={phoneInline.error}
+        <div className="flex flex-col gap-2 w-full">
+          <PasswordField
+            label="Password"
+            value={password}
+            onChange={(v) => { setPassword(v); setPasswordError('') }}
+            show={showPw}
+            onToggle={() => setShowPw((s) => !s)}
+            placeholder="Enter password"
+            error={passwordError}
+          />
+          <PasswordRules password={debouncedPassword} attempted={attempted} />
+        </div>
+        <PasswordField
+          label="Confirm password"
+          value={confirm}
+          onChange={(v) => { setConfirm(v); confirmInline.reset() }}
+          onBlur={confirmInline.onBlur}
+          show={showConfirm}
+          onToggle={() => setShowConfirm((s) => !s)}
+          placeholder="Re-enter password"
+          error={confirmError}
         />
         <PrimaryButton onClick={submit}>
-          Request OTP
+          Verify Email
         </PrimaryButton>
       </div>
-      <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full">
-        Already have an account? <LinkButton onClick={onLogin}>Log in</LinkButton>
-      </p>
+      {/* Two lines only, legal first — matches the Create Account design */}
+      <div className="flex flex-col gap-3 w-full">
+        <LegalLine />
+        <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full m-0">
+          Already have an account? <LinkButton onClick={onLogin}>Log in</LinkButton>
+        </p>
+      </div>
     </AuthShell>
   )
 }
@@ -544,12 +871,10 @@ function OtpVerification({
         {error && <FieldError message={error} />}
         <ResendRow />
         <PrimaryButton onClick={verify}>
-          Verify
+          Continue
         </PrimaryButton>
       </div>
-      <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full">
-        Having trouble? <LinkButton>Contact our support team</LinkButton>
-      </p>
+      <SupportLine />
     </AuthShell>
   )
 }
@@ -574,12 +899,42 @@ function ResendRow() {
 }
 
 
+/** Live rule checklist, shared by every screen that sets a password. */
+function PasswordRules({ password, attempted }: { password: string; attempted: boolean }) {
+  return (
+    <div className="flex flex-col gap-2">
+      <span className="text-[12px] leading-[1.4] text-[#6e6e6e]">Your password must contain at least:</span>
+      {PASSWORD_RULES.map((rule) => {
+        const met = rule.test(password)
+        const failed = attempted && !met
+        return (
+          <div key={rule.label} className="flex items-center gap-2">
+            <span
+              className={`flex items-center justify-center w-[16px] h-[16px] rounded-full border ${
+                met ? 'bg-[#08754f] border-[#08754f]' : failed ? 'border-[#dc2626]' : 'border-[#c9ced6]'
+              }`}
+            >
+              {met && <Check size={11} className="text-white" strokeWidth={3} />}
+            </span>
+            <span className={`text-[12px] leading-[1.4] ${met ? 'text-[#08754f]' : failed ? 'text-[#dc2626]' : 'text-[#6e6e6e]'}`}>
+              {rule.label}
+            </span>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 function PasswordSetup({
   toast,
   title,
   subtitle,
   buttonLabel,
-  nric,
+  email,
+  setEmail,
+  showEmail,
+  showConsent,
   onBack,
   onSubmit,
 }: {
@@ -587,10 +942,15 @@ function PasswordSetup({
   title: string
   subtitle: string
   buttonLabel: string
-  /** Drives the "cannot contain NRIC" and password-history checks. */
-  nric?: string
+  /** Drives the password-history check, and shown when Singpass supplied it. */
+  email?: string
+  setEmail?: (v: string) => void
+  /** Singpass setup surfaces the email it retrieved, still editable. */
+  showEmail?: boolean
+  /** Sign-up screens ask for marketing consent; a password reset does not. */
+  showConsent?: boolean
   onBack: () => void
-  onSubmit: () => void
+  onSubmit: (password: string) => void
 }) {
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
@@ -598,13 +958,12 @@ function PasswordSetup({
   const [showConfirm, setShowConfirm] = useState(false)
   const [attempted, setAttempted] = useState(false)
   const [passwordError, setPasswordError] = useState('')
+  const [marketingConsent, setMarketingConsent] = useState(true)
 
   // Checkmarks tick as the user types, once typing settles
   const debouncedPassword = useDebouncedValue(password)
 
   const allRulesMet = passwordMeetsRules(password)
-  // Only flag a mismatch once the confirm entry is at least as long as the
-  // password — otherwise every prefix reads as "does not match".
   const confirmInline = useInlineValidation({
     value: confirm,
     validate: v => (v !== debouncedPassword ? MESSAGES.passwordMismatch : undefined),
@@ -614,7 +973,6 @@ function PasswordSetup({
   })
   const mismatch = Boolean(confirmInline.error)
 
-  // Confirm-field error: live mismatch, or empty/mismatch surfaced after a submit attempt.
   const confirmError = mismatch
     ? MESSAGES.passwordMismatch
     : attempted && confirm === ''
@@ -627,26 +985,36 @@ function PasswordSetup({
       confirmInline.show()
       return
     }
-    // Content policy — no NRIC/FIN, no "pass"/"pwd"
-    const contentError = validatePasswordContent(password, nric)
+    // Content policy — no "pass"/"pwd"
+    const contentError = validatePasswordContent(password)
     if (contentError) {
       setPasswordError(contentError)
       return
     }
     // Reuse policy — checked against the last 5 passwords on file
-    const historyError = validatePasswordHistory(password, nric)
+    const historyError = validatePasswordHistory(password, email)
     if (historyError) {
       setPasswordError(historyError)
       return
     }
     setPasswordError('')
-    onSubmit()
+    onSubmit(password)
   }
 
   return (
     <AuthShell onBack={onBack} toast={toast}>
       <AuthHeader title={title} subtitle={subtitle} />
       <div className="flex flex-col gap-4 w-full">
+        {showEmail && setEmail && (
+          <Field
+            label="Email address"
+            value={email ?? ''}
+            onChange={setEmail}
+            placeholder="Enter email address"
+            type="email"
+            inputMode="email"
+          />
+        )}
         <div className="flex flex-col gap-2 w-full">
           <PasswordField
             label="Password"
@@ -657,27 +1025,7 @@ function PasswordSetup({
             placeholder="Enter password"
             error={passwordError}
           />
-          <div className="flex flex-col gap-2">
-            <span className="text-[12px] leading-[1.4] text-[#6e6e6e]">Your password must contain at least:</span>
-            {PASSWORD_RULES.map((rule) => {
-              const met = rule.test(debouncedPassword)
-              const failed = attempted && !met
-              return (
-                <div key={rule.label} className="flex items-center gap-2">
-                  <span
-                    className={`flex items-center justify-center w-[16px] h-[16px] rounded-full border ${
-                      met ? 'bg-[#08754f] border-[#08754f]' : failed ? 'border-[#dc2626]' : 'border-[#c9ced6]'
-                    }`}
-                  >
-                    {met && <Check size={11} className="text-white" strokeWidth={3} />}
-                  </span>
-                  <span className={`text-[12px] leading-[1.4] ${met ? 'text-[#08754f]' : failed ? 'text-[#dc2626]' : 'text-[#6e6e6e]'}`}>
-                    {rule.label}
-                  </span>
-                </div>
-              )
-            })}
-          </div>
+          <PasswordRules password={debouncedPassword} attempted={attempted} />
         </div>
         <PasswordField
           label="Confirm password"
@@ -689,20 +1037,37 @@ function PasswordSetup({
           placeholder="Re-enter password"
           error={confirmError}
         />
+        {showConsent && (
+          <ConsentCheckbox
+            checked={marketingConsent}
+            onChange={setMarketingConsent}
+            label={MARKETING_CONSENT_LABEL}
+          />
+        )}
         <PrimaryButton onClick={submit}>
           {buttonLabel}
         </PrimaryButton>
       </div>
-      <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full">
-        Having trouble? <LinkButton>Contact our support team</LinkButton>
-      </p>
+      <div className="flex flex-col gap-3 w-full">
+        {showConsent && <LegalLine />}
+        <SupportLine />
+      </div>
     </AuthShell>
   )
 }
 
 /* ───────────────────────── Forgot Password ───────────────────── */
-function ForgotPassword({ onBack, onSent }: { onBack: () => void; onSent: () => void }) {
-  const [email, setEmail] = useState('')
+function ForgotPassword({
+  email,
+  setEmail,
+  onBack,
+  onSent,
+}: {
+  email: string
+  setEmail: (v: string) => void
+  onBack: () => void
+  onSent: () => void
+}) {
   const [error, setError] = useState('')
   const [sent, setSent] = useState(false)
   const emailInline = useInlineValidation({
@@ -731,7 +1096,7 @@ function ForgotPassword({ onBack, onSent }: { onBack: () => void; onSent: () => 
     <AuthShell onBack={onBack} toast={sent ? 'Password reset link sent' : undefined}>
       <AuthHeader
         title="Forgot Password"
-        subtitle="Enter your account email and we'll send you a password reset link"
+        subtitle="Enter your account email and we will send you a password reset link"
       />
       <div className="flex flex-col gap-4 w-full">
         <Field
@@ -748,9 +1113,7 @@ function ForgotPassword({ onBack, onSent }: { onBack: () => void; onSent: () => 
           Send Reset Link
         </PrimaryButton>
       </div>
-      <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full">
-        Having trouble? <LinkButton>Contact our support team</LinkButton>
-      </p>
+      <SupportLine />
     </AuthShell>
   )
 }

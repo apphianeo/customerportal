@@ -1,0 +1,4 @@
+/* Same design tokens as the customer portal — one visual language, two apps. */
+@import "../../src/index.css";
+
+@source "./";

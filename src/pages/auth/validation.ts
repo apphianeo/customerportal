@@ -45,13 +45,15 @@ export const COUNTRIES: { code: CountryCode; dial: string; label: string }[] = [
   { code: 'SG', dial: '+65', label: 'Singapore' },
   { code: 'MY', dial: '+60', label: 'Malaysia' },
   { code: 'ID', dial: '+62', label: 'Indonesia' },
+  { code: 'VN', dial: '+84', label: 'Vietnam' },
+  { code: 'CN', dial: '+86', label: 'China' },
+  { code: 'HK', dial: '+852', label: 'Hong Kong' },
+  { code: 'TH', dial: '+66', label: 'Thailand' },
+  { code: 'PH', dial: '+63', label: 'Philippines' },
+  { code: 'IN', dial: '+91', label: 'India' },
   { code: 'AU', dial: '+61', label: 'Australia' },
   { code: 'GB', dial: '+44', label: 'United Kingdom' },
   { code: 'US', dial: '+1',  label: 'United States' },
-  { code: 'CN', dial: '+86', label: 'China' },
-  { code: 'IN', dial: '+91', label: 'India' },
-  { code: 'HK', dial: '+852', label: 'Hong Kong' },
-  { code: 'PH', dial: '+63', label: 'Philippines' },
 ]
 
 export function validatePhone(value: string, country: CountryCode): string | undefined {
@@ -82,22 +84,23 @@ export function validatePasswordContent(password: string, nric?: string): string
   return undefined
 }
 
-/** Rejects anything in the account's last 5 passwords. */
-export function validatePasswordHistory(password: string, nric?: string): string | undefined {
-  const account = nric ? findAccount(nric) : undefined
+/** Rejects anything in the account's last 5 passwords. Keyed by email now. */
+export function validatePasswordHistory(password: string, email?: string): string | undefined {
+  const account = email ? findAccount(email) : undefined
   if (!account) return undefined
   const lastFive = account.passwordHistory.slice(0, 5)
   return lastFive.some(p => p === password) ? MESSAGES.passwordReused : undefined
 }
 
-/* ─── Sign-in (on submit) ──────────────────────────────────── */
+/* ─── Sign-in (on submit) ──────────────────────────────────────
+   Email is the credential; NRIC is never typed into a login form. */
 export type LoginResult =
   | { ok: true }
-  | { ok: false; field: 'nric' | 'password'; message: string }
+  | { ok: false; field: 'email' | 'password'; message: string }
 
-export function attemptLogin(nric: string, password: string): LoginResult {
-  const account = findAccount(nric)
-  if (!account) return { ok: false, field: 'nric', message: MESSAGES.accountMissing }
+export function attemptLogin(email: string, password: string): LoginResult {
+  const account = findAccount(email)
+  if (!account) return { ok: false, field: 'email', message: MESSAGES.accountMissing }
   if (account.password !== password) {
     return { ok: false, field: 'password', message: MESSAGES.passwordIncorrect }
   }

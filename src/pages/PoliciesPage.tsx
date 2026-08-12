@@ -11,6 +11,7 @@ import iconAccident1  from '../assets/icon-accident-1.svg'
 import iconAccident2  from '../assets/icon-accident-2.svg'
 
 import { POLICIES, type PolicyData, type PolicyStatus, type FilterKey } from '../data/policies'
+import EmptyCoverage from '../components/EmptyCoverage'
 import { BUY_POLICY_URL } from '../components/dashboard/QuickActions'
 
 /* ─── Filter icon components ─────────────────────────────── */
@@ -204,33 +205,44 @@ function RecommendationCard({ item }: { item: RecommendationItem }) {
 
 /* ─── Main page ──────────────────────────────────────────── */
 type Props = {
+  /** False → no UOI products on file; show the empty state. */
+  hasPolicies?: boolean
+  onNavigateToDashboard?: () => void
   onSelectPolicy?: (slug: string) => void
 }
 
-export default function PoliciesPage({ onSelectPolicy }: Props) {
+export default function PoliciesPage({ onSelectPolicy, onNavigateToDashboard, hasPolicies = true }: Props) {
   const [activeFilter, setActiveFilter] = useState<FilterKey>('all')
 
+  // No policies on file → counts and chips all read zero
+  const policies = hasPolicies ? POLICIES : []
+
   const countFor = (key: FilterKey) =>
-    key === 'all' ? POLICIES.length : POLICIES.filter(p => p.category === key).length
+    key === 'all' ? policies.length : policies.filter(p => p.category === key).length
 
   const visible = activeFilter === 'all'
-    ? POLICIES
-    : POLICIES.filter(p => p.category === activeFilter)
+    ? policies
+    : policies.filter(p => p.category === activeFilter)
 
   return (
     <div className="bg-bg-page min-h-full">
-      <div className="w-full max-w-[1044px] mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-[32px]">
+      <div className="screen-container flex flex-col gap-[32px]">
 
         {/* ── Breadcrumbs ── */}
         <div className="flex items-center gap-[4px]">
-          <span className="text-[12px] text-[#8d8d8d] leading-[1.4]">Dashboard</span>
+          <button
+            onClick={onNavigateToDashboard}
+            className="text-[12px] text-[#8d8d8d] leading-[1.4] bg-transparent border-0 p-0 cursor-pointer"
+          >
+            Dashboard
+          </button>
           <ChevronRightIcon size={10} style={{ color: '#6E6E6E' }} />
           <span className="text-[12px] font-semibold text-[#005eb8] leading-[1.4]">Policies</span>
         </div>
 
         {/* ── Title row ── */}
         <div className="flex items-center gap-[12px]">
-          <h1 className="flex-1 text-[32px] font-semibold text-[#212121] leading-[1.2] m-0">Policies</h1>
+          <h1 className="flex-1 font-h1-title font-semibold text-[#212121] m-0">Policies</h1>
           <a
             href={BUY_POLICY_URL}
             target="_blank"
@@ -297,9 +309,11 @@ export default function PoliciesPage({ onSelectPolicy }: Props) {
             })}
           </div>
 
-          {/* Policy cards */}
+          {/* Policy cards, or the empty state */}
           <div className="flex flex-col gap-[24px]">
-            {visible.length === 0 ? (
+            {!hasPolicies ? (
+              <EmptyCoverage />
+            ) : visible.length === 0 ? (
               <p className="text-sm text-[#8d8d8d] py-4 text-center">No policies in this category</p>
             ) : (
               visible.map(policy => <PolicyCard key={policy.id} policy={policy} onSelect={onSelectPolicy} />)
@@ -311,7 +325,7 @@ export default function PoliciesPage({ onSelectPolicy }: Props) {
         {/* ── Disclaimer ── */}
         <p className="text-[14px] text-[#212121] leading-[1.5] m-0">
           The policy overview includes only active policies and those inactive for 180 days. If you can't find a policy, please contact us{' '}
-          <a href="https://api.whatsapp.com/send/?phone=6580814843&text&type=phone_number&app_absent=0" className="text-[#005eb8] hover:underline">here</a>.
+          <a href="https://api.whatsapp.com/send/?phone=6580814843&text&type=phone_number&app_absent=0" className="text-text-secondary underline">here</a>.
         </p>
 
         {/* ── Divider ── */}
@@ -320,7 +334,7 @@ export default function PoliciesPage({ onSelectPolicy }: Props) {
         {/* ── Not yet covered ── */}
         <div className="flex flex-col gap-[16px]">
           <div className="flex flex-col gap-[4px]">
-            <h2 className="text-[18px] font-semibold text-[#212121] m-0 leading-[1.5]">Not yet covered?</h2>
+            <h2 className="font-h3-title font-semibold text-[#212121] m-0 leading-[1.5]">Not yet covered?</h2>
             <p className="text-[14px] text-[#6e6e6e] leading-[1.5] m-0">
               Recommended coverage based on your profile
             </p>

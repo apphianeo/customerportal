@@ -1,10 +1,12 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { ChevronDown, ChevronLeft, Eye, EyeOff } from 'lucide-react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
+import { Check, ChevronDown, ChevronLeft, ChevronUp, Eye, EyeOff } from 'lucide-react'
 import DatePicker from '../../components/DatePicker'
 import uoiLogo from '../../assets/uoi-logo.svg'
 import authHero from '../../assets/auth-hero.png'
 import successCircle from '../../assets/icons/success-circle.svg'
 import errorNotice from '../../assets/icons/error-notice.svg'
+import infoIcon from '../../assets/icons/info.svg'
 import FooterShort from '../../components/layout/FooterShort'
 import { COUNTRIES } from './validation'
 import type { CountryCode } from 'libphonenumber-js'
@@ -32,7 +34,7 @@ export function AuthShell({
       <div className="flex flex-1 min-h-0">
         {/* Left form panel — scrolls when content is taller than the viewport */}
         <div
-          className="flex flex-1 flex-col items-center px-6 overflow-y-auto min-w-0"
+          className="flex flex-1 flex-col items-center px-4 sm:px-6 overflow-y-auto min-w-0"
           style={{
             backgroundImage:
               'linear-gradient(90deg, rgba(0,94,184,0.06) 0%, rgba(92,85,235,0.06) 100%), linear-gradient(#fff,#fff)',
@@ -54,18 +56,21 @@ export function AuthShell({
             </div>
           )}
           {/* Content: centered when it fits (my-auto), scrolls with top/bottom padding when tall */}
-          <div className="w-full max-w-[420px] flex flex-col items-center gap-8 my-auto py-8">
+          <div className="w-full max-w-[420px] flex flex-col items-center gap-8 my-auto py-6 sm:py-8">
             {children}
           </div>
 
-          {/* Mobile: the footer travels with the content instead of being pinned */}
-          <div className="w-full lg:hidden -mx-6 mt-auto">
+          {/* Mobile: the footer travels with the content instead of being pinned.
+              self-stretch, not w-full — the panel centres its children, so a
+              fixed-width box would just re-centre and the -mx-6 bleed would
+              cancel itself out. */}
+          <div className="self-stretch lg:hidden -mx-4 sm:-mx-6 mt-auto">
             <FooterShort />
           </div>
         </div>
 
         {/* Right hero image */}
-        <div className="hidden lg:block w-1/2 max-w-[720px] shrink-0">
+        <div className="hidden lg:block w-1/2 shrink-0">
           <img src={authHero} alt="" className="h-full w-full object-cover" />
         </div>
       </div>
@@ -83,11 +88,104 @@ export function AuthHeader({ title, subtitle }: { title: string; subtitle: strin
   return (
     <div className="flex flex-col items-center gap-3 w-full">
       <img src={uoiLogo} alt="UOI" className="h-[50px] w-auto" />
-      <h1 className="text-[32px] font-semibold leading-[1.2] text-[#212121] text-center">
+      <h1 className="font-h1-title font-semibold text-[#212121] text-center">
         {title}
       </h1>
       <p className="text-[16px] leading-[1.5] text-[#6e6e6e] text-center">{subtitle}</p>
     </div>
+  )
+}
+
+/* ── Legal consent line, shown wherever an action is binding ── */
+export const TERMS_URL = 'https://www.uoi.com.sg/uoi/important-information.page'
+export const PRIVACY_URL = 'https://www.uoi.com.sg/privacy.page'
+export const SUPPORT_URL =
+  'https://api.whatsapp.com/send/?phone=6580814843&text&type=phone_number&app_absent=0'
+
+export function LegalLine() {
+  return (
+    <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full m-0">
+      By continuing, you agree to our{' '}
+      <a href={TERMS_URL} target="_blank" rel="noopener noreferrer" className="text-text-secondary underline">T&Cs</a>
+      {' '}and{' '}
+      <a href={PRIVACY_URL} target="_blank" rel="noopener noreferrer" className="text-text-secondary underline">Privacy Notice</a>
+    </p>
+  )
+}
+
+/** Support link — opens WhatsApp in a new tab. */
+export function SupportLine() {
+  return (
+    <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full m-0">
+      Having trouble?{' '}
+      <a href={SUPPORT_URL} target="_blank" rel="noopener noreferrer" className="text-text-secondary underline">
+        Contact our support team
+      </a>
+    </p>
+  )
+}
+
+/* ── Marketing consent checkbox ── */
+export function ConsentCheckbox({
+  checked,
+  onChange,
+  label,
+}: {
+  checked: boolean
+  onChange: (v: boolean) => void
+  label: string
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onChange(!checked)}
+      className="flex items-center gap-2 w-full bg-transparent border-0 p-0 cursor-pointer text-left"
+    >
+      <span
+        aria-hidden="true"
+        className={`flex items-center justify-center size-[18px] rounded-[4px] border shrink-0 ${
+          checked ? 'bg-[#005eb8] border-[#005eb8]' : 'bg-white border-[rgba(0,0,0,0.25)]'
+        }`}
+      >
+        {checked && (
+          <svg viewBox="0 0 12 12" className="size-[12px]" aria-hidden="true">
+            <path d="M10 3L4.5 8.5L2 6" stroke="white" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
+      </span>
+      <span className="text-[14px] leading-[1.5] text-[#212121]">{label}</span>
+    </button>
+  )
+}
+
+/* ── Info tooltip beside a field label ── */
+export function InfoTooltip({ text }: { text: string }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <span className="relative inline-flex items-center">
+      <button
+        type="button"
+        aria-label={text}
+        onClick={() => setOpen(o => !o)}
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+        className="flex items-center bg-transparent border-0 p-0 cursor-pointer"
+      >
+        <img src={infoIcon} alt="" className="size-[16px]" />
+      </button>
+      {open && (
+        <span
+          role="tooltip"
+          className="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 z-30 w-[280px] max-w-[280px] bg-white rounded-[8px] p-[12px] drop-shadow-[0px_0px_4.5px_rgba(0,0,0,0.12)] text-[14px] leading-[1.5] text-[#212121] text-left"
+        >
+          {/* Arrow pointing back at the icon */}
+          <span className="absolute left-[-4px] top-1/2 -translate-y-1/2 size-[8px] rotate-45 bg-white" />
+          {text}
+        </span>
+      )}
+    </span>
   )
 }
 
@@ -123,6 +221,7 @@ export function Field({
   inputMode,
   maxLength,
   onBlur,
+  labelTooltip,
 }: {
   label?: string
   value: string
@@ -135,11 +234,18 @@ export function Field({
   inputMode?: 'text' | 'numeric' | 'tel' | 'email'
   maxLength?: number
   onBlur?: () => void
+  /** Renders an info icon next to the label with this copy in a popover. */
+  labelTooltip?: string
 }) {
   return (
     <label className="flex flex-col gap-2 w-full">
       <div className="flex flex-col gap-3 w-full">
-        {label && <span className="text-[14px] font-normal leading-[1.5] text-[#212121]">{label}</span>}
+        {label && (
+          <span className="flex items-center gap-2 text-[14px] font-normal leading-[1.5] text-[#212121]">
+            {label}
+            {labelTooltip && <InfoTooltip text={labelTooltip} />}
+          </span>
+        )}
         <div className="relative w-full">
           <input
             type={type}
@@ -219,6 +325,146 @@ export function DateField({
   return <DatePicker label={label} value={value} onChange={onChange} error={error} />
 }
 
+/* ── Country code dropdown — searchable, keyboard accessible ── */
+const MENU_WIDTH = 356
+const MENU_GAP = 12
+
+function CountrySelect({
+  country,
+  onChange,
+}: {
+  country: CountryCode
+  onChange: (c: CountryCode) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const [query, setQuery] = useState('')
+  const ref = useRef<HTMLDivElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
+  const searchRef = useRef<HTMLInputElement>(null)
+  /** Viewport coords — the menu is portalled out so cards cannot clip it. */
+  const [pos, setPos] = useState({ top: 0, left: 0 })
+
+  const selected = COUNTRIES.find(c => c.code === country) ?? COUNTRIES[0]
+  const matches = COUNTRIES.filter(c =>
+    `${c.label} ${c.dial}`.toLowerCase().includes(query.trim().toLowerCase()),
+  )
+
+  const place = useCallback(() => {
+    const anchor = ref.current
+    if (!anchor) return
+    const r = anchor.getBoundingClientRect()
+    const width = Math.min(MENU_WIDTH, window.innerWidth - 16)
+    setPos({
+      top: r.bottom + MENU_GAP,
+      left: Math.min(Math.max(8, r.left), window.innerWidth - width - 8),
+    })
+  }, [])
+
+  useLayoutEffect(() => {
+    if (!open) return
+    place()
+    window.addEventListener('scroll', place, true)
+    window.addEventListener('resize', place)
+    return () => {
+      window.removeEventListener('scroll', place, true)
+      window.removeEventListener('resize', place)
+    }
+  }, [open, place])
+
+  useEffect(() => {
+    if (!open) return
+    searchRef.current?.focus()
+    function handleClick(e: MouseEvent) {
+      const t = e.target as Node
+      if (ref.current?.contains(t) || menuRef.current?.contains(t)) return
+      setOpen(false)
+    }
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('mousedown', handleClick)
+    document.addEventListener('keydown', handleKey)
+    return () => {
+      document.removeEventListener('mousedown', handleClick)
+      document.removeEventListener('keydown', handleKey)
+    }
+  }, [open])
+
+  function pick(code: CountryCode) {
+    onChange(code)
+    setQuery('')
+    setOpen(false)
+  }
+
+  return (
+    <div ref={ref} className="relative shrink-0">
+      <button
+        type="button"
+        aria-label="Country code"
+        aria-expanded={open}
+        aria-haspopup="listbox"
+        onClick={() => setOpen(o => !o)}
+        className={`bg-white rounded-[8px] px-[16px] py-[12px] w-[93px] flex items-center gap-2 text-[16px] text-[#212121] leading-[1.5] cursor-pointer outline-none border ${
+          open
+            ? 'border-[#005eb8] shadow-[0px_0px_0px_3px_rgba(0,94,184,0.2)]'
+            : 'border-[rgba(0,0,0,0.09)]'
+        }`}
+      >
+        <span className="flex-1 text-left">{selected.dial}</span>
+        {open
+          ? <ChevronUp size={16} className="shrink-0 text-[#212121]" aria-hidden="true" />
+          : <ChevronDown size={16} className="shrink-0 text-[#212121]" aria-hidden="true" />}
+      </button>
+
+      {open && createPortal(
+        <div
+          ref={menuRef}
+          role="listbox"
+          aria-label="Country code"
+          style={{ position: 'fixed', top: pos.top, left: pos.left, width: Math.min(MENU_WIDTH, window.innerWidth - 16) }}
+          className="z-[100] bg-white rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] border border-[rgba(0,0,0,0.09)] overflow-hidden"
+        >
+          <input
+            ref={searchRef}
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder="Search"
+            aria-label="Search country"
+            className="w-full px-[12px] py-[12px] text-[16px] text-[#212121] leading-[1.5] outline-none placeholder:text-[#949494] border-b border-[rgba(0,0,0,0.09)]"
+          />
+          <div className="max-h-[240px] overflow-y-auto">
+            {matches.length === 0 ? (
+              <p className="px-[12px] py-[12px] text-[16px] text-[#949494] leading-[1.5] m-0">
+                No matches
+              </p>
+            ) : (
+              matches.map(c => {
+                const isSelected = c.code === country
+                return (
+                  <button
+                    key={c.code}
+                    type="button"
+                    role="option"
+                    aria-selected={isSelected}
+                    onClick={() => pick(c.code)}
+                    className={`w-full flex items-center gap-[10px] px-[12px] py-[12px] bg-white border-0 cursor-pointer text-left text-[16px] leading-[1.5] hover:bg-[#f6f6f6] ${
+                      isSelected ? 'text-[#005eb8] font-medium' : 'text-[#212121]'
+                    }`}
+                  >
+                    <span className="flex-1 min-w-0">{c.label} ({c.dial})</span>
+                    {isSelected && <Check size={24} className="shrink-0" aria-hidden="true" />}
+                  </button>
+                )
+              })
+            )}
+          </div>
+        </div>,
+        document.body,
+      )}
+    </div>
+  )
+}
+
 /* ── Phone number field — country code drives validation ── */
 export function PhoneField({
   label,
@@ -228,6 +474,7 @@ export function PhoneField({
   onCountryChange,
   error,
   onBlur,
+  placeholder = 'Enter phone number',
 }: {
   label: string
   value: string
@@ -236,34 +483,18 @@ export function PhoneField({
   onCountryChange: (c: CountryCode) => void
   error?: string
   onBlur?: () => void
+  placeholder?: string
 }) {
   return (
     <div className="flex flex-col gap-3 w-full">
       <span className="text-[14px] font-normal leading-[1.5] text-[#212121]">{label}</span>
       <div className="flex gap-2 w-full">
-        {/* Native select, but with the platform arrow swapped for the design's chevron */}
-        <div className="relative shrink-0">
-          <select
-            value={country}
-            onChange={e => onCountryChange(e.target.value as CountryCode)}
-            aria-label="Country code"
-            className="appearance-none bg-white border border-[rgba(0,0,0,0.09)] rounded-[8px] pl-[16px] pr-[44px] py-[12px] text-[16px] text-[#212121] leading-[1.5] w-full outline-none cursor-pointer focus:border-[#005eb8] focus:shadow-[0px_0px_0px_3px_rgba(0,94,184,0.2)]"
-          >
-            {COUNTRIES.map(c => (
-              <option key={c.code} value={c.code}>{c.dial}</option>
-            ))}
-          </select>
-          <ChevronDown
-            size={20}
-            aria-hidden="true"
-            className="pointer-events-none absolute right-[16px] top-1/2 -translate-y-1/2 text-[#6e6e6e]"
-          />
-        </div>
+        <CountrySelect country={country} onChange={onCountryChange} />
         <input
           type="tel"
           inputMode="numeric"
           value={value}
-          placeholder="Enter phone number"
+          placeholder={placeholder}
           /* No fixed length — each country's own digit range is enforced on validate */
           onChange={(e) => onChange(e.target.value.replace(/[^\d]/g, '').slice(0, 15))}
           onBlur={onBlur}
@@ -381,7 +612,7 @@ export function LinkButton({ children, onClick }: { children: ReactNode; onClick
   return (
     <button
       onClick={onClick}
-      className="text-[#005eb8] underline bg-transparent border-0 p-0 cursor-pointer font-normal"
+      className="text-text-secondary underline bg-transparent border-0 p-0 cursor-pointer font-normal"
     >
       {children}
     </button>

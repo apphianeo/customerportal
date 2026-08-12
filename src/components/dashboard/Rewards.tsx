@@ -53,7 +53,7 @@ export default function Rewards() {
   return (
     <div className="flex flex-col gap-4">
       {/* Header */}
-      <h2 className="text-[18px] font-semibold text-text-primary leading-tight m-0">
+      <h2 className="font-h3-title font-semibold text-text-primary m-0">
         Rewards
       </h2>
 

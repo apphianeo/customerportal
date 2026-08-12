@@ -4,6 +4,9 @@ import successCircle from '../assets/icons/success-circle.svg'
 import ChangePasswordModal from '../components/ChangePasswordModal'
 import DatePicker from '../components/DatePicker'
 import { ACCOUNTS, type Account } from '../data/accounts'
+import { PhoneField, SUPPORT_URL } from './auth/AuthUI'
+import retrieveMyInfo from '../assets/retrieve-myinfo.png'
+import type { CountryCode } from 'libphonenumber-js'
 
 /* ─── Field — editable or locked (grey) ─── */
 function Field({
@@ -20,7 +23,7 @@ function Field({
   placeholder?: string
 }) {
   return (
-    <label className="flex flex-col gap-[8px] w-full">
+    <label className="flex flex-col gap-[12px] w-full">
       <span className="text-[14px] text-[#212121] leading-[1.5]">{label}</span>
       {disabled ? (
         <div aria-disabled="true" className="bg-[#f5f5f5] border border-[rgba(0,0,0,0.09)] rounded-[8px] px-[16px] py-[12px] w-full">
@@ -74,14 +77,14 @@ function Card({
   footer,
 }: {
   title: string
-  subtitle?: string
+  subtitle?: React.ReactNode
   children: React.ReactNode
   footer?: React.ReactNode
 }) {
   return (
     <div className="rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] overflow-hidden bg-white w-full">
       <div className="border-b border-[rgba(0,0,0,0.09)] px-[24px] py-[16px] flex flex-col gap-[4px]">
-        <h2 className="text-[18px] font-semibold text-[#212121] m-0">{title}</h2>
+        <h2 className="font-h3-title font-semibold text-[#212121] m-0">{title}</h2>
         {subtitle && <p className="text-[14px] text-[#6e6e6e] m-0 leading-[1.5]">{subtitle}</p>}
       </div>
       <div className="p-[24px] flex flex-col gap-[24px]">{children}</div>
@@ -122,7 +125,8 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
   const [mailUnit, setMailUnit] = useState(seed.mailingUnit)
 
   // Contact
-  const [contact, setContact] = useState(`+65 ${seed.phone}`)
+  const [contact, setContact] = useState(seed.phone)
+  const [country, setCountry] = useState<CountryCode>('SG')
   const [email, setEmail] = useState(seed.email)
   const [consent, setConsent] = useState(true)
 
@@ -148,7 +152,7 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
         </div>
       )}
 
-      <div className="w-full max-w-[1044px] mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-[32px]">
+      <div className="screen-container flex flex-col gap-[32px]">
 
         {/* Breadcrumb + title — 32px rhythm between breadcrumb, header and content */}
         <div className="flex flex-col gap-[32px]">
@@ -159,70 +163,107 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
             <ChevronRightIcon size={10} style={{ color: '#6E6E6E' }} />
             <span className="text-[12px] font-semibold text-[#005eb8] leading-[1.4]">Manage Account</span>
           </div>
-          <h1 className="text-[32px] font-semibold text-[#212121] leading-[1.2] m-0">Manage Account</h1>
+          <h1 className="font-h1-title font-semibold text-[#212121] m-0">Manage Account</h1>
         </div>
 
-        {/* Personal details */}
-        <Card
-          title="Personal details"
-          footer={!singpass && <SaveButton onClick={() => setToast('Personal details updated successfully')} />}
-        >
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
-            <Field label="First name" value={first} onChange={setFirst} disabled={singpass} />
-            <Field label="Last name" value={last} onChange={setLast} disabled={singpass} />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
-            <DatePicker label="Date of birth" value={dob} onChange={setDob} disabled={singpass} />
-            <Field label="NRIC/FIN" value={nric} onChange={setNric} disabled={singpass} />
-          </div>
-        </Card>
-
-        {/* Address */}
-        <Card
-          title="Address"
-          footer={<SaveButton onClick={() => setToast('Address updated successfully')} />}
-        >
-          <div className="flex flex-col gap-[16px] w-full">
-            <span className="text-[14px] font-medium text-[#212121] leading-[1.5]">Residential address</span>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
-              <Field label="Postal code" value={resPostal} onChange={setResPostal} />
-              <Field label="Address" value={resAddr} onChange={setResAddr} />
+        {/* MyInfo banner — retrieving from Singpass is offered to everyone */}
+        <div className="rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] bg-white w-full px-[24px] py-[16px] flex flex-wrap items-center justify-between gap-[16px]">
+            <div className="flex flex-col gap-[4px] min-w-0">
+              <h2 className="text-[16px] font-semibold text-[#212121] m-0">Update details with MyInfo</h2>
+              {/* Only Singpass accounts have locked fields to explain */}
+              {singpass && (
+                <p className="text-[14px] text-[#6e6e6e] leading-[1.5] m-0">
+                  Some details are read-only because they are linked to your Singpass profile
+                </p>
+              )}
             </div>
-            <Field label="Unit number" value={resUnit} onChange={setResUnit} />
+            <button
+              onClick={() => setToast('Details retrieved from MyInfo')}
+              className="shrink-0 bg-transparent border-0 p-0 cursor-pointer"
+            >
+              <img
+                src={retrieveMyInfo}
+                alt="Retrieve MyInfo with Singpass"
+                className="w-[155px] h-[55px] object-contain"
+              />
+            </button>
+        </div>
+
+        {/* Profile — personal details and residential address in one card */}
+        <Card
+          title="Profile"
+          footer={<SaveButton onClick={() => setToast('Profile updated successfully')} />}
+        >
+          <div className="flex flex-col gap-[16px] w-full">
+            <span className="text-[14px] font-semibold text-[#212121] leading-[1.5]">Personal details</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
+              <Field label="First name" value={first} onChange={setFirst} disabled={singpass} />
+              <Field label="Last name" value={last} onChange={setLast} disabled={singpass} />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
+              <DatePicker label="Date of birth" value={dob} onChange={setDob} disabled={singpass} />
+              <Field label="NRIC/FIN" value={nric} onChange={setNric} disabled={singpass} />
+            </div>
           </div>
 
           <div className="flex flex-col gap-[16px] w-full">
-            <span className="text-[14px] font-medium text-[#212121] leading-[1.5]">Mailing address</span>
+            <span className="text-[14px] font-semibold text-[#212121] leading-[1.5]">Residential address</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
+              <Field label="Postal code" value={resPostal} onChange={setResPostal} disabled={singpass} />
+              <Field label="Address" value={resAddr} onChange={setResAddr} disabled={singpass} />
+            </div>
+            <Field label="Unit number" value={resUnit} onChange={setResUnit} disabled={singpass} />
             <Checkbox checked={mailingSame} onChange={() => setMailingSame(v => !v)} label="Mailing address same as residential" />
-            {!mailingSame && (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
-                  <Field label="Postal code" value={mailPostal} onChange={setMailPostal} placeholder="Enter postal code" />
-                  <Field label="Address" value={mailAddr} onChange={setMailAddr} placeholder="Enter address" />
-                </div>
-                <Field label="Unit number" value={mailUnit} onChange={setMailUnit} placeholder="Enter unit number" />
-              </>
-            )}
           </div>
 
+          {!mailingSame && (
+            <div className="flex flex-col gap-[16px] w-full">
+              <span className="text-[14px] font-semibold text-[#212121] leading-[1.5]">Mailing address</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
+                <Field label="Postal code" value={mailPostal} onChange={setMailPostal} placeholder="Enter postal code" />
+                <Field label="Address" value={mailAddr} onChange={setMailAddr} placeholder="Enter address" />
+              </div>
+              <Field label="Unit number" value={mailUnit} onChange={setMailUnit} placeholder="Enter unit number" />
+            </div>
+          )}
         </Card>
 
         {/* Contact information */}
         <Card
           title="Contact information"
-          subtitle="This is for marketing communications only. To update your contact info for your policy, please update in policy page."
           footer={<SaveButton onClick={() => setToast('Contact information updated successfully')} />}
         >
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
-            <Field label="Contact number" value={contact} onChange={setContact} />
-            <Field label="Email address" value={email} onChange={setEmail} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full items-start">
+            <PhoneField
+              label="Mobile number"
+              value={contact}
+              onChange={setContact}
+              country={country}
+              onCountryChange={setCountry}
+              placeholder="Enter Mobile number"
+            />
+            <div className="flex flex-col gap-[8px] w-full">
+              <Field label="Email address" value={email} onChange={setEmail} />
+              <span className="text-[12px] leading-[1.4] text-[#6e6e6e]">
+                This is for UOI's correspondences only. To change portal login email address,
+                please contact UOI{' '}
+                <a
+                  href={SUPPORT_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-text-secondary underline"
+                >
+                  here
+                </a>
+                .
+              </span>
+            </div>
           </div>
           <Checkbox checked={consent} onChange={() => setConsent(v => !v)} label="I consent to receiving marketing communications" />
         </Card>
 
         {/* Login & security */}
         <Card title="Login & security">
-          <Field label="Account authenticator" value={singpass ? 'Linked via Singpass' : 'System Creation'} disabled />
           <div className="flex flex-col gap-[12px] w-full">
             <span className="text-[14px] text-[#212121] leading-[1.5]">Password</span>
             <button
@@ -237,6 +278,7 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
 
       {showChangePw && (
         <ChangePasswordModal
+          email={email}
           nric={nric}
           onClose={() => setShowChangePw(false)}
           onSignIn={() => { setShowChangePw(false); onLogout?.() }}
