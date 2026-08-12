@@ -352,68 +352,83 @@ function Landing({
   )
 }
 
-/* ────────────── Singpass login (QR) — Singpass's own page ─────── */
+/* ────────────── Singpass login (QR) — Singpass's own page ───────
+   A screenshot of Singpass's page with the two sign-in options made
+   clickable, since we cannot host their app. */
 function SingpassLogin({ onScan }: { onScan: () => void }) {
   return (
     <div className="min-h-screen w-full bg-white overflow-auto">
       <div className="relative w-full">
         <img src={singpassLogin} alt="Log in with Singpass" className="block w-full h-auto" />
-        {/* Clickable QR region → authorisation page */}
         <button
           onClick={onScan}
           aria-label="Scan QR code with Singpass app"
           className="absolute cursor-pointer"
-          style={{ left: '57%', top: '23%', width: '14%', height: '20%' }}
+          style={{ left: '55.4%', top: '21%', width: '11.2%', height: '15.5%' }}
+        />
+        <button
+          onClick={onScan}
+          aria-label="Use Singpass password"
+          className="absolute cursor-pointer"
+          style={{ left: '52.6%', top: '38.2%', width: '16.7%', height: '4.5%' }}
         />
       </div>
     </div>
   )
 }
 
-/* ────────────── Singpass authorisation / consent screen ───────── */
-const SINGPASS_FIELDS = ['Name', 'NRIC/FIN', 'Email Address', 'Mobile Number', 'Date of Birth', 'Registered Address', 'Sex']
+/* ────────────── Singpass authorisation / consent screen ─────────
+   Singpass's own page, so it follows their styling rather than ours. */
+const SINGPASS_FIELDS = [
+  'Name',
+  'NRIC/FIN',
+  'Email Address',
+  'Mobile Number',
+  'Date of Birth',
+  'Registered Address',
+]
 
 function SingpassApprove({ onCancel, onAgree }: { onCancel: () => void; onAgree: () => void }) {
   return (
     <div className="min-h-screen w-full bg-[#f7f7f7] flex items-center justify-center p-6">
-      <div className="w-[785px] max-w-full flex flex-col gap-8 items-center">
-        <div className="w-full border border-[rgba(0,0,0,0.09)] rounded-[12px] overflow-hidden">
-          <div className="bg-[#e6e5e8] border-t-[5px] border-[#ed1a3b] flex flex-col gap-9 items-center p-8">
-            <img src={singpassLogo} alt="Singpass" className="h-[39px] w-auto" />
-            <div className="w-full text-[18px] leading-normal text-[#6e6e6e] flex flex-col gap-4">
-              <p>
+      <div className="w-[636px] max-w-full flex flex-col gap-[26px] items-center">
+        <div className="w-full border border-[rgba(0,0,0,0.09)] rounded-[10px] overflow-hidden">
+          <div className="bg-[#e6e5e8] border-t-[4px] border-[#ed1a3b] flex flex-col gap-[29px] items-center p-[26px]">
+            <img src={singpassLogo} alt="Singpass" className="h-[32px] w-auto" />
+            <div className="w-full text-[14.5px] leading-normal text-[#6e6e6e] flex flex-col gap-4">
+              <p className="m-0">
                 Singpass retrieves personal data from relevant government agencies to pre-fill the
                 relevant fields, making digital transactions faster and more convenient.
               </p>
-              <p className="font-semibold text-[#212121]">
+              <p className="m-0 font-bold text-[#212121]">
                 UOI Customer Portal by United Overseas Insurance is requesting your information from
                 Singpass to register for an account.
               </p>
             </div>
           </div>
-          <div className="bg-white p-8 text-[18px] text-[#212121]">
+          <div className="bg-white p-[26px] text-[14.5px] text-[#212121]">
             {SINGPASS_FIELDS.map((field) => (
-              <p key={field} className="leading-[2]">
+              <p key={field} className="leading-[2] m-0">
                 <span className="text-[#949494]">{'> '}</span>
                 {field}
               </p>
             ))}
           </div>
         </div>
-        <p className="text-[16px] leading-normal text-[#6e6e6e] text-center">
+        <p className="text-[13px] leading-normal text-[#6e6e6e] text-center m-0">
           Clicking the “I Agree” button permits the digital service to retrieve your data based on the{' '}
           <span className="text-[#005eb8]">Terms of Use.</span>
         </p>
-        <div className="flex gap-8">
+        <div className="flex gap-[26px]">
           <button
             onClick={onCancel}
-            className="h-[48px] px-8 rounded-[8px] bg-white border border-[rgba(0,0,0,0.09)] text-[16px] font-medium text-[#6e6e6e] cursor-pointer"
+            className="h-[39px] px-[26px] rounded-[8px] bg-white border border-[rgba(0,0,0,0.09)] text-[13px] font-medium text-[#6e6e6e] cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={onAgree}
-            className="h-[48px] px-8 rounded-[8px] bg-[#d93841] text-[16px] font-medium text-white cursor-pointer"
+            className="h-[39px] px-[26px] rounded-[8px] bg-[#d93841] text-[13px] font-medium text-white border-0 cursor-pointer"
           >
             I Agree
           </button>
