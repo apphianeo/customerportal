@@ -262,11 +262,9 @@ export default function AuthFlow({
       return (
         <PasswordSetup
           title="Set Password"
-          subtitle="Set a password to finish setup and enable future login with your email address"
+          subtitle="Set a password to finish setup and enable future login with your Singpass-linked email address"
           buttonLabel="Create Account"
           email={email}
-          setEmail={setEmail}
-          showEmail
           showConsent
           onBack={() => setScreen('landing')}
           onSubmit={pw =>
@@ -947,8 +945,6 @@ function PasswordSetup({
   subtitle,
   buttonLabel,
   email,
-  setEmail,
-  showEmail,
   showConsent,
   onBack,
   onSubmit,
@@ -957,11 +953,9 @@ function PasswordSetup({
   title: string
   subtitle: string
   buttonLabel: string
-  /** Drives the password-history check, and shown when Singpass supplied it. */
+  /** Drives the password-history check. Singpass supplies it, so it is never
+      asked for again here — the account is already tied to that address. */
   email?: string
-  setEmail?: (v: string) => void
-  /** Singpass setup surfaces the email it retrieved, still editable. */
-  showEmail?: boolean
   /** Sign-up screens ask for marketing consent; a password reset does not. */
   showConsent?: boolean
   onBack: () => void
@@ -1020,16 +1014,6 @@ function PasswordSetup({
     <AuthShell onBack={onBack} toast={toast}>
       <AuthHeader title={title} subtitle={subtitle} />
       <div className="flex flex-col gap-4 w-full">
-        {showEmail && setEmail && (
-          <Field
-            label="Email address"
-            value={email ?? ''}
-            onChange={setEmail}
-            placeholder="Enter email address"
-            type="email"
-            inputMode="email"
-          />
-        )}
         <div className="flex flex-col gap-2 w-full">
           <PasswordField
             label="Password"
