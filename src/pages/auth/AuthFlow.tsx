@@ -486,7 +486,7 @@ function EmailLogin({
       <AuthHeader title="Customer Portal" subtitle={SUBTITLE} />
       <div className="flex flex-col gap-4 w-full">
         <Field
-          label="Email address"
+          label="Login ID (Email address)"
           value={email}
           onChange={(v) => { setEmail(v); setEmailSubmitError(''); emailInline.reset() }}
           onBlur={emailInline.onBlur}
@@ -585,9 +585,10 @@ function RegisterDetails({
   const [country, setCountry] = useState<CountryCode>('SG')
   const [showSingpass, setShowSingpass] = useState(false)
 
-  // A six-digit postal code identifies a building, so the street fills itself
-  usePostalAutofill({ postal, address: line, setAddress: setLine })
-  usePostalAutofill({ postal: mailPostal, address: mailLine, setAddress: setMailLine })
+  // A six-digit postal code identifies a building, so the street fills itself —
+  // and stays locked, since the code it came from is the thing to correct
+  const residential = usePostalAutofill({ postal, address: line, setAddress: setLine })
+  const mailing = usePostalAutofill({ postal: mailPostal, address: mailLine, setAddress: setMailLine })
 
   const nricInline = useInlineValidation({
     value: nric,
@@ -650,7 +651,13 @@ function RegisterDetails({
             inputMode="numeric"
             maxLength={6}
           />
-          <Field label="Address" value={line} onChange={setLine} placeholder="Enter address" />
+          <Field
+            label="Address"
+            value={line}
+            onChange={setLine}
+            placeholder="Enter address"
+            readOnly={residential.locked}
+          />
           <Field label="Unit number" value={unit} onChange={setUnit} placeholder="Enter unit number" />
           <ConsentCheckbox
             checked={mailingSame}
@@ -673,7 +680,13 @@ function RegisterDetails({
               inputMode="numeric"
               maxLength={6}
             />
-            <Field label="Address" value={mailLine} onChange={setMailLine} placeholder="Enter address" />
+            <Field
+              label="Address"
+              value={mailLine}
+              onChange={setMailLine}
+              placeholder="Enter address"
+              readOnly={mailing.locked}
+            />
             <Field label="Unit number" value={mailUnit} onChange={setMailUnit} placeholder="Enter unit number" />
           </div>
         )}
@@ -802,7 +815,7 @@ function RegisterCredentials({
       <AuthHeader title="Complete Profile" subtitle="Set up your login details" />
       <div className="flex flex-col gap-4 w-full">
         <Field
-          label="Email address"
+          label="Login ID (Email address)"
           value={email}
           onChange={(v) => { setEmail(v); setEmailSubmitError(''); emailInline.reset() }}
           onBlur={emailInline.onBlur}
@@ -1099,7 +1112,7 @@ function ForgotPassword({
       />
       <div className="flex flex-col gap-4 w-full">
         <Field
-          label="Email address"
+          label="Login ID (Email address)"
           value={email}
           onChange={(v) => { setEmail(v); setError(''); emailInline.reset() }}
           onBlur={emailInline.onBlur}

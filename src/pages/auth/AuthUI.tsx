@@ -202,6 +202,10 @@ export function FieldError({ message }: { message: string }) {
 const inputBase =
   'bg-white border rounded-[8px] px-[16px] py-[12px] w-full text-[16px] text-[#212121] leading-[1.5] outline-none placeholder:text-[#949494]'
 
+/** A value the form filled in for the user: greyed out, and left alone. */
+const inputReadOnly =
+  'border rounded-[8px] px-[16px] py-[12px] w-full text-[16px] leading-[1.5] outline-none bg-[#f5f5f5] text-[#bdbdbd] border-[rgba(0,0,0,0.09)] cursor-default'
+
 function borderClasses(error?: string) {
   return error
     ? 'border-[#dc2626]'
@@ -222,6 +226,7 @@ export function Field({
   maxLength,
   onBlur,
   labelTooltip,
+  readOnly,
 }: {
   label?: string
   value: string
@@ -236,6 +241,8 @@ export function Field({
   onBlur?: () => void
   /** Renders an info icon next to the label with this copy in a popover. */
   labelTooltip?: string
+  /** Shown, and readable, but the value is not the user's to change. */
+  readOnly?: boolean
 }) {
   return (
     <label className="flex flex-col gap-2 w-full">
@@ -253,9 +260,10 @@ export function Field({
             placeholder={placeholder}
             inputMode={inputMode}
             maxLength={maxLength}
+            readOnly={readOnly}
             onChange={(e) => onChange(e.target.value)}
             onBlur={onBlur}
-            className={`${inputBase} ${borderClasses(error)}`}
+            className={readOnly ? inputReadOnly : `${inputBase} ${borderClasses(error)}`}
             style={suffix ? { paddingRight: 44 } : undefined}
           />
           {suffix && (
