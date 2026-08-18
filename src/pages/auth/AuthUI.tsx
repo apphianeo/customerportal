@@ -158,32 +158,146 @@ export function ConsentCheckbox({
   )
 }
 
-/* ── Info tooltip beside a field label ── */
+/* ── Info tooltip beside a field label ──
+   Desktop (hover-capable pointer): hover or keyboard focus opens it, leaving
+   or blurring closes it. Touch: tap the icon to toggle, tap outside to close.
+   Portalled and measured so it sits beside the icon without being clipped by
+   the form, and flips to the other side when it would run off-screen. */
+const TIP_WIDTH = 280
+const TIP_GAP = 12
+const TIP_EDGE = 8
+const ARROW = 8
+
+type Side = 'right' | 'left' | 'below'
+
 export function InfoTooltip({ text }: { text: string }) {
   const [open, setOpen] = useState(false)
+  /** Hover-capable pointers get the hover affordance; touch gets tap-to-toggle. */
+  const [canHover, setCanHover] = useState(true)
+  const anchorRef = useRef<HTMLSpanElement>(null)
+  const tipRef = useRef<HTMLSpanElement>(null)
+  const [pos, setPos] = useState({ top: 0, left: 0, side: 'right' as Side, arrowX: 0 })
+
+  useEffect(() => {
+    const mq = window.matchMedia('(hover: hover) and (pointer: fine)')
+    const sync = () => setCanHover(mq.matches)
+    sync()
+    mq.addEventListener('change', sync)
+    return () => mq.removeEventListener('change', sync)
+  }, [])
+
+  const place = useCallback(() => {
+    const anchor = anchorRef.current
+    if (!anchor) return
+    const r = anchor.getBoundingClientRect()
+    const vw = window.innerWidth
+    const width = Math.min(TIP_WIDTH, vw - TIP_EDGE * 2)
+    const height = tipRef.current?.offsetHeight ?? 0
+
+    // Beside the icon by preference — right, then left. On a narrow phone
+    // neither side fits, and clamping to the edge would sit the card on top of
+    // the icon and swallow the tap that closes it, so drop below it instead.
+    const side: Side = r.right + TIP_GAP + width <= vw - TIP_EDGE
+      ? 'right'
+      : r.left - TIP_GAP - width >= TIP_EDGE
+        ? 'left'
+        : 'below'
+
+    const clamp = (x: number) => Math.min(Math.max(TIP_EDGE, x), Math.max(TIP_EDGE, vw - width - TIP_EDGE))
+    const left = side === 'right'
+      ? r.right + TIP_GAP
+      : side === 'left'
+        ? r.left - TIP_GAP - width
+        : clamp(r.left + r.width / 2 - width / 2)
+    const top = side === 'below'
+      ? r.bottom + TIP_GAP
+      : Math.min(
+          Math.max(TIP_EDGE, r.top + r.height / 2 - height / 2),
+          Math.max(TIP_EDGE, window.innerHeight - height - TIP_EDGE),
+        )
+    // Keep the arrow over the icon even once the card has been clamped.
+    setPos({ top, left, side, arrowX: r.left + r.width / 2 - left - ARROW / 2 })
+  }, [])
+
+  useLayoutEffect(() => {
+    if (!open) return
+    // Twice: once to mount, once with the measured height so it centres.
+    place()
+    const id = requestAnimationFrame(place)
+    window.addEventListener('scroll', place, true)
+    window.addEventListener('resize', place)
+    return () => {
+      cancelAnimationFrame(id)
+      window.removeEventListener('scroll', place, true)
+      window.removeEventListener('resize', place)
+    }
+  }, [open, place])
+
+  // Outside-tap dismissal only matters on touch, where there is no unhover.
+  useEffect(() => {
+    if (!open || canHover) return
+    function handle(e: PointerEvent) {
+      const t = e.target as Node
+      if (anchorRef.current?.contains(t) || tipRef.current?.contains(t)) return
+      setOpen(false)
+    }
+    document.addEventListener('pointerdown', handle)
+    return () => document.removeEventListener('pointerdown', handle)
+  }, [open, canHover])
+
+  const hoverProps = canHover
+    ? {
+        onMouseEnter: () => setOpen(true),
+        onMouseLeave: () => setOpen(false),
+        onFocus: () => setOpen(true),
+        onBlur: () => setOpen(false),
+      }
+    : {}
+
   return (
-    <span className="relative inline-flex items-center">
+    <span ref={anchorRef} className="inline-flex items-center">
       <button
         type="button"
         aria-label={text}
-        onClick={() => setOpen(o => !o)}
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
-        onFocus={() => setOpen(true)}
-        onBlur={() => setOpen(false)}
+        aria-expanded={open}
+        /* The icon lives inside a <label>, so a plain click would focus the
+           field and pop the keyboard open on touch. */
+        onClick={(e) => {
+          e.preventDefault()
+          if (!canHover) setOpen(o => !o)
+        }}
+        {...hoverProps}
         className="flex items-center bg-transparent border-0 p-0 cursor-pointer"
       >
         <img src={infoIcon} alt="" className="size-[16px]" />
       </button>
-      {open && (
+      {open && createPortal(
         <span
+          ref={tipRef}
           role="tooltip"
-          className="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 z-30 w-[280px] max-w-[280px] bg-white rounded-[8px] p-[12px] drop-shadow-[0px_0px_4.5px_rgba(0,0,0,0.12)] text-[14px] leading-[1.5] text-[#212121] text-left"
+          style={{
+            position: 'fixed',
+            top: pos.top,
+            left: pos.left,
+            width: Math.min(TIP_WIDTH, window.innerWidth - TIP_EDGE * 2),
+          }}
+          className="z-[100] block bg-white rounded-[8px] p-[12px] drop-shadow-[0px_0px_4.5px_rgba(0,0,0,0.12)] text-[14px] leading-[1.5] text-[#212121] text-left"
         >
-          {/* Arrow pointing back at the icon */}
-          <span className="absolute left-[-4px] top-1/2 -translate-y-1/2 size-[8px] rotate-45 bg-white" />
+          {/* Arrow points back at the icon, from whichever side it landed */}
+          <span
+            aria-hidden="true"
+            className="absolute size-[8px] rotate-45 bg-white"
+            style={
+              pos.side === 'below'
+                ? { top: -ARROW / 2, left: pos.arrowX }
+                : pos.side === 'right'
+                  ? { top: '50%', left: -ARROW / 2, transform: 'translateY(-50%) rotate(45deg)' }
+                  : { top: '50%', right: -ARROW / 2, transform: 'translateY(-50%) rotate(45deg)' }
+            }
+          />
           {text}
-        </span>
+        </span>,
+        document.body,
       )}
     </span>
   )

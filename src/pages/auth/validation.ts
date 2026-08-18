@@ -8,6 +8,7 @@ import { findAccount } from '../../data/accounts'
    Sentence case per the UOI UX writing guideline; single-line
    messages carry no terminal period. */
 export const MESSAGES = {
+  required: 'This field is required',
   nricInvalid: 'Please enter a valid NRIC/FIN',
   emailInvalid: 'Email address is invalid',
   phoneInvalid: 'Please enter a valid phone number',

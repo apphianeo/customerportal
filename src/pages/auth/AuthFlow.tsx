@@ -51,6 +51,23 @@ const MARKETING_CONSENT_LABEL = 'I consent to receiving marketing communications
 const NRIC_TOOLTIP =
   'NRIC/FIN is collected to securely match and display your existing or future UOI insurance policies'
 
+/**
+ * Fields with no format rule of their own still have to be filled in.
+ *
+ * Deliberately not wired to onBlur: an error appearing under an empty field on
+ * blur reflows everything below it, and on touch that lands the tap the user
+ * was already making on the wrong control. The check runs on submit instead.
+ */
+const NO_FORMAT_RULE = () => undefined
+
+function useRequired(value: string) {
+  return useInlineValidation({
+    value,
+    validate: NO_FORMAT_RULE,
+    requiredMessage: MESSAGES.required,
+  })
+}
+
 type Screen =
   | 'landing'
   | 'login'
@@ -465,13 +482,17 @@ function EmailLogin({
   const emailInline = useInlineValidation({
     value: email,
     validate: validateEmail,
-    requiredMessage: MESSAGES.emailInvalid,
+    requiredMessage: MESSAGES.required,
   })
   const emailError = emailSubmitError || emailInline.error
 
+  const passwordRequired = useRequired(password)
+  const passwordFieldError = passwordError || passwordRequired.error
+
   function submit() {
     emailInline.show()
-    if (!emailInline.isValid) return
+    passwordRequired.show()
+    if (!emailInline.isValid || !passwordRequired.isValid) return
     const result = attemptLogin(email, password)
     if (!result.ok) {
       if (result.field === 'email') setEmailSubmitError(result.message)
@@ -500,11 +521,11 @@ function EmailLogin({
         <PasswordField
           label="Password"
           value={password}
-          onChange={(v) => { setPassword(v); setPasswordError('') }}
+          onChange={(v) => { setPassword(v); setPasswordError(''); passwordRequired.reset() }}
           show={show}
           onToggle={() => setShow((s) => !s)}
           placeholder="Enter password"
-          error={passwordError}
+          error={passwordFieldError}
         />
         <div className="self-start text-[14px]">
           <LinkButton onClick={onForgot}>Forgot password?</LinkButton>
@@ -594,18 +615,37 @@ function RegisterDetails({
   const nricInline = useInlineValidation({
     value: nric,
     validate: validateNric,
-    requiredMessage: MESSAGES.nricInvalid,
+    requiredMessage: MESSAGES.required,
   })
   const phoneInline = useInlineValidation({
     value: phone,
     validate: v => validatePhone(v, country),
-    requiredMessage: MESSAGES.phoneInvalid,
+    requiredMessage: MESSAGES.required,
   })
 
+  // Unit number is optional — every other field on the form has to be filled.
+  const firstRequired = useRequired(first)
+  const lastRequired = useRequired(last)
+  const dobRequired = useRequired(dob)
+  const postalRequired = useRequired(postal)
+  const lineRequired = useRequired(line)
+  const mailPostalRequired = useRequired(mailPostal)
+  const mailLineRequired = useRequired(mailLine)
+
   function submit() {
-    nricInline.show()
-    phoneInline.show()
-    if (!nricInline.isValid || !phoneInline.isValid) return
+    const checks = [
+      firstRequired,
+      lastRequired,
+      dobRequired,
+      nricInline,
+      phoneInline,
+      postalRequired,
+      lineRequired,
+      // The mailing block only exists while the addresses differ.
+      ...(mailingSame ? [] : [mailPostalRequired, mailLineRequired]),
+    ]
+    checks.forEach(c => c.show())
+    if (checks.some(c => !c.isValid)) return
     setShowSingpass(true)
   }
 
@@ -615,9 +655,28 @@ function RegisterDetails({
       <div className="flex flex-col gap-8 w-full">
         {/* Personal details */}
         <div className="flex flex-col gap-6 w-full">
-          <Field label="First name" value={first} onChange={setFirst} placeholder="Enter first name" />
-          <Field label="Last name" value={last} onChange={setLast} placeholder="Enter last name" />
-          <DateField label="Date of birth" value={dob} onChange={setDob} />
+          <Field
+            label="First name"
+            value={first}
+            onChange={(v) => { setFirst(v); firstRequired.reset() }}
+            placeholder="Enter first name"
+            error={firstRequired.error}
+          />
+          <Field
+            label="Last name"
+            value={last}
+            onChange={(v) => { setLast(v); lastRequired.reset() }}
+            placeholder="Enter last name"
+            error={lastRequired.error}
+          />
+          {/* No onBlur — opening the calendar blurs the input, which would
+              flash "required" underneath the picker the user just opened. */}
+          <DateField
+            label="Date of birth"
+            value={dob}
+            onChange={(v) => { setDob(v); dobRequired.reset() }}
+            error={dobRequired.error}
+          />
           <Field
             label="NRIC/FIN"
             value={nric}
@@ -647,13 +706,27 @@ function RegisterDetails({
           <Field
             label="Postal code"
             value={postal}
-            onChange={setPostal}
+            onChange={(v) => { setPostal(v); postalRequired.reset() }}
             placeholder="Enter postal code"
             inputMode="numeric"
             maxLength={6}
+            error={postalRequired.error}
           />
-          <Field label="Address" value={line} onChange={setLine} placeholder="Enter address" />
-          <Field label="Unit number" value={unit} onChange={setUnit} placeholder="Enter unit number" />
+          <Field
+            label="Address"
+            value={line}
+            onChange={(v) => { setLine(v); lineRequired.reset() }}
+            placeholder="Enter address"
+            error={lineRequired.error}
+          />
+          {/* Optional — a landed address has no unit */}
+          <Field
+            label="Unit number"
+            value={unit}
+            onChange={setUnit}
+            placeholder="Enter unit number"
+            inputMode="numeric"
+          />
           <ConsentCheckbox
             checked={mailingSame}
             onChange={setMailingSame}
@@ -670,13 +743,26 @@ function RegisterDetails({
             <Field
               label="Postal code"
               value={mailPostal}
-              onChange={setMailPostal}
+              onChange={(v) => { setMailPostal(v); mailPostalRequired.reset() }}
               placeholder="Enter postal code"
               inputMode="numeric"
               maxLength={6}
+              error={mailPostalRequired.error}
             />
-            <Field label="Address" value={mailLine} onChange={setMailLine} placeholder="Enter address" />
-            <Field label="Unit number" value={mailUnit} onChange={setMailUnit} placeholder="Enter unit number" />
+            <Field
+              label="Address"
+              value={mailLine}
+              onChange={(v) => { setMailLine(v); mailLineRequired.reset() }}
+              placeholder="Enter address"
+              error={mailLineRequired.error}
+            />
+            <Field
+              label="Unit number"
+              value={mailUnit}
+              onChange={setMailUnit}
+              placeholder="Enter unit number"
+              inputMode="numeric"
+            />
           </div>
         )}
 
@@ -760,9 +846,12 @@ function RegisterCredentials({
   const emailInline = useInlineValidation({
     value: email,
     validate: validateEmail,
-    requiredMessage: MESSAGES.emailInvalid,
+    requiredMessage: MESSAGES.required,
   })
   const emailError = emailSubmitError || emailInline.error
+
+  const passwordRequired = useRequired(password)
+  const passwordFieldError = passwordError || passwordRequired.error
 
   const confirmInline = useInlineValidation({
     value: confirm,
@@ -772,22 +861,23 @@ function RegisterCredentials({
   const confirmError = confirmInline.error
     ? MESSAGES.passwordMismatch
     : attempted && confirm === ''
-      ? 'Please re-enter your password'
+      ? MESSAGES.required
       : undefined
 
   function submit() {
+    // Surface every empty field at once — bailing out on the first failure
+    // would leave the fields below it looking fine.
     emailInline.show()
+    passwordRequired.show()
+    confirmInline.show()
+    setAttempted(true)
     if (!emailInline.isValid) return
     // Signing up with an email that already has an account
     if (accountExists(email)) {
       setEmailSubmitError(MESSAGES.accountExists)
       return
     }
-    if (!allRulesMet || confirm !== password) {
-      setAttempted(true)
-      confirmInline.show()
-      return
-    }
+    if (!passwordRequired.isValid || !allRulesMet || confirm !== password) return
     // NRIC is not known yet, so only the banned-word rule can run here.
     const contentError = validatePasswordContent(password)
     if (contentError) {
@@ -817,11 +907,11 @@ function RegisterCredentials({
           <PasswordField
             label="Password"
             value={password}
-            onChange={(v) => { setPassword(v); setPasswordError('') }}
+            onChange={(v) => { setPassword(v); setPasswordError(''); passwordRequired.reset() }}
             show={showPw}
             onToggle={() => setShowPw((s) => !s)}
             placeholder="Enter password"
-            error={passwordError}
+            error={passwordFieldError}
           />
           <PasswordRules password={debouncedPassword} attempted={attempted} />
         </div>
@@ -864,6 +954,10 @@ function OtpVerification({
   const [error, setError] = useState('')
 
   function verify() {
+    if (!code.trim()) {
+      setError(MESSAGES.required)
+      return
+    }
     // Mock: an incomplete code or the all-nines placeholder fails verification.
     const otpError = validateOtp(code)
     if (otpError) {
@@ -974,6 +1068,8 @@ function PasswordSetup({
   const debouncedPassword = useDebouncedValue(password)
 
   const allRulesMet = passwordMeetsRules(password)
+  const passwordRequired = useRequired(password)
+  const passwordFieldError = passwordError || passwordRequired.error
   const confirmInline = useInlineValidation({
     value: confirm,
     validate: v => (v !== debouncedPassword ? MESSAGES.passwordMismatch : undefined),
@@ -986,15 +1082,14 @@ function PasswordSetup({
   const confirmError = mismatch
     ? MESSAGES.passwordMismatch
     : attempted && confirm === ''
-      ? 'Please re-enter your password'
+      ? MESSAGES.required
       : undefined
 
   function submit() {
-    if (!allRulesMet || confirm !== password) {
-      setAttempted(true)
-      confirmInline.show()
-      return
-    }
+    passwordRequired.show()
+    confirmInline.show()
+    setAttempted(true)
+    if (!passwordRequired.isValid || !allRulesMet || confirm !== password) return
     // Content policy — no "pass"/"pwd"
     const contentError = validatePasswordContent(password)
     if (contentError) {
@@ -1019,11 +1114,11 @@ function PasswordSetup({
           <PasswordField
             label="Password"
             value={password}
-            onChange={(v) => { setPassword(v); setPasswordError('') }}
+            onChange={(v) => { setPassword(v); setPasswordError(''); passwordRequired.reset() }}
             show={showPw}
             onToggle={() => setShowPw((s) => !s)}
             placeholder="Enter password"
-            error={passwordError}
+            error={passwordFieldError}
           />
           <PasswordRules password={debouncedPassword} attempted={attempted} />
         </div>
@@ -1073,7 +1168,7 @@ function ForgotPassword({
   const emailInline = useInlineValidation({
     value: email,
     validate: validateEmail,
-    requiredMessage: MESSAGES.emailInvalid,
+    requiredMessage: MESSAGES.required,
   })
   const emailError = error || emailInline.error
 
