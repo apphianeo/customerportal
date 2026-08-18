@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react'
 import { ChevronRightIcon } from '../components/icons'
 import successCircle from '../assets/icons/success-circle.svg'
 import ChangePasswordModal from '../components/ChangePasswordModal'
+import ChangeLoginIdModal from '../components/ChangeLoginIdModal'
 import DatePicker from '../components/DatePicker'
-import { ACCOUNTS, type Account } from '../data/accounts'
+import { ACCOUNTS, SINGPASS_IDENTITY, type Account } from '../data/accounts'
 import { PhoneField, SUPPORT_URL } from './auth/AuthUI'
+import { usePostalAutofill } from '../hooks/usePostalAutofill'
 import retrieveMyInfo from '../assets/retrieve-myinfo.png'
 import type { CountryCode } from 'libphonenumber-js'
 
@@ -15,12 +17,16 @@ function Field({
   onChange,
   disabled,
   placeholder,
+  inputMode,
+  maxLength,
 }: {
   label: string
   value: string
   onChange?: (v: string) => void
   disabled?: boolean
   placeholder?: string
+  inputMode?: 'text' | 'numeric' | 'tel' | 'email'
+  maxLength?: number
 }) {
   return (
     <label className="flex flex-col gap-[12px] w-full">
@@ -33,6 +39,8 @@ function Field({
         <input
           value={value}
           placeholder={placeholder}
+          inputMode={inputMode}
+          maxLength={maxLength}
           onChange={e => onChange?.(e.target.value)}
           className="bg-white border border-[rgba(0,0,0,0.09)] rounded-[8px] px-[16px] py-[12px] w-full text-[16px] text-[#212121] leading-[1.5] outline-none placeholder:text-[#949494] focus:border-[#005eb8] focus:shadow-[0px_0px_0px_3px_rgba(0,94,184,0.2)]"
         />
@@ -54,6 +62,32 @@ function Checkbox({ checked, onChange, label }: { checked: boolean; onChange: ()
       </span>
       <span className="text-[14px] text-[#212121] leading-[1.5]">{label}</span>
     </button>
+  )
+}
+
+/* ─── Read-only credential row with an inline "Change" action ─── */
+function CredentialRow({
+  label,
+  value,
+  onChange,
+}: {
+  label: string
+  value: string
+  onChange: () => void
+}) {
+  return (
+    <div className="flex flex-col gap-[4px] w-full">
+      <span className="text-[14px] text-[#6e6e6e] leading-[1.5]">{label}</span>
+      <div className="flex items-center gap-[12px]">
+        <span className="text-[16px] text-[#212121] leading-[1.5] break-all">{value}</span>
+        <button
+          onClick={onChange}
+          className="shrink-0 text-[14px] font-medium leading-[1.5] text-[#005eb8] bg-transparent border-0 p-0 cursor-pointer"
+        >
+          Change
+        </button>
+      </div>
+    </div>
   )
 }
 
@@ -132,6 +166,31 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
 
   const [toast, setToast] = useState<string | null>(null)
   const [showChangePw, setShowChangePw] = useState(false)
+  const [showChangeLoginId, setShowChangeLoginId] = useState(false)
+  /**
+   * Retrieving from MyInfo hands the profile over to Singpass. It is the
+   * authoritative copy from then on, so the fields it filled stop being
+   * editable — even on an account that was created manually.
+   */
+  const [retrieved, setRetrieved] = useState(false)
+  const locked = singpass || retrieved
+
+  // Postal code identifies the building, so the address fills itself — the
+  // same OneMap lookup the registration form uses.
+  usePostalAutofill({ postal: resPostal, address: resAddr, setAddress: setResAddr })
+  usePostalAutofill({ postal: mailPostal, address: mailAddr, setAddress: setMailAddr })
+
+  function retrieveFromMyInfo() {
+    setFirst(SINGPASS_IDENTITY.firstName.toUpperCase())
+    setLast(SINGPASS_IDENTITY.lastName.toUpperCase())
+    setDob(SINGPASS_IDENTITY.dob)
+    setNric(SINGPASS_IDENTITY.nric)
+    setResPostal(SINGPASS_IDENTITY.residentialPostal)
+    setResAddr(SINGPASS_IDENTITY.residentialAddress)
+    setResUnit(SINGPASS_IDENTITY.residentialUnit)
+    setRetrieved(true)
+    setToast('Details retrieved from MyInfo')
+  }
 
   useEffect(() => {
     if (!toast) return
@@ -170,15 +229,15 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
         <div className="rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] bg-white w-full px-[24px] py-[16px] flex flex-wrap items-center justify-between gap-[16px]">
             <div className="flex flex-col gap-[4px] min-w-0">
               <h2 className="text-[16px] font-semibold text-[#212121] m-0">Update details with MyInfo</h2>
-              {/* Only Singpass accounts have locked fields to explain */}
-              {singpass && (
+              {/* Explained whenever the profile is Singpass-owned */}
+              {locked && (
                 <p className="text-[14px] text-[#6e6e6e] leading-[1.5] m-0">
                   Some details are read-only because they are linked to your Singpass profile
                 </p>
               )}
             </div>
             <button
-              onClick={() => setToast('Details retrieved from MyInfo')}
+              onClick={retrieveFromMyInfo}
               className="shrink-0 bg-transparent border-0 p-0 cursor-pointer"
             >
               <img
@@ -197,22 +256,32 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
           <div className="flex flex-col gap-[16px] w-full">
             <span className="text-[14px] font-semibold text-[#212121] leading-[1.5]">Personal details</span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
-              <Field label="First name" value={first} onChange={setFirst} disabled={singpass} />
-              <Field label="Last name" value={last} onChange={setLast} disabled={singpass} />
+              <Field label="First name" value={first} onChange={setFirst} disabled={locked} />
+              <Field label="Last name" value={last} onChange={setLast} disabled={locked} />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
-              <DatePicker label="Date of birth" value={dob} onChange={setDob} disabled={singpass} />
-              <Field label="NRIC/FIN" value={nric} onChange={setNric} disabled={singpass} />
+              <DatePicker label="Date of birth" value={dob} onChange={setDob} disabled={locked} />
+              <Field label="NRIC/FIN" value={nric} onChange={setNric} disabled={locked} />
             </div>
           </div>
 
           <div className="flex flex-col gap-[16px] w-full">
             <span className="text-[14px] font-semibold text-[#212121] leading-[1.5]">Residential address</span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
-              <Field label="Postal code" value={resPostal} onChange={setResPostal} disabled={singpass} />
-              <Field label="Address" value={resAddr} onChange={setResAddr} disabled={singpass} />
+              <Field
+                label="Postal code"
+                value={resPostal}
+                onChange={setResPostal}
+                disabled={locked}
+                inputMode="numeric"
+                maxLength={6}
+              />
+              <Field label="Address" value={resAddr} onChange={setResAddr} disabled={locked} />
             </div>
-            <Field label="Unit number" value={resUnit} onChange={setResUnit} disabled={singpass} />
+            {/* Half width, like the pair above — not the full card */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
+              <Field label="Unit number" value={resUnit} onChange={setResUnit} disabled={locked} />
+            </div>
             <Checkbox checked={mailingSame} onChange={() => setMailingSame(v => !v)} label="Mailing address same as residential" />
           </div>
 
@@ -220,10 +289,19 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
             <div className="flex flex-col gap-[16px] w-full">
               <span className="text-[14px] font-semibold text-[#212121] leading-[1.5]">Mailing address</span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
-                <Field label="Postal code" value={mailPostal} onChange={setMailPostal} placeholder="Enter postal code" />
+                <Field
+                  label="Postal code"
+                  value={mailPostal}
+                  onChange={setMailPostal}
+                  placeholder="Enter postal code"
+                  inputMode="numeric"
+                  maxLength={6}
+                />
                 <Field label="Address" value={mailAddr} onChange={setMailAddr} placeholder="Enter address" />
               </div>
-              <Field label="Unit number" value={mailUnit} onChange={setMailUnit} placeholder="Enter unit number" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
+                <Field label="Unit number" value={mailUnit} onChange={setMailUnit} placeholder="Enter unit number" />
+              </div>
             </div>
           )}
         </Card>
@@ -231,6 +309,21 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
         {/* Contact information */}
         <Card
           title="Contact information"
+          subtitle={
+            <>
+              This is for marketing communications only. To update your contact info for your
+              policy, please contact us{' '}
+              <a
+                href={SUPPORT_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-text-secondary underline"
+              >
+                here
+              </a>
+              .
+            </>
+          }
           footer={<SaveButton onClick={() => setToast('Contact information updated successfully')} />}
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full items-start">
@@ -242,39 +335,30 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
               onCountryChange={setCountry}
               placeholder="Enter Mobile number"
             />
-            <div className="flex flex-col gap-[8px] w-full">
-              <Field label="Email address" value={email} onChange={setEmail} />
-              <span className="text-[12px] leading-[1.4] text-[#6e6e6e]">
-                This is for UOI's correspondences only. To change portal login email address,
-                please contact UOI{' '}
-                <a
-                  href={SUPPORT_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-text-secondary underline"
-                >
-                  here
-                </a>
-                .
-              </span>
-            </div>
+            <Field label="Email address" value={email} onChange={setEmail} />
           </div>
           <Checkbox checked={consent} onChange={() => setConsent(v => !v)} label="I consent to receiving marketing communications" />
         </Card>
 
-        {/* Login & security */}
-        <Card title="Login & security">
-          <div className="flex flex-col gap-[12px] w-full">
-            <span className="text-[14px] text-[#212121] leading-[1.5]">Password</span>
-            <button
-              onClick={() => setShowChangePw(true)}
-              className="self-start border border-[#005eb8] text-[#005eb8] bg-white px-[24px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-medium text-[16px] cursor-pointer"
-            >
-              Update Password
-            </button>
-          </div>
+        {/* Login details — credentials are changed one at a time, each behind
+            its own verified flow, so the card has no Save action of its own */}
+        <Card title="Login details">
+          <CredentialRow
+            label="Login ID (email address)"
+            value={email}
+            onChange={() => setShowChangeLoginId(true)}
+          />
+          <CredentialRow label="Password" value="••••••••" onChange={() => setShowChangePw(true)} />
         </Card>
       </div>
+
+      {showChangeLoginId && (
+        <ChangeLoginIdModal
+          email={email}
+          onClose={() => setShowChangeLoginId(false)}
+          onSignIn={() => { setShowChangeLoginId(false); onLogout?.() }}
+        />
+      )}
 
       {showChangePw && (
         <ChangePasswordModal

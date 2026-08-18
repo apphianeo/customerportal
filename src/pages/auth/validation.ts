@@ -13,6 +13,7 @@ export const MESSAGES = {
   emailInvalid: 'Email address is invalid',
   phoneInvalid: 'Please enter a valid phone number',
   passwordMismatch: 'Passwords do not match',
+  emailMismatch: 'Email addresses do not match',
   accountMissing: 'Account does not exist',
   accountExists: 'Account already exists, please login instead',
   passwordIncorrect: 'Password is incorrect, try again',
@@ -20,6 +21,15 @@ export const MESSAGES = {
   passwordUnsafe: 'Cannot contain NRIC/FIN or words like "pass" or "pwd"',
   otpIncorrect: 'Incorrect OTP',
 } as const
+
+/* ─── Email display ────────────────────────────────────────────
+   Masks an address for OTP screens: ch*****@gmail.com */
+export function maskEmail(email: string) {
+  const [name, domain] = email.split('@')
+  if (!domain) return email
+  const head = name.slice(0, 2)
+  return `${head}${'*'.repeat(Math.max(name.length - 2, 3))}@${domain}`
+}
 
 /* ─── Text casing ──────────────────────────────────────────────
    Only ever raises a letter that starts a word, so casing the user

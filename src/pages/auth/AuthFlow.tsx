@@ -23,6 +23,7 @@ import {
   PASSWORD_RULES,
   attemptLogin,
   capitalizeWords,
+  maskEmail,
   passwordMeetsRules,
   validateEmail,
   validateNric,
@@ -90,14 +91,6 @@ type Screen =
 type SingpassIntent = 'login' | 'register'
 
 const SUBTITLE = 'Access your insurance policies in one place'
-
-/** Mask an email like ch*****@gmail.com for OTP display. */
-function maskEmail(email: string) {
-  const [name, domain] = email.split('@')
-  if (!domain) return email
-  const head = name.slice(0, 2)
-  return `${head}${'*'.repeat(Math.max(name.length - 2, 3))}@${domain}`
-}
 
 export default function AuthFlow({
   onAuthenticated,
