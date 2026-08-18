@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { Check, ChevronDown, ChevronLeft, ChevronUp, Eye, EyeOff } from 'lucide-react'
+import { Check, ChevronDown, ChevronLeft, ChevronUp, Delete, Eye, EyeOff } from 'lucide-react'
 import DatePicker from '../../components/DatePicker'
 import uoiLogo from '../../assets/uoi-logo.svg'
 import authHero from '../../assets/auth-hero.png'
@@ -8,6 +8,7 @@ import successCircle from '../../assets/icons/success-circle.svg'
 import errorNotice from '../../assets/icons/error-notice.svg'
 import infoIcon from '../../assets/icons/info.svg'
 import FooterShort from '../../components/layout/FooterShort'
+import { useIsTouch } from '../../hooks/useIsTouch'
 import { COUNTRIES } from './validation'
 import type { CountryCode } from 'libphonenumber-js'
 
@@ -56,7 +57,10 @@ export function AuthShell({
             </div>
           )}
           {/* Content: centered when it fits (my-auto), scrolls with top/bottom padding when tall */}
-          <div className="w-full max-w-[420px] flex flex-col items-center gap-8 my-auto py-6 sm:py-8">
+          <div
+            data-tooltip-bounds
+            className="w-full max-w-[420px] flex flex-col items-center gap-8 my-auto py-6 sm:py-8"
+          >
             {children}
           </div>
 
@@ -173,37 +177,34 @@ type Side = 'right' | 'left' | 'below'
 export function InfoTooltip({ text }: { text: string }) {
   const [open, setOpen] = useState(false)
   /** Hover-capable pointers get the hover affordance; touch gets tap-to-toggle. */
-  const [canHover, setCanHover] = useState(true)
+  const canHover = !useIsTouch()
   const anchorRef = useRef<HTMLSpanElement>(null)
   const tipRef = useRef<HTMLSpanElement>(null)
-  const [pos, setPos] = useState({ top: 0, left: 0, side: 'right' as Side, arrowX: 0 })
-
-  useEffect(() => {
-    const mq = window.matchMedia('(hover: hover) and (pointer: fine)')
-    const sync = () => setCanHover(mq.matches)
-    sync()
-    mq.addEventListener('change', sync)
-    return () => mq.removeEventListener('change', sync)
-  }, [])
+  const [pos, setPos] = useState({ top: 0, left: 0, width: TIP_WIDTH, side: 'right' as Side, arrowX: 0 })
 
   const place = useCallback(() => {
     const anchor = anchorRef.current
     if (!anchor) return
     const r = anchor.getBoundingClientRect()
-    const vw = window.innerWidth
-    const width = Math.min(TIP_WIDTH, vw - TIP_EDGE * 2)
     const height = tipRef.current?.offsetHeight ?? 0
+
+    // Stay inside the form column rather than the raw viewport, so the card
+    // lines up with the fields instead of bleeding into the screen's padding.
+    const bounds = anchor.closest('[data-tooltip-bounds]')?.getBoundingClientRect()
+    const minX = Math.max(TIP_EDGE, bounds?.left ?? TIP_EDGE)
+    const maxX = Math.min(window.innerWidth - TIP_EDGE, bounds?.right ?? window.innerWidth - TIP_EDGE)
+    const width = Math.min(TIP_WIDTH, Math.max(0, maxX - minX))
 
     // Beside the icon by preference — right, then left. On a narrow phone
     // neither side fits, and clamping to the edge would sit the card on top of
     // the icon and swallow the tap that closes it, so drop below it instead.
-    const side: Side = r.right + TIP_GAP + width <= vw - TIP_EDGE
+    const side: Side = r.right + TIP_GAP + width <= maxX
       ? 'right'
-      : r.left - TIP_GAP - width >= TIP_EDGE
+      : r.left - TIP_GAP - width >= minX
         ? 'left'
         : 'below'
 
-    const clamp = (x: number) => Math.min(Math.max(TIP_EDGE, x), Math.max(TIP_EDGE, vw - width - TIP_EDGE))
+    const clamp = (x: number) => Math.min(Math.max(minX, x), Math.max(minX, maxX - width))
     const left = side === 'right'
       ? r.right + TIP_GAP
       : side === 'left'
@@ -216,7 +217,7 @@ export function InfoTooltip({ text }: { text: string }) {
           Math.max(TIP_EDGE, window.innerHeight - height - TIP_EDGE),
         )
     // Keep the arrow over the icon even once the card has been clamped.
-    setPos({ top, left, side, arrowX: r.left + r.width / 2 - left - ARROW / 2 })
+    setPos({ top, left, width, side, arrowX: r.left + r.width / 2 - left - ARROW / 2 })
   }, [])
 
   useLayoutEffect(() => {
@@ -279,7 +280,7 @@ export function InfoTooltip({ text }: { text: string }) {
             position: 'fixed',
             top: pos.top,
             left: pos.left,
-            width: Math.min(TIP_WIDTH, window.innerWidth - TIP_EDGE * 2),
+            width: pos.width,
           }}
           className="z-[100] block bg-white rounded-[8px] p-[12px] drop-shadow-[0px_0px_4.5px_rgba(0,0,0,0.12)] text-[14px] leading-[1.5] text-[#212121] text-left"
         >
@@ -336,6 +337,7 @@ export function Field({
   maxLength,
   onBlur,
   labelTooltip,
+  autoCapitalize,
 }: {
   label?: string
   value: string
@@ -350,6 +352,8 @@ export function Field({
   onBlur?: () => void
   /** Renders an info icon next to the label with this copy in a popover. */
   labelTooltip?: string
+  /** Mobile keyboard hint — shifts to caps automatically as the user types. */
+  autoCapitalize?: 'none' | 'words' | 'characters'
 }) {
   return (
     <label className="flex flex-col gap-2 w-full">
@@ -366,6 +370,7 @@ export function Field({
             value={value}
             placeholder={placeholder}
             inputMode={inputMode}
+            autoCapitalize={autoCapitalize}
             maxLength={maxLength}
             onChange={(e) => onChange(e.target.value)}
             onBlur={onBlur}
@@ -626,11 +631,17 @@ export function OtpBoxes({
   onChange,
   length = 6,
   error,
+  onFocusChange,
+  suppressNativeKeyboard,
 }: {
   value: string
   onChange: (v: string) => void
   length?: number
   error?: boolean
+  /** Fires when focus enters or leaves the group as a whole. */
+  onFocusChange?: (focused: boolean) => void
+  /** Prototype keypad is driving input, so keep the system keyboard down. */
+  suppressNativeKeyboard?: boolean
 }) {
   const refs = useRef<(HTMLInputElement | null)[]>([])
 
@@ -657,12 +668,22 @@ export function OtpBoxes({
   }
 
   return (
-    <div className="flex gap-2 w-full">
+    <div
+      className="flex gap-2 w-full"
+      onFocus={() => onFocusChange?.(true)}
+      /* Moving between boxes keeps focus inside the group — only report a
+         real exit, or the keypad would flicker on every hop. */
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) onFocusChange?.(false)
+      }}
+    >
       {Array.from({ length }).map((_, i) => (
         <input
           key={i}
           ref={(el) => { refs.current[i] = el }}
-          inputMode="numeric"
+          inputMode={suppressNativeKeyboard ? 'none' : 'numeric'}
+          /* Lets a real device lift the code straight out of the SMS. */
+          autoComplete={i === 0 ? 'one-time-code' : 'off'}
           maxLength={1}
           value={value[i] ?? ''}
           onChange={(e) => setChar(i, e.target.value)}
@@ -675,6 +696,82 @@ export function OtpBoxes({
           }`}
         />
       ))}
+    </div>
+  )
+}
+
+/* ── Mock iOS numeric keyboard ──
+   Prototype only. A page cannot draw into the real system keyboard, so the OTP
+   screen renders its own and keeps the native one down — that is the only way
+   to show the "From Messages" strip iOS puts above the keypad for SMS codes. */
+const KEYPAD_ROWS = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9']]
+
+/** Keeps focus in the OTP field, so tapping a key never dismisses the keypad. */
+const holdFocus = (e: { preventDefault: () => void }) => e.preventDefault()
+
+function KeypadKey({ children, onClick }: { children: ReactNode; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onMouseDown={holdFocus}
+      onClick={onClick}
+      className="flex-1 h-[46px] rounded-[5px] bg-white border-0 text-[25px] text-black cursor-pointer drop-shadow-[0px_1px_0px_rgba(0,0,0,0.25)]"
+    >
+      {children}
+    </button>
+  )
+}
+
+export function MockNumericKeypad({
+  suggestion,
+  onSuggestion,
+  onDigit,
+  onBackspace,
+}: {
+  /** The code iOS would have lifted out of the SMS; hidden once typing starts. */
+  suggestion?: string
+  onSuggestion: () => void
+  onDigit: (digit: string) => void
+  onBackspace: () => void
+}) {
+  return (
+    <div
+      className="fixed inset-x-0 bottom-0 z-[90] bg-[#d1d3d9] select-none"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+    >
+      {suggestion && (
+        <button
+          type="button"
+          onMouseDown={holdFocus}
+          onClick={onSuggestion}
+          className="w-full flex flex-col items-center gap-[2px] bg-[#efeff4] border-y border-[rgba(0,0,0,0.12)] px-[16px] py-[4px] cursor-pointer"
+        >
+          <span className="text-[12px] leading-[1.4] text-[#6e6e6e]">From Messages</span>
+          <span className="text-[16px] font-semibold leading-[1.5] text-[#212121]">{suggestion}</span>
+        </button>
+      )}
+      <div className="flex flex-col gap-[7px] px-[6px] py-[8px]">
+        {KEYPAD_ROWS.map((row) => (
+          <div key={row[0]} className="flex gap-[6px]">
+            {row.map((k) => (
+              <KeypadKey key={k} onClick={() => onDigit(k)}>{k}</KeypadKey>
+            ))}
+          </div>
+        ))}
+        <div className="flex gap-[6px] items-center">
+          <span className="flex-1 h-[46px]" />
+          <KeypadKey onClick={() => onDigit('0')}>0</KeypadKey>
+          <button
+            type="button"
+            aria-label="Delete"
+            onMouseDown={holdFocus}
+            onClick={onBackspace}
+            className="flex-1 h-[46px] flex items-center justify-center rounded-[5px] bg-transparent border-0 text-black cursor-pointer"
+          >
+            <Delete size={24} />
+          </button>
+        </div>
+      </div>
     </div>
   )
 }

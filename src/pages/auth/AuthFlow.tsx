@@ -6,6 +6,7 @@ import singpassLogo from '../../assets/singpass-logo.png'
 import closeIcon from '../../assets/icons/close.svg'
 import { useDebouncedValue } from '../../hooks/useDebouncedValue'
 import { useInlineValidation } from '../../hooks/useInlineValidation'
+import { useIsTouch } from '../../hooks/useIsTouch'
 import { usePostalAutofill } from '../../hooks/usePostalAutofill'
 import {
   SINGPASS_IDENTITY,
@@ -21,6 +22,7 @@ import {
   MESSAGES,
   PASSWORD_RULES,
   attemptLogin,
+  capitalizeWords,
   passwordMeetsRules,
   validateEmail,
   validateNric,
@@ -44,6 +46,7 @@ import {
   LegalLine,
   SupportLine,
   ConsentCheckbox,
+  MockNumericKeypad,
 } from './AuthUI'
 
 const MARKETING_CONSENT_LABEL = 'I consent to receiving marketing communications'
@@ -658,15 +661,17 @@ function RegisterDetails({
           <Field
             label="First name"
             value={first}
-            onChange={(v) => { setFirst(v); firstRequired.reset() }}
+            onChange={(v) => { setFirst(capitalizeWords(v)); firstRequired.reset() }}
             placeholder="Enter first name"
+            autoCapitalize="words"
             error={firstRequired.error}
           />
           <Field
             label="Last name"
             value={last}
-            onChange={(v) => { setLast(v); lastRequired.reset() }}
+            onChange={(v) => { setLast(capitalizeWords(v)); lastRequired.reset() }}
             placeholder="Enter last name"
+            autoCapitalize="words"
             error={lastRequired.error}
           />
           {/* No onBlur — opening the calendar blurs the input, which would
@@ -680,9 +685,10 @@ function RegisterDetails({
           <Field
             label="NRIC/FIN"
             value={nric}
-            onChange={(v) => { setNric(v); nricInline.reset() }}
+            onChange={(v) => { setNric(v.toUpperCase()); nricInline.reset() }}
             onBlur={nricInline.onBlur}
             placeholder="Enter NRIC/FIN"
+            autoCapitalize="characters"
             error={nricInline.error}
             labelTooltip={NRIC_TOOLTIP}
           />
@@ -709,6 +715,7 @@ function RegisterDetails({
             onChange={(v) => { setPostal(v); postalRequired.reset() }}
             placeholder="Enter postal code"
             inputMode="numeric"
+            autoCapitalize="characters"
             maxLength={6}
             error={postalRequired.error}
           />
@@ -746,6 +753,7 @@ function RegisterDetails({
               onChange={(v) => { setMailPostal(v); mailPostalRequired.reset() }}
               placeholder="Enter postal code"
               inputMode="numeric"
+              autoCapitalize="characters"
               maxLength={6}
               error={mailPostalRequired.error}
             />
@@ -940,7 +948,10 @@ function RegisterCredentials({
   )
 }
 
-/* ──────────────────────── OTP Verification ───────────────────── */
+/* ──────────────────────── OTP Verification ─────────────────────
+   The prototype's stand-in for the code that would arrive by SMS. */
+const MOCK_OTP = '283016'
+
 function OtpVerification({
   email,
   onBack,
@@ -952,6 +963,14 @@ function OtpVerification({
 }) {
   const [code, setCode] = useState('')
   const [error, setError] = useState('')
+  /** Touch only — a desktop browser has a real keyboard already. */
+  const isTouch = useIsTouch()
+  const [keypadOpen, setKeypadOpen] = useState(false)
+
+  function edit(next: string) {
+    setCode(next.slice(0, 6))
+    setError('')
+  }
 
   function verify() {
     if (!code.trim()) {
@@ -976,7 +995,13 @@ function OtpVerification({
       />
       <div className="flex flex-col gap-4 w-full">
         <label className="text-[14px] font-medium leading-[1.5] text-[#212121]">Enter code</label>
-        <OtpBoxes value={code} onChange={(v) => { setCode(v); setError('') }} error={Boolean(error)} />
+        <OtpBoxes
+          value={code}
+          onChange={edit}
+          error={Boolean(error)}
+          onFocusChange={setKeypadOpen}
+          suppressNativeKeyboard={isTouch}
+        />
         {error && <FieldError message={error} />}
         <ResendRow />
         <PrimaryButton onClick={verify}>
@@ -984,6 +1009,21 @@ function OtpVerification({
         </PrimaryButton>
       </div>
       <SupportLine />
+      {isTouch && (
+        <>
+          {/* Reserved for the whole screen, not just while the keypad is up:
+              collapsing it on blur reflows the page between a button's press
+              and its release, and the tap lands on whatever slid underneath. */}
+          <div className="shrink-0 h-[280px]" aria-hidden="true" />
+          {keypadOpen && <MockNumericKeypad
+            /* iOS drops the suggestion the moment the user types their own */
+            suggestion={code ? undefined : MOCK_OTP}
+            onSuggestion={() => edit(MOCK_OTP)}
+            onDigit={(d) => edit(code + d)}
+            onBackspace={() => edit(code.slice(0, -1))}
+          />}
+        </>
+      )}
     </AuthShell>
   )
 }
