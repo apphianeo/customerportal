@@ -159,7 +159,9 @@ export default function AuthFlow({
       return
     }
     // Registering — Singpass confirms identity only. There is no synced email
-    // to borrow, so the user sets their login address themselves.
+    // to borrow, so the user sets their login address themselves. Clear anything
+    // typed on an earlier screen so Complete Profile never pre-fills the login ID.
+    setEmail('')
     setScreen('register-credentials')
   }
 
@@ -262,11 +264,9 @@ export default function AuthFlow({
       return (
         <PasswordSetup
           title="Set Password"
-          subtitle="Set a password to finish setup and enable future login with your email address"
+          subtitle="Set a password to finish setup and enable future login with your Singpass-linked email address"
           buttonLabel="Create Account"
           email={email}
-          setEmail={setEmail}
-          showEmail
           showConsent
           onBack={() => setScreen('landing')}
           onSubmit={pw =>
@@ -488,7 +488,7 @@ function EmailLogin({
       <AuthHeader title="Customer Portal" subtitle={SUBTITLE} />
       <div className="flex flex-col gap-4 w-full">
         <Field
-          label="Email address"
+          label="Login ID (email address)"
           value={email}
           onChange={(v) => { setEmail(v); setEmailSubmitError(''); emailInline.reset() }}
           onBlur={emailInline.onBlur}
@@ -804,7 +804,7 @@ function RegisterCredentials({
       <AuthHeader title="Complete Profile" subtitle="Set up your login details" />
       <div className="flex flex-col gap-4 w-full">
         <Field
-          label="Email address"
+          label="Login ID (email address)"
           value={email}
           onChange={(v) => { setEmail(v); setEmailSubmitError(''); emailInline.reset() }}
           onBlur={emailInline.onBlur}
@@ -947,8 +947,6 @@ function PasswordSetup({
   subtitle,
   buttonLabel,
   email,
-  setEmail,
-  showEmail,
   showConsent,
   onBack,
   onSubmit,
@@ -957,11 +955,8 @@ function PasswordSetup({
   title: string
   subtitle: string
   buttonLabel: string
-  /** Drives the password-history check, and shown when Singpass supplied it. */
+  /** Drives the password-history check. Never shown — Singpass owns the address. */
   email?: string
-  setEmail?: (v: string) => void
-  /** Singpass setup surfaces the email it retrieved, still editable. */
-  showEmail?: boolean
   /** Sign-up screens ask for marketing consent; a password reset does not. */
   showConsent?: boolean
   onBack: () => void
@@ -1020,16 +1015,6 @@ function PasswordSetup({
     <AuthShell onBack={onBack} toast={toast}>
       <AuthHeader title={title} subtitle={subtitle} />
       <div className="flex flex-col gap-4 w-full">
-        {showEmail && setEmail && (
-          <Field
-            label="Email address"
-            value={email ?? ''}
-            onChange={setEmail}
-            placeholder="Enter email address"
-            type="email"
-            inputMode="email"
-          />
-        )}
         <div className="flex flex-col gap-2 w-full">
           <PasswordField
             label="Password"
@@ -1115,7 +1100,7 @@ function ForgotPassword({
       />
       <div className="flex flex-col gap-4 w-full">
         <Field
-          label="Email address"
+          label="Login ID (email address)"
           value={email}
           onChange={(v) => { setEmail(v); setError(''); emailInline.reset() }}
           onBlur={emailInline.onBlur}
