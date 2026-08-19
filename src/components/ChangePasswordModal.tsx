@@ -121,7 +121,7 @@ export default function ChangePasswordModal({
   if (done) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-        <div className="relative bg-white rounded-[12px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] p-[24px] w-[480px] max-w-full flex flex-col gap-[16px]">
+        <div className="relative bg-white rounded-[12px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] p-[24px] w-[600px] max-w-full flex flex-col gap-[16px]">
           <div className="flex flex-col gap-[4px]">
             <h2 className="font-h2-title font-semibold text-[#212121] m-0">Password updated</h2>
             <p className="text-[14px] text-[#6e6e6e] leading-[1.5] m-0">
@@ -141,11 +141,11 @@ export default function ChangePasswordModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
-      <div className="relative bg-white rounded-[12px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] p-[24px] w-[480px] max-w-full flex flex-col gap-[16px]" onClick={e => e.stopPropagation()}>
+      <div className="relative bg-white rounded-[12px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] p-[24px] w-[600px] max-w-full flex flex-col gap-[16px]" onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-start gap-[16px]">
           <div className="flex flex-col gap-[4px] flex-1 min-w-0">
-            <h2 className="font-h2-title font-semibold text-[#212121] m-0">Choose new password</h2>
+            <h2 className="font-h2-title font-semibold text-[#212121] m-0">Change password</h2>
             <p className="text-[14px] text-[#6e6e6e] leading-[1.5] m-0">
               You will be logged out of all active sessions after your password is changed
             </p>

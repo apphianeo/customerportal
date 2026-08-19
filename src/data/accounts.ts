@@ -53,14 +53,14 @@ export const ACCOUNTS: Account[] = [
     password: 'Chris2026',
     passwordHistory: ['Chris2026', 'Summer2025', 'Winter2024', 'Orchard88', 'Marina2023'],
     authMethod: 'account',
-    salutation: 'Mr',
-    firstName: 'Chris',
-    lastName: 'Wong',
+    salutation: 'MR',
+    firstName: 'CHRIS',
+    lastName: 'WONG',
     dob: '01/01/1989',
     nric: 'S1234567D',
     phone: '91234567',
     residentialPostal: '645123',
-    residentialAddress: '123 Pasir Ris St 21',
+    residentialAddress: '123 PASIR RIS ST 21',
     residentialUnit: '#03-21',
     mailingSameAsResidential: true,
     mailingPostal: '',
@@ -73,18 +73,18 @@ export const ACCOUNTS: Account[] = [
     password: 'Portal2026',
     passwordHistory: ['Portal2026', 'Portal2025', 'Portal2024', 'Portal2023', 'Portal2022'],
     authMethod: 'singpass',
-    salutation: 'Ms',
-    firstName: 'Mei Ling',
-    lastName: 'Tan',
+    salutation: 'MS',
+    firstName: 'MEI LING',
+    lastName: 'TAN',
     dob: '14/07/1992',
     nric: 'S8912345A',
     phone: '98765432',
     residentialPostal: '188024',
-    residentialAddress: '55 Bras Basah Rd',
+    residentialAddress: '55 BRAS BASAH RD',
     residentialUnit: '#12-08',
     mailingSameAsResidential: false,
     mailingPostal: '069118',
-    mailingAddress: '8 Cross St',
+    mailingAddress: '8 CROSS ST',
     mailingUnit: '#24-03',
   },
   {
@@ -93,14 +93,14 @@ export const ACCOUNTS: Account[] = [
     password: 'Bedok2026',
     passwordHistory: ['Bedok2026'],
     authMethod: 'account',
-    salutation: 'Mr',
-    firstName: 'Ravi',
-    lastName: 'Kumar',
+    salutation: 'MR',
+    firstName: 'RAVI',
+    lastName: 'KUMAR',
     dob: '23/11/1978',
     nric: 'S7654321B',
     phone: '81234567',
     residentialPostal: '460022',
-    residentialAddress: '22 Bedok South Ave 1',
+    residentialAddress: '22 BEDOK SOUTH AVE 1',
     residentialUnit: '#07-114',
     mailingSameAsResidential: true,
     mailingPostal: '',
@@ -113,14 +113,14 @@ export const ACCOUNTS: Account[] = [
     password: 'Sentosa2026',
     passwordHistory: ['Sentosa2026', 'Sentosa2025'],
     authMethod: 'account',
-    salutation: 'Mrs',
-    firstName: 'Aisyah',
-    lastName: 'Rahman',
+    salutation: 'MRS',
+    firstName: 'AISYAH',
+    lastName: 'RAHMAN',
     dob: '05/03/1985',
     nric: 'G4567890X',
     phone: '71234567',
     residentialPostal: '098269',
-    residentialAddress: '30 Sentosa Gateway',
+    residentialAddress: '30 SENTOSA GATEWAY',
     residentialUnit: '#05-02',
     mailingSameAsResidential: true,
     mailingPostal: '',
@@ -133,14 +133,14 @@ export const ACCOUNTS: Account[] = [
     password: 'Marina2026',
     passwordHistory: ['Marina2026'],
     authMethod: 'singpass',
-    salutation: 'Ms',
-    firstName: 'Nadia',
-    lastName: 'Lim',
+    salutation: 'MS',
+    firstName: 'NADIA',
+    lastName: 'LIM',
     dob: '09/09/1995',
     nric: 'T0011223J',
     phone: '92220000',
     residentialPostal: '018960',
-    residentialAddress: '8 Marina View',
+    residentialAddress: '8 MARINA VIEW',
     residentialUnit: '#21-05',
     mailingSameAsResidential: true,
     mailingPostal: '',
@@ -178,7 +178,7 @@ export function draftAccount(input: Partial<Account> & { email: string }): Accou
     password: '',
     passwordHistory: [],
     authMethod: 'account',
-    salutation: 'Mr',
+    salutation: 'MR',
     firstName: 'there',
     lastName: '',
     dob: '',
@@ -198,6 +198,17 @@ export function draftAccount(input: Partial<Account> & { email: string }): Accou
 
 export const fullName = (a: Account) => `${a.firstName} ${a.lastName}`.trim()
 
+/**
+ * Names are stored exactly as entered — the profile form and MyInfo both
+ * shout — but they read as prose wherever someone is greeted by name, so
+ * soften them there. Presentation only: the stored value stays authoritative,
+ * and casing the user meant ("McDonald") does not survive the round trip.
+ */
+export const titleCaseName = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/(^|[\s'-])([a-z])/g, (_, sep: string, ch: string) => sep + ch.toUpperCase())
+
 export const initials = (a: Account) =>
   `${a.firstName[0] ?? ''}${a.lastName[0] ?? ''}`.toUpperCase()
 
@@ -206,14 +217,14 @@ export const initials = (a: Account) =>
    policies but has never registered, so the first Singpass sign-in runs
    the first-time path; afterwards she is a returning user. */
 export const SINGPASS_IDENTITY = {
-  salutation: 'Mdm',
-  firstName: 'Grace',
-  lastName: 'Sim',
+  salutation: 'MDM',
+  firstName: 'GRACE',
+  lastName: 'SIM',
   dob: '17/12/1971',
   nric: 'S2244668E',
   email: 'grace.sim@gmail.com',
   phone: '93304488',
   residentialPostal: '229832',
-  residentialAddress: '77 Bukit Timah Rd',
+  residentialAddress: '77 BUKIT TIMAH RD',
   residentialUnit: '#14-02',
 }

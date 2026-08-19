@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { Check, ChevronDown, ChevronLeft, ChevronUp, Eye, EyeOff } from 'lucide-react'
+import { Check, ChevronDown, ChevronLeft, ChevronUp, Delete, Eye, EyeOff } from 'lucide-react'
 import DatePicker from '../../components/DatePicker'
 import uoiLogo from '../../assets/uoi-logo.svg'
 import authHero from '../../assets/auth-hero.png'
@@ -8,6 +8,7 @@ import successCircle from '../../assets/icons/success-circle.svg'
 import errorNotice from '../../assets/icons/error-notice.svg'
 import infoIcon from '../../assets/icons/info.svg'
 import FooterShort from '../../components/layout/FooterShort'
+import { useIsTouch } from '../../hooks/useIsTouch'
 import { COUNTRIES } from './validation'
 import type { CountryCode } from 'libphonenumber-js'
 
@@ -56,7 +57,10 @@ export function AuthShell({
             </div>
           )}
           {/* Content: centered when it fits (my-auto), scrolls with top/bottom padding when tall */}
-          <div className="w-full max-w-[420px] flex flex-col items-center gap-8 my-auto py-6 sm:py-8">
+          <div
+            data-tooltip-bounds
+            className="w-full max-w-[420px] flex flex-col items-center gap-8 my-auto py-6 sm:py-8"
+          >
             {children}
           </div>
 
@@ -158,32 +162,143 @@ export function ConsentCheckbox({
   )
 }
 
-/* ── Info tooltip beside a field label ── */
+/* ── Info tooltip beside a field label ──
+   Desktop (hover-capable pointer): hover or keyboard focus opens it, leaving
+   or blurring closes it. Touch: tap the icon to toggle, tap outside to close.
+   Portalled and measured so it sits beside the icon without being clipped by
+   the form, and flips to the other side when it would run off-screen. */
+const TIP_WIDTH = 280
+const TIP_GAP = 12
+const TIP_EDGE = 8
+const ARROW = 8
+
+type Side = 'right' | 'left' | 'below'
+
 export function InfoTooltip({ text }: { text: string }) {
   const [open, setOpen] = useState(false)
+  /** Hover-capable pointers get the hover affordance; touch gets tap-to-toggle. */
+  const canHover = !useIsTouch()
+  const anchorRef = useRef<HTMLSpanElement>(null)
+  const tipRef = useRef<HTMLSpanElement>(null)
+  const [pos, setPos] = useState({ top: 0, left: 0, width: TIP_WIDTH, side: 'right' as Side, arrowX: 0 })
+
+  const place = useCallback(() => {
+    const anchor = anchorRef.current
+    if (!anchor) return
+    const r = anchor.getBoundingClientRect()
+    const height = tipRef.current?.offsetHeight ?? 0
+
+    // Stay inside the form column rather than the raw viewport, so the card
+    // lines up with the fields instead of bleeding into the screen's padding.
+    const bounds = anchor.closest('[data-tooltip-bounds]')?.getBoundingClientRect()
+    const minX = Math.max(TIP_EDGE, bounds?.left ?? TIP_EDGE)
+    const maxX = Math.min(window.innerWidth - TIP_EDGE, bounds?.right ?? window.innerWidth - TIP_EDGE)
+    const width = Math.min(TIP_WIDTH, Math.max(0, maxX - minX))
+
+    // Beside the icon by preference — right, then left. On a narrow phone
+    // neither side fits, and clamping to the edge would sit the card on top of
+    // the icon and swallow the tap that closes it, so drop below it instead.
+    const side: Side = r.right + TIP_GAP + width <= maxX
+      ? 'right'
+      : r.left - TIP_GAP - width >= minX
+        ? 'left'
+        : 'below'
+
+    const clamp = (x: number) => Math.min(Math.max(minX, x), Math.max(minX, maxX - width))
+    const left = side === 'right'
+      ? r.right + TIP_GAP
+      : side === 'left'
+        ? r.left - TIP_GAP - width
+        : clamp(r.left + r.width / 2 - width / 2)
+    const top = side === 'below'
+      ? r.bottom + TIP_GAP
+      : Math.min(
+          Math.max(TIP_EDGE, r.top + r.height / 2 - height / 2),
+          Math.max(TIP_EDGE, window.innerHeight - height - TIP_EDGE),
+        )
+    // Keep the arrow over the icon even once the card has been clamped.
+    setPos({ top, left, width, side, arrowX: r.left + r.width / 2 - left - ARROW / 2 })
+  }, [])
+
+  useLayoutEffect(() => {
+    if (!open) return
+    // Twice: once to mount, once with the measured height so it centres.
+    place()
+    const id = requestAnimationFrame(place)
+    window.addEventListener('scroll', place, true)
+    window.addEventListener('resize', place)
+    return () => {
+      cancelAnimationFrame(id)
+      window.removeEventListener('scroll', place, true)
+      window.removeEventListener('resize', place)
+    }
+  }, [open, place])
+
+  // Outside-tap dismissal only matters on touch, where there is no unhover.
+  useEffect(() => {
+    if (!open || canHover) return
+    function handle(e: PointerEvent) {
+      const t = e.target as Node
+      if (anchorRef.current?.contains(t) || tipRef.current?.contains(t)) return
+      setOpen(false)
+    }
+    document.addEventListener('pointerdown', handle)
+    return () => document.removeEventListener('pointerdown', handle)
+  }, [open, canHover])
+
+  const hoverProps = canHover
+    ? {
+        onMouseEnter: () => setOpen(true),
+        onMouseLeave: () => setOpen(false),
+        onFocus: () => setOpen(true),
+        onBlur: () => setOpen(false),
+      }
+    : {}
+
   return (
-    <span className="relative inline-flex items-center">
+    <span ref={anchorRef} className="inline-flex items-center">
       <button
         type="button"
         aria-label={text}
-        onClick={() => setOpen(o => !o)}
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
-        onFocus={() => setOpen(true)}
-        onBlur={() => setOpen(false)}
+        aria-expanded={open}
+        /* The icon lives inside a <label>, so a plain click would focus the
+           field and pop the keyboard open on touch. */
+        onClick={(e) => {
+          e.preventDefault()
+          if (!canHover) setOpen(o => !o)
+        }}
+        {...hoverProps}
         className="flex items-center bg-transparent border-0 p-0 cursor-pointer"
       >
         <img src={infoIcon} alt="" className="size-[16px]" />
       </button>
-      {open && (
+      {open && createPortal(
         <span
+          ref={tipRef}
           role="tooltip"
-          className="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 z-30 w-[280px] max-w-[280px] bg-white rounded-[8px] p-[12px] drop-shadow-[0px_0px_4.5px_rgba(0,0,0,0.12)] text-[14px] leading-[1.5] text-[#212121] text-left"
+          style={{
+            position: 'fixed',
+            top: pos.top,
+            left: pos.left,
+            width: pos.width,
+          }}
+          className="z-[100] block bg-white rounded-[8px] p-[12px] drop-shadow-[0px_0px_4.5px_rgba(0,0,0,0.12)] text-[14px] leading-[1.5] text-[#212121] text-left"
         >
-          {/* Arrow pointing back at the icon */}
-          <span className="absolute left-[-4px] top-1/2 -translate-y-1/2 size-[8px] rotate-45 bg-white" />
+          {/* Arrow points back at the icon, from whichever side it landed */}
+          <span
+            aria-hidden="true"
+            className="absolute size-[8px] rotate-45 bg-white"
+            style={
+              pos.side === 'below'
+                ? { top: -ARROW / 2, left: pos.arrowX }
+                : pos.side === 'right'
+                  ? { top: '50%', left: -ARROW / 2, transform: 'translateY(-50%) rotate(45deg)' }
+                  : { top: '50%', right: -ARROW / 2, transform: 'translateY(-50%) rotate(45deg)' }
+            }
+          />
           {text}
-        </span>
+        </span>,
+        document.body,
       )}
     </span>
   )
@@ -222,6 +337,7 @@ export function Field({
   maxLength,
   onBlur,
   labelTooltip,
+  autoCapitalize,
 }: {
   label?: string
   value: string
@@ -236,6 +352,8 @@ export function Field({
   onBlur?: () => void
   /** Renders an info icon next to the label with this copy in a popover. */
   labelTooltip?: string
+  /** Mobile keyboard hint — shifts to caps automatically as the user types. */
+  autoCapitalize?: 'none' | 'words' | 'characters'
 }) {
   return (
     <label className="flex flex-col gap-2 w-full">
@@ -252,6 +370,7 @@ export function Field({
             value={value}
             placeholder={placeholder}
             inputMode={inputMode}
+            autoCapitalize={autoCapitalize}
             maxLength={maxLength}
             onChange={(e) => onChange(e.target.value)}
             onBlur={onBlur}
@@ -512,11 +631,17 @@ export function OtpBoxes({
   onChange,
   length = 6,
   error,
+  onFocusChange,
+  suppressNativeKeyboard,
 }: {
   value: string
   onChange: (v: string) => void
   length?: number
   error?: boolean
+  /** Fires when focus enters or leaves the group as a whole. */
+  onFocusChange?: (focused: boolean) => void
+  /** Prototype keypad is driving input, so keep the system keyboard down. */
+  suppressNativeKeyboard?: boolean
 }) {
   const refs = useRef<(HTMLInputElement | null)[]>([])
 
@@ -543,12 +668,22 @@ export function OtpBoxes({
   }
 
   return (
-    <div className="flex gap-2 w-full">
+    <div
+      className="flex gap-2 w-full"
+      onFocus={() => onFocusChange?.(true)}
+      /* Moving between boxes keeps focus inside the group — only report a
+         real exit, or the keypad would flicker on every hop. */
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) onFocusChange?.(false)
+      }}
+    >
       {Array.from({ length }).map((_, i) => (
         <input
           key={i}
           ref={(el) => { refs.current[i] = el }}
-          inputMode="numeric"
+          inputMode={suppressNativeKeyboard ? 'none' : 'numeric'}
+          /* Lets a real device lift the code straight out of the SMS. */
+          autoComplete={i === 0 ? 'one-time-code' : 'off'}
           maxLength={1}
           value={value[i] ?? ''}
           onChange={(e) => setChar(i, e.target.value)}
@@ -561,6 +696,82 @@ export function OtpBoxes({
           }`}
         />
       ))}
+    </div>
+  )
+}
+
+/* ── Mock iOS numeric keyboard ──
+   Prototype only. A page cannot draw into the real system keyboard, so the OTP
+   screen renders its own and keeps the native one down — that is the only way
+   to show the "From Messages" strip iOS puts above the keypad for SMS codes. */
+const KEYPAD_ROWS = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9']]
+
+/** Keeps focus in the OTP field, so tapping a key never dismisses the keypad. */
+const holdFocus = (e: { preventDefault: () => void }) => e.preventDefault()
+
+function KeypadKey({ children, onClick }: { children: ReactNode; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onMouseDown={holdFocus}
+      onClick={onClick}
+      className="flex-1 h-[46px] rounded-[5px] bg-white border-0 text-[25px] text-black cursor-pointer drop-shadow-[0px_1px_0px_rgba(0,0,0,0.25)]"
+    >
+      {children}
+    </button>
+  )
+}
+
+export function MockNumericKeypad({
+  suggestion,
+  onSuggestion,
+  onDigit,
+  onBackspace,
+}: {
+  /** The code iOS would have lifted out of the SMS; hidden once typing starts. */
+  suggestion?: string
+  onSuggestion: () => void
+  onDigit: (digit: string) => void
+  onBackspace: () => void
+}) {
+  return (
+    <div
+      className="fixed inset-x-0 bottom-0 z-[90] bg-[#d1d3d9] select-none"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+    >
+      {suggestion && (
+        <button
+          type="button"
+          onMouseDown={holdFocus}
+          onClick={onSuggestion}
+          className="w-full flex flex-col items-center gap-[2px] bg-[#efeff4] border-y border-[rgba(0,0,0,0.12)] px-[16px] py-[4px] cursor-pointer"
+        >
+          <span className="text-[12px] leading-[1.4] text-[#6e6e6e]">From Messages</span>
+          <span className="text-[16px] font-semibold leading-[1.5] text-[#212121]">{suggestion}</span>
+        </button>
+      )}
+      <div className="flex flex-col gap-[7px] px-[6px] py-[8px]">
+        {KEYPAD_ROWS.map((row) => (
+          <div key={row[0]} className="flex gap-[6px]">
+            {row.map((k) => (
+              <KeypadKey key={k} onClick={() => onDigit(k)}>{k}</KeypadKey>
+            ))}
+          </div>
+        ))}
+        <div className="flex gap-[6px] items-center">
+          <span className="flex-1 h-[46px]" />
+          <KeypadKey onClick={() => onDigit('0')}>0</KeypadKey>
+          <button
+            type="button"
+            aria-label="Delete"
+            onMouseDown={holdFocus}
+            onClick={onBackspace}
+            className="flex-1 h-[46px] flex items-center justify-center rounded-[5px] bg-transparent border-0 text-black cursor-pointer"
+          >
+            <Delete size={24} />
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
