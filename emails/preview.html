@@ -1,52 +1,249 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>UOI Connect email templates</title>
+<title>UOI Connect Auth Emails</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-  :root { color-scheme: light; }
+  :root {
+    --ground:      #F6F8FC;
+    --surface:     #FFFFFF;
+    --ink:         #212121;
+    --muted:       #6E6E6E;
+    --faint:       #8D8D8D;
+    --accent:      #005EB8;
+    --hairline:    #E3E9F2;
+    --rail:        #EEF2F8;
+    --viewport:    #EDF1F7;
+    --sans: 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:   #0F1621;
+      --surface:  #161F2C;
+      --ink:      #E6ECF5;
+      --muted:    #9AA8BC;
+      --faint:    #71809A;
+      --accent:   #5AA5EE;
+      --hairline: #232F41;
+      --rail:     #1B2634;
+      --viewport: #0A1018;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:   #0F1621;
+    --surface:  #161F2C;
+    --ink:      #E6ECF5;
+    --muted:    #9AA8BC;
+    --faint:    #71809A;
+    --accent:   #5AA5EE;
+    --hairline: #232F41;
+    --rail:     #1B2634;
+    --viewport: #0A1018;
+  }
+
   * { box-sizing: border-box; }
-  body { margin:0; background:#F6F8FC; color:#212121;
-         font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif; }
-  .page { max-width:1400px; margin:0 auto; padding:48px 24px 80px; }
-  h1 { font-size:32px; line-height:1.2; margin:0 0 8px; }
-  .lede { font-size:16px; line-height:1.5; color:#6E6E6E;
-          margin:0 0 48px; max-width:60ch; }
-  .grid { display:grid; gap:32px; grid-template-columns:repeat(auto-fit,minmax(420px,1fr)); }
-  .tpl { background:#fff; border:1px solid #EBEBEB; border-radius:8px; overflow:hidden; }
-  .tpl header { padding:20px 24px; border-bottom:1px solid #F0F0F0; }
-  .tpl h2 { font-size:18px; margin:0 0 12px; }
-  dl { display:grid; grid-template-columns:88px 1fr; gap:4px 12px; margin:0 0 12px;
-       font-size:13px; line-height:1.5; }
-  dt { color:#8D8D8D; }
-  dd { margin:0; color:#6E6E6E; }
-  code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px;
-         background:#F6F8FC; padding:1px 5px; border-radius:4px;
-         color:#212121; }
-  .note { margin:0; font-size:13px; line-height:1.5; color:#6E6E6E;
-          border-left:3px solid #005EB8; padding-left:12px; }
-  .frame { background:#F6F8FC; }
-  iframe { width:100%; height:790px; border:0; display:block; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .shell { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+  .prose { max-width: 68ch; }
+
+  /* ── Masthead ─────────────────────────────────────────── */
+  header.mast { padding: 88px 0 56px; border-bottom: 1px solid var(--hairline); }
+  .eyebrow {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    letter-spacing: .14em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 20px;
+  }
+  h1 {
+    font-size: clamp(2.25rem, 5vw, 3.4rem); font-weight: 800;
+    letter-spacing: -.03em; line-height: 1.05; margin: 0 0 24px;
+    text-wrap: balance; max-width: 18ch;
+  }
+  .lede { font-size: 1.2rem; line-height: 1.55; color: var(--muted); margin: 0; max-width: 60ch; }
+  .facts {
+    display: flex; flex-wrap: wrap; gap: 0 48px;
+    margin: 44px 0 0; padding: 0; list-style: none;
+  }
+  .facts div { padding: 0; }
+  .facts dt {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--faint); margin: 0 0 6px;
+  }
+  .facts dd { margin: 0; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  /* ── Sections ─────────────────────────────────────────── */
+  section { padding: 72px 0; border-bottom: 1px solid var(--hairline); }
+  section:last-of-type { border-bottom: 0; }
+  h2 {
+    font-size: 1.75rem; font-weight: 700; letter-spacing: -.02em;
+    margin: 0 0 12px; text-wrap: balance;
+  }
+  .sub { color: var(--muted); margin: 0 0 44px; max-width: 62ch; }
+
+  .changes { display: grid; gap: 32px 44px; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); }
+  .change h3 {
+    font-size: 1rem; font-weight: 700; margin: 0 0 8px;
+    padding-left: 14px; border-left: 3px solid var(--accent); line-height: 1.4;
+  }
+  .change p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--muted); padding-left: 17px; }
+  .change em { color: var(--ink); font-style: italic; }
+
+  /* ── Template cards ───────────────────────────────────── */
+  .tpl {
+    display: grid; grid-template-columns: minmax(280px, 360px) 1fr;
+    gap: 0; background: var(--surface);
+    border: 1px solid var(--hairline); border-radius: 12px;
+    overflow: hidden; margin-bottom: 32px;
+  }
+  .tpl-meta { padding: 32px; border-right: 1px solid var(--hairline); }
+  .num {
+    display: inline-block; font-family: var(--mono); font-size: 12px; font-weight: 500;
+    color: var(--accent); border: 1px solid var(--accent);
+    border-radius: 999px; padding: 1px 10px; margin-bottom: 16px;
+  }
+  .tpl-meta h3 { font-size: 1.2rem; font-weight: 700; letter-spacing: -.01em; margin: 0 0 20px; line-height: 1.3; }
+  .tpl-meta dl { display: grid; grid-template-columns: 82px 1fr; gap: 8px 14px; margin: 0 0 20px; }
+  .tpl-meta dt {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--faint); padding-top: 3px;
+  }
+  .tpl-meta dd { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--muted); overflow-wrap: anywhere; }
+  .why {
+    margin: 0; font-size: 13.5px; line-height: 1.6; color: var(--ink);
+    background: var(--rail); border-radius: 8px; padding: 12px 14px;
+  }
+  .tpl-render { background: var(--viewport); position: relative; padding: 20px 0 0; }
+  .viewport-label {
+    position: absolute; top: 12px; right: 16px; z-index: 1;
+    font-family: var(--mono); font-size: 10px; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--faint);
+  }
+  iframe { width: 100%; min-height: 620px; border: 0; display: block; }
+
+  /* ── Token table ──────────────────────────────────────── */
+  .scroll { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 14.5px; }
+  caption { text-align: left; color: var(--muted); font-size: 14px; padding-bottom: 16px; }
+  th, td { text-align: left; padding: 11px 20px 11px 0; border-bottom: 1px solid var(--hairline); vertical-align: top; }
+  thead th {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--faint); font-weight: 500;
+    border-bottom: 1px solid var(--ink);
+  }
+  tbody th { font-weight: 600; white-space: nowrap; }
+  td { color: var(--muted); }
+  .mono, code { font-family: var(--mono); font-size: .88em; }
+  code { background: var(--rail); border-radius: 4px; padding: 1px 5px; color: var(--ink); }
+
+  ul.steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 18px; }
+  ul.steps li { padding-left: 20px; position: relative; color: var(--muted); font-size: 15px; }
+  ul.steps li::before {
+    content: ""; position: absolute; left: 0; top: .62em;
+    width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+  }
+  ul.steps strong { color: var(--ink); font-weight: 600; }
+
+  footer.end { padding: 56px 0 88px; color: var(--faint); font-size: 13px; }
+
+  a { color: var(--accent); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+
+  @media (max-width: 900px) {
+    .shell { padding: 0 20px; }
+    .tpl { grid-template-columns: 1fr; }
+    .tpl-meta { border-right: 0; border-bottom: 1px solid var(--hairline); }
+    header.mast { padding: 56px 0 40px; }
+    section { padding: 52px 0; }
+    .facts { gap: 24px 36px; }
+  }
 </style>
-</head>
-<body>
-  <div class="page">
-    <h1>UOI Connect email templates</h1>
-    <p class="lede">Four transactional templates built from the customer portal's own design
-    system — same tokens, same button, same card, same footer. Rendered live below at 600px.</p>
-    <div class="grid">
-    <section class="tpl">
-      <header>
-        <h2>Your UOI Connect login code</h2>
-        <dl>
-          <dt>File</dt><dd><code>01-login-otp.html</code></dd>
-          <dt>Subject</dt><dd><code>946683 is your UOI Connect login code</code></dd>
-          <dt>Preheader</dt><dd>Expires in 3 minutes. UOI will never ask you for this code.</dd>
-        </dl>
-        <p class="note">Code in the subject line so it is readable from the notification without opening the email.</p>
-      </header>
-      <div class="frame"><iframe srcdoc="<!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;>
+
+<div class="shell">
+
+  <header class="mast">
+    <p class="eyebrow">Design proposal &middot; Customer Portal</p>
+    <h1>Auth emails, rebuilt on the portal&rsquo;s own system</h1>
+    <p class="lede">Four transactional templates for UOI&nbsp;Connect &mdash; login, password
+      reset, registration and change of login ID. Same tokens, same button, same card,
+      same footer as the screens they lead to, so the email and the product stop looking
+      like two different companies.</p>
+    <dl class="facts">
+      <div><dt>Templates</dt><dd>4</dd></div>
+      <div><dt>Width</dt><dd>600&#8202;px</dd></div>
+      <div><dt>Typeface</dt><dd>Noto Sans</dd></div>
+      <div><dt>Images required</dt><dd>Logo only</dd></div>
+    </dl>
+  </header>
+
+  <section>
+    <div class="prose">
+      <h2>What changes, and why</h2>
+      <p class="sub">Eight moves, each one aimed at the same thing: get the reader to the
+        code or the button faster, and make a forged copy of this email harder to pass off.</p>
+    </div>
+    <div class="changes">
+        <div class="change">
+          <h3>The hero photo is gone</h3>
+          <p>In the current email the stock photo is the largest element and carries no information — on a phone it pushes the code below the fold. A 4px rule in the portal blue does the branding instead. Most corporate clients block images by default, so the photo-led version currently arrives as a grey box; this one doesn’t depend on images at all.</p>
+        </div>
+        <div class="change">
+          <h3>The code is an object, not a sentence</h3>
+          <p><code>Your OTP: 946683</code> inside a paragraph doesn’t scan. The code now sits in a plate that reuses the portal’s OTP input treatment, at 34px with wide tracking, with its expiry inside the same plate. One thing to read, not two.</p>
+        </div>
+        <div class="change">
+          <h3>One expiry, stated correctly</h3>
+          <p>The spec table says 3 minutes; the current email says 5. Templates use 3 throughout — drive it from one backend value so copy and token can’t drift apart again.</p>
+        </div>
+        <div class="change">
+          <h3>The yellow highlighter is gone</h3>
+          <p>Highlighting on “OTP” reads as an unfinished Word document. Emphasis comes from type scale and the plate, which is what the portal already does.</p>
+        </div>
+        <div class="change">
+          <h3>Copy cut by roughly half</h3>
+          <p>Before: <em>“To ensure secure access to your UOIConnect account, we’ve generated a One-Time Password (OTP) for you. Please enter this OTP on the portal login page to proceed.”</em> After: <em>“Enter this code to finish signing in to UOI Connect.”</em></p>
+        </div>
+        <div class="change">
+          <h3>A proportionate disclaimer</h3>
+          <p>The current legal block runs six lines of ~7px grey text — physically larger than the message itself. Compressed to two sentences at 11px and moved outside the card so it reads as chrome. Worth a Legal check before sending.</p>
+        </div>
+        <div class="change">
+          <h3>A “we will never ask” strip</h3>
+          <p>An OTP email is the most spoofed message an insurer sends. One line on every template, plus the absence of the generic stock photo phishing kits also use, makes the real email easier to trust and the fake one easier to spot.</p>
+        </div>
+        <div class="change">
+          <h3>Every email says what to do if it wasn’t you</h3>
+          <p>Login → change your password. Reset → ignore it, nothing happens. Change login ID → call us now, don’t enter the code. The highest-value copy in a security email, and the current template has none of it.</p>
+        </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="prose">
+      <h2>The templates</h2>
+      <p class="sub">Rendered live below at 600&#8202;px with sample data. Numbering follows
+        the rows in your spec table.</p>
+    </div>
+      <article class="tpl">
+        <div class="tpl-meta">
+          <span class="num">1</span>
+          <h3>Your UOI Connect login code</h3>
+          <dl>
+            <dt>File</dt><dd class="mono">01-login-otp.html</dd>
+            <dt>Subject</dt><dd class="mono">946683 is your UOI Connect login code</dd>
+            <dt>Preheader</dt><dd>Expires in 3 minutes. UOI will never ask you for this code.</dd>
+          </dl>
+          <p class="why">Code in the subject line so it is readable from the notification without opening the email.</p>
+        </div>
+        <div class="tpl-render">
+          <span class="viewport-label">600&#8202;px render</span>
+          <iframe srcdoc="<!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;>
 <html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; lang=&quot;en&quot;>
 <head>
   <meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8&quot; />
@@ -216,19 +413,23 @@
   </table>
 </body>
 </html>
-" title="Your UOI Connect login code"></iframe></div>
-    </section>
-    <section class="tpl">
-      <header>
-        <h2>Reset your UOI Connect password</h2>
-        <dl>
-          <dt>File</dt><dd><code>02-forgot-password-reset.html</code></dd>
-          <dt>Subject</dt><dd><code>Reset your UOI Connect password</code></dd>
-          <dt>Preheader</dt><dd>Your reset link expires in 30 minutes.</dd>
-        </dl>
-        <p class="note">Link, not a code — a reset is a click-through, so don't make the user retype anything.</p>
-      </header>
-      <div class="frame"><iframe srcdoc="<!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;>
+" title="Your UOI Connect login code"></iframe>
+        </div>
+      </article>
+      <article class="tpl">
+        <div class="tpl-meta">
+          <span class="num">2</span>
+          <h3>Reset your UOI Connect password</h3>
+          <dl>
+            <dt>File</dt><dd class="mono">02-forgot-password-reset.html</dd>
+            <dt>Subject</dt><dd class="mono">Reset your UOI Connect password</dd>
+            <dt>Preheader</dt><dd>Your reset link expires in 30 minutes.</dd>
+          </dl>
+          <p class="why">Link, not a code — a reset is a click-through, so don't make the user retype anything.</p>
+        </div>
+        <div class="tpl-render">
+          <span class="viewport-label">600&#8202;px render</span>
+          <iframe srcdoc="<!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;>
 <html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; lang=&quot;en&quot;>
 <head>
   <meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8&quot; />
@@ -408,19 +609,23 @@
   </table>
 </body>
 </html>
-" title="Reset your UOI Connect password"></iframe></div>
-    </section>
-    <section class="tpl">
-      <header>
-        <h2>Verify your email address</h2>
-        <dl>
-          <dt>File</dt><dd><code>03-registration-otp.html</code></dd>
-          <dt>Subject</dt><dd><code>946683 is your UOI Connect verification code</code></dd>
-          <dt>Preheader</dt><dd>Verify your email to finish creating your account.</dd>
-        </dl>
-        <p class="note">Reassures rather than warns — a stranger receiving this has nothing at risk yet.</p>
-      </header>
-      <div class="frame"><iframe srcdoc="<!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;>
+" title="Reset your UOI Connect password"></iframe>
+        </div>
+      </article>
+      <article class="tpl">
+        <div class="tpl-meta">
+          <span class="num">3</span>
+          <h3>Verify your email address</h3>
+          <dl>
+            <dt>File</dt><dd class="mono">03-registration-otp.html</dd>
+            <dt>Subject</dt><dd class="mono">946683 is your UOI Connect verification code</dd>
+            <dt>Preheader</dt><dd>Verify your email to finish creating your account.</dd>
+          </dl>
+          <p class="why">Reassures rather than warns — a stranger receiving this has nothing at risk yet.</p>
+        </div>
+        <div class="tpl-render">
+          <span class="viewport-label">600&#8202;px render</span>
+          <iframe srcdoc="<!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;>
 <html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; lang=&quot;en&quot;>
 <head>
   <meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8&quot; />
@@ -595,19 +800,23 @@
   </table>
 </body>
 </html>
-" title="Verify your email address"></iframe></div>
-    </section>
-    <section class="tpl">
-      <header>
-        <h2>Confirm your new login ID</h2>
-        <dl>
-          <dt>File</dt><dd><code>04-change-login-id-otp.html</code></dd>
-          <dt>Subject</dt><dd><code>946683 is your code to confirm your new login ID</code></dd>
-          <dt>Preheader</dt><dd>Confirm your new UOI Connect login ID. Expires in 3 minutes.</dd>
-        </dl>
-        <p class="note">The highest-risk email of the four — states both addresses so a hijack is obvious on sight.</p>
-      </header>
-      <div class="frame"><iframe srcdoc="<!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;>
+" title="Verify your email address"></iframe>
+        </div>
+      </article>
+      <article class="tpl">
+        <div class="tpl-meta">
+          <span class="num">4</span>
+          <h3>Confirm your new login ID</h3>
+          <dl>
+            <dt>File</dt><dd class="mono">04-change-login-id-otp.html</dd>
+            <dt>Subject</dt><dd class="mono">946683 is your code to confirm your new login ID</dd>
+            <dt>Preheader</dt><dd>Confirm your new UOI Connect login ID. Expires in 3 minutes.</dd>
+          </dl>
+          <p class="why">The highest-risk email of the four — states both addresses so a hijack is obvious on sight.</p>
+        </div>
+        <div class="tpl-render">
+          <span class="viewport-label">600&#8202;px render</span>
+          <iframe srcdoc="<!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;>
 <html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; lang=&quot;en&quot;>
 <head>
   <meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8&quot; />
@@ -782,9 +991,86 @@
   </table>
 </body>
 </html>
-" title="Confirm your new login ID"></iframe></div>
-    </section>
+" title="Confirm your new login ID"></iframe>
+        </div>
+      </article>
+  </section>
+
+  <section>
+    <div class="prose">
+      <h2>Nothing here is a new visual language</h2>
+      <p class="sub">Every value is lifted from <code>src/index.css</code> and
+        <code>src/pages/auth/AuthUI.tsx</code>. Two deviations are forced by the medium:
+        <code>rgba()</code> borders are resolved to flat hex, because Outlook on Windows
+        drops the alpha channel and renders them black; and shadows are dropped, because
+        <code>--shadow-card</code> is invisible in most clients and the hairline border
+        carries the same separation.</p>
     </div>
-  </div>
-</body>
-</html>
+    <div class="scroll">
+      <table>
+        <thead><tr><th scope="col">Email element</th><th scope="col">Portal source</th><th scope="col">Spec</th></tr></thead>
+        <tbody>
+            <tr><th scope="row">Page canvas</th><td><code>--color-bg-page</code></td><td class="mono">#F6F8FC</td></tr>
+            <tr><th scope="row">Card surface</th><td>menu surface, <code>AuthUI.tsx:425</code></td><td class="mono">white, 1px hairline, 8px radius</td></tr>
+            <tr><th scope="row">Brand rule</th><td><code>--color-primary</code></td><td class="mono">#005EB8, 4px</td></tr>
+            <tr><th scope="row">Code plate</th><td>OTP digit box, <code>AuthUI.tsx:557</code></td><td class="mono">white, 1px hairline, 8px radius</td></tr>
+            <tr><th scope="row">CTA button</th><td><code>PrimaryButton</code>, <code>AuthUI.tsx:585</code></td><td class="mono">#005EB8, 8px radius, 12/24px, 16px/1.5, w500</td></tr>
+            <tr><th scope="row">Info notice</th><td><code>SuccessToast</code> geometry</td><td class="mono">#EFF6FF, 8px radius, 12/16px</td></tr>
+            <tr><th scope="row">Caution notice</th><td>same geometry</td><td class="mono">#FFF8EC</td></tr>
+            <tr><th scope="row">Footer bar</th><td><code>FooterShort.tsx</code></td><td class="mono">#005EB8 bar, 12px white</td></tr>
+            <tr><th scope="row">Typeface</th><td><code>--font-sans</code></td><td class="mono">Noto Sans</td></tr>
+            <tr><th scope="row">Text colours</th><td><code>--color-text-*</code></td><td class="mono">#212121 / #6E6E6E / #8D8D8D</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="prose">
+      <h2>Before these go out</h2>
+      <ul class="steps">
+        <li><strong>Host the logo.</strong> <code>LOGO_URL</code> points at a placeholder.
+          Upload <code>assets/uoi-logo.png</code> to a public HTTPS path and update it.
+          Alt text is <code>UOI</code>, so a blocked image degrades cleanly.</li>
+        <li><strong>Wire the merge fields.</strong> Currently Handlebars-style
+          &mdash; swap the delimiters for whatever your ESP uses.</li>
+        <li><strong>Send a plain-text alternative.</strong> Transactional mail without a
+          <code>text/plain</code> part takes a spam-score hit.</li>
+        <li><strong>Check SPF, DKIM and DMARC.</strong> No amount of design makes an
+          unauthenticated OTP email trustworthy.</li>
+        <li><strong>Decide on the code in the subject line.</strong> Google, Stripe and
+          Apple all do it &mdash; readable from the lock screen without opening the mail.
+          The tradeoff is shoulder-surfing. Templates 1, 3 and 4 currently do it.</li>
+        <li><strong>Confirm the reset-link TTL.</strong> Template 2 says 30 minutes.</li>
+        <li><strong>Send me row 5.</strong> The &ldquo;Others&rdquo; section was cut off in
+          the screenshot &mdash; those scenarios slot into the same shell.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="end">
+    Render-test in Litmus or Email on Acid before launch: Outlook 2016/2019 Windows,
+    Outlook 365 web, Gmail web / iOS / Android, Apple Mail macOS / iOS, Samsung Mail.
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    function fit(f) {
+      try {
+        var d = f.contentDocument;
+        if (d && d.documentElement) {
+          f.style.height = (d.documentElement.scrollHeight + 16) + "px";
+        }
+      } catch (e) { /* leave the CSS min-height in place */ }
+    }
+    document.querySelectorAll(".tpl-render iframe").forEach(function (f) {
+      f.addEventListener("load", function () { fit(f); });
+      fit(f);
+    });
+    addEventListener("load", function () {
+      document.querySelectorAll(".tpl-render iframe").forEach(fit);
+    });
+  })();
+</script>
