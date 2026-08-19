@@ -39,6 +39,7 @@ T = {
 TERMS_URL = "https://www.uoi.com.sg/uoi/important-information.page"
 PRIVACY_URL = "https://www.uoi.com.sg/privacy.page"
 UOI_URL = "https://www.uoi.com.sg"
+PORTAL_URL = "https://portal.uoi.com.sg"
 # Confirm the production host before sending; /help is the portal route (App.tsx:119).
 SUPPORT_URL = "https://portal.uoi.com.sg/help"
 SUPPORT_EMAIL = "contactus@uoi.com.sg"
@@ -140,6 +141,30 @@ def fine(lines):
                   <td style="border-top:1px solid {T['border_split']}; padding-top:20px;">{body}
                   </td>
                 </tr>
+              </table>"""
+
+
+def benefits(items):
+    """What the portal does, as titled rows separated by hairlines.
+
+    No icons: images are blocked by default in most corporate clients, so an
+    icon column would arrive as a row of empty boxes and take the titles with it.
+    """
+    last = len(items) - 1
+    rows = "".join(
+        f"""
+                <tr>
+                  <td style="{'' if i == 0 else f'border-top:1px solid {T["border_split"]};'}
+                             padding:{'0' if i == 0 else '16px'} 0 {'0' if i == last else '16px'} 0;">
+                    <p style="margin:0; font-family:{T['font']}; font-size:16px; line-height:1.5;
+                              font-weight:600; color:{T['text_primary']};">{title}</p>
+                    <p style="margin:4px 0 0 0; font-family:{T['font']}; font-size:14px;
+                              line-height:1.5; color:{T['text_secondary']};">{body}</p>
+                  </td>
+                </tr>"""
+        for i, (title, body) in enumerate(items))
+    return f"""
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">{rows}
               </table>"""
 
 
@@ -389,12 +414,57 @@ add(
                "don't enter the code above.", "caution"),
         spacer(24),
         fine([
-            "Until the change is confirmed, keep signing in with your current login ID. "
-            "We've also notified your previous address.",
+            "Until the change is confirmed, keep signing in with your current login ID.",
             NEVER_ASK, HELP_LINE,
         ]),
     ],
     "The highest-risk email of the four. It states both addresses, so a hijack is obvious on sight.",
+)
+
+
+# 5. Welcome
+add(
+    "05-welcome.html",
+    "Welcome to UOI Customer Portal",
+    "Your account is ready. Here is what you can do with it.",
+    "Welcome to UOI Customer Portal",
+    [
+        heading("Welcome to UOI Customer Portal"),
+        para("Hi {{first_name}}, your account is ready. Everything to do with your "
+             "UOI policies now lives in one place, available whenever you need it.",
+             16, T["text_secondary"], 14),
+        spacer(26),
+        lead("Sign in to get started:"),
+        spacer(14),
+        f'<div class="btn">{primary_button("Go to my dashboard", PORTAL_URL)}</div>',
+        spacer(30),
+        benefits([
+            ("Every policy on one screen",
+             "Motor, travel, home, helper and personal accident, each with its policy "
+             "number, coverage period and status. You will see what is active and what "
+             "is coming up for renewal without hunting through email."),
+            ("Documents whenever you need them",
+             "Download policy documents, schedules and payment receipts yourself, "
+             "at any hour, instead of calling to request a copy."),
+            ("Start a claim from the policy it belongs to",
+             "Open the policy, submit the claim. The details we already hold are "
+             "attached for you."),
+            ("Keep your own details current",
+             "Update your contact details, change your password or change the email "
+             "you sign in with, without paperwork."),
+            ("Rewards for UOI customers",
+             "Member offers and perks, refreshed from time to time. Worth a look "
+             "when you sign in."),
+        ]),
+        spacer(28),
+        fine([
+            "You are receiving this because an account was created for "
+            "<strong>{{login_id}}</strong> on UOI Customer Portal.",
+            NEVER_ASK, HELP_LINE,
+        ]),
+    ],
+    "The only email of the five that sells rather than authenticates, so it earns "
+    "a longer body. Benefits are drawn from what the portal actually ships.",
 )
 
 
@@ -704,12 +774,11 @@ PREVIEW_SHELL = """<title>UOI Customer Portal Auth Emails</title>
   <header class="mast">
     <p class="eyebrow">Design proposal &middot; Customer Portal</p>
     <h1>Auth emails, rebuilt on the portal&rsquo;s own system</h1>
-    <p class="lede">Four transactional templates for UOI Customer Portal: login, password
-      reset, registration and change of login ID. Same tokens, same button, same card,
-      same footer as the screens they lead to, so the email and the product stop looking
-      like two different companies.</p>
+    <p class="lede">Five templates for UOI Customer Portal: the four authentication
+      emails, plus the welcome. Same tokens, same button, same card as the screens they
+      lead to, so the email and the product stop looking like two different companies.</p>
     <dl class="facts">
-      <div><dt>Templates</dt><dd>4</dd></div>
+      <div><dt>Templates</dt><dd>5</dd></div>
       <div><dt>Width</dt><dd>600&#8202;px</dd></div>
       <div><dt>Typeface</dt><dd>Noto Sans</dd></div>
       <div><dt>Images required</dt><dd>Logo only</dd></div>
@@ -729,8 +798,8 @@ PREVIEW_SHELL = """<title>UOI Customer Portal Auth Emails</title>
   <section>
     <div class="prose">
       <h2>The templates</h2>
-      <p class="sub">Rendered live below at 600&#8202;px with sample data. Numbering follows
-        the rows in your spec table.</p>
+      <p class="sub">Rendered live below at 600&#8202;px with sample data. One to four follow
+        the rows in your spec table; five is the welcome email.</p>
     </div>__CARDS__
   </section>
 

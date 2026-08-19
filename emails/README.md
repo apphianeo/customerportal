@@ -1,8 +1,7 @@
-# UOI Customer Portal, transactional email templates
+# UOI Customer Portal, email templates
 
-Four HTML email templates for the customer portal's authentication flows, built
-from the portal's own design system so the email and the screen it leads to look
-like the same product.
+Five HTML email templates for the customer portal, built from the portal's own
+design system so the email and the screen it leads to look like the same product.
 
 | # | Scenario | File |
 |---|----------|------|
@@ -10,8 +9,9 @@ like the same product.
 | 2 | Login, forgot password reset link | `02-forgot-password-reset.html` |
 | 3 | Manual account registration OTP | `03-registration-otp.html` |
 | 4 | Change Login ID (email address) OTP | `04-change-login-id-otp.html` |
+| 5 | Welcome | `05-welcome.html` |
 
-Open `preview.html` in a browser to see all four rendered at 600px with sample data.
+Open `preview.html` in a browser to see all five rendered at 600px with sample data.
 
 The emails have no footer. Logo, one card, nothing else.
 
@@ -130,12 +130,14 @@ per-template copy is in the `TEMPLATES` section near the bottom.
 
 | Field | Used in |
 |---|---|
-| `{{first_name}}` | 1, 2, 4 |
+| `{{first_name}}` | 1, 2, 4, 5 |
 | `{{otp_code}}` | 1, 3, 4 (subject + body) |
-| `{{login_id}}` | 2, 3 |
+| `{{login_id}}` | 2, 3, 5 |
 | `{{old_login_id}}` / `{{new_login_id}}` | 4 |
 | `{{reset_url}}` | 2 |
 | `{{change_password_url}}` | 1 |
+
+Template 5 links to `PORTAL_URL`, a constant rather than a merge field.
 
 3. **Send a plain-text alternative.** Transactional mail without a `text/plain`
    part takes a spam-score hit. The code and the URL are all it needs to contain.
