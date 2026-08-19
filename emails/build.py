@@ -41,6 +41,7 @@ PRIVACY_URL = "https://www.uoi.com.sg/privacy.page"
 UOI_URL = "https://www.uoi.com.sg"
 # Confirm the production host before sending; /help is the portal route (App.tsx:119).
 SUPPORT_URL = "https://portal.uoi.com.sg/help"
+SUPPORT_EMAIL = "contactus@uoi.com.sg"
 SUPPORT_TEL = "+6562227733"
 SUPPORT_TEL_DISPLAY = "(+65) 6222 7733"
 COPYRIGHT = ("Copyright © 2026 United Overseas Insurance Limited "
@@ -234,7 +235,8 @@ def shell(title, preheader, blocks):
           <tr>
             <td class="pad" align="center" style="padding:24px 32px 0 32px; font-family:{T['font']};
                        font-size:14px; line-height:1.5; color:{T['text_secondary']};">
-              Need help? Reach out to our support team {link('here', SUPPORT_URL)}.
+              Need help? Reach out to our support team {link('here', SUPPORT_URL)}
+              or email {link(SUPPORT_EMAIL, 'mailto:' + SUPPORT_EMAIL)}.
             </td>
           </tr>
 
