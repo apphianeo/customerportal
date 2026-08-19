@@ -45,7 +45,7 @@ const TRAVEL_ADD_ONS =
 
 /* ─── Shared blocks (same policyholder across this demo account) ───────── */
 const POLICYHOLDER: Field[] = [
-  { label: 'Salutation', value: 'Mr' },
+  { label: 'Salutation', value: 'MR' },
   { label: 'Name', value: 'CHRIS WONG' },
   { label: 'NRIC/FIN', value: 'S1234567A' },
   { label: 'Date of birth', value: '12/02/1966' },

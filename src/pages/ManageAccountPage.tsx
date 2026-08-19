@@ -156,11 +156,11 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
   // Address
   const [resPostal, setResPostal] = useState(seed.residentialPostal)
   const [resAddr, setResAddr] = useState(seed.residentialAddress.toUpperCase())
-  const [resUnit, setResUnit] = useState(seed.residentialUnit)
+  const [resUnit, setResUnit] = useState(seed.residentialUnit.toUpperCase())
   const [mailingSame, setMailingSame] = useState(seed.mailingSameAsResidential)
   const [mailPostal, setMailPostal] = useState(seed.mailingPostal)
   const [mailAddr, setMailAddr] = useState(seed.mailingAddress.toUpperCase())
-  const [mailUnit, setMailUnit] = useState(seed.mailingUnit)
+  const [mailUnit, setMailUnit] = useState(seed.mailingUnit.toUpperCase())
 
   // Contact
   const [contact, setContact] = useState(seed.phone)
@@ -191,7 +191,7 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
     setNric(SINGPASS_IDENTITY.nric)
     setResPostal(SINGPASS_IDENTITY.residentialPostal)
     setResAddr(SINGPASS_IDENTITY.residentialAddress.toUpperCase())
-    setResUnit(SINGPASS_IDENTITY.residentialUnit)
+    setResUnit(SINGPASS_IDENTITY.residentialUnit.toUpperCase())
     setRetrieved(true)
     setToast('Details retrieved from MyInfo')
   }
@@ -302,7 +302,13 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
             </div>
             {/* Half width, like the pair above — not the full card */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
-              <Field label="Unit number" value={resUnit} onChange={setResUnit} disabled={locked} />
+              <Field
+                label="Unit number"
+                value={resUnit}
+                onChange={v => setResUnit(v.toUpperCase())}
+                disabled={locked}
+                autoCapitalize="characters"
+              />
             </div>
             <Checkbox checked={mailingSame} onChange={() => setMailingSame(v => !v)} label="Mailing address same as residential" />
           </div>
@@ -328,7 +334,13 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
                 />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
-                <Field label="Unit number" value={mailUnit} onChange={setMailUnit} placeholder="Enter unit number" />
+                <Field
+                  label="Unit number"
+                  value={mailUnit}
+                  onChange={v => setMailUnit(v.toUpperCase())}
+                  placeholder="Enter unit number"
+                  autoCapitalize="characters"
+                />
               </div>
             </div>
           )}

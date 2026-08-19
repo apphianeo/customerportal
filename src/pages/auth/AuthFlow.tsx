@@ -723,9 +723,10 @@ function RegisterDetails({
           <Field
             label="Unit number"
             value={unit}
-            onChange={setUnit}
+            onChange={(v) => setUnit(v.toUpperCase())}
             placeholder="Enter unit number"
             inputMode="numeric"
+            autoCapitalize="characters"
           />
           <ConsentCheckbox
             checked={mailingSame}
@@ -761,9 +762,10 @@ function RegisterDetails({
             <Field
               label="Unit number"
               value={mailUnit}
-              onChange={setMailUnit}
+              onChange={(v) => setMailUnit(v.toUpperCase())}
               placeholder="Enter unit number"
               inputMode="numeric"
+              autoCapitalize="characters"
             />
           </div>
         )}
