@@ -39,7 +39,6 @@ T = {
 TERMS_URL = "https://www.uoi.com.sg/uoi/important-information.page"
 PRIVACY_URL = "https://www.uoi.com.sg/privacy.page"
 UOI_URL = "https://www.uoi.com.sg"
-PORTAL_URL = "https://portal.uoi.com.sg"
 # Confirm the production host before sending; /help is the portal route (App.tsx:119).
 SUPPORT_URL = "https://portal.uoi.com.sg/help"
 SUPPORT_EMAIL = "contactus@uoi.com.sg"
@@ -211,7 +210,6 @@ def shell(title, preheader, blocks):
       .h1      {{ font-size:22px !important; }}
       .code    {{ font-size:30px !important; letter-spacing:7px !important; text-indent:7px !important; }}
       .btn a   {{ display:block !important; }}
-      .ghost   {{ display:none !important; }}
     }}
   </style>
 </head>
@@ -230,32 +228,12 @@ def shell(title, preheader, blocks):
         <table role="presentation" class="wrap" width="600" cellpadding="0" cellspacing="0" border="0"
                style="width:600px; max-width:600px;">
 
-          <!-- Masthead: logo left, a way back into the portal on the right -->
+          <!-- Masthead -->
           <tr>
             <td class="pad" style="padding:0 4px 18px 4px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td align="left" valign="middle">
-                    <img src="{LOGO_URL}" width="100" height="51" alt="UOI"
-                         style="display:block; width:100px; height:51px; font-family:{T['font']};
-                                font-size:20px; font-weight:700; color:{T['primary']};" />
-                  </td>
-                  <td align="right" valign="middle" class="ghost">
-                    <!-- Ports OutlineButton (AuthUI.tsx) at small size -->
-                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                      <tr>
-                        <td align="center" bgcolor="{T['bg_white']}"
-                            style="border:1px solid {T['primary']}; border-radius:{T['radius']};">
-                          <a href="{PORTAL_URL}"
-                             style="display:inline-block; font-family:{T['font']}; font-size:14px;
-                                    line-height:1.4; font-weight:500; color:{T['primary']};
-                                    text-decoration:none; padding:8px 16px;">Go to portal</a>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
+              <img src="{LOGO_URL}" width="100" height="51" alt="UOI"
+                   style="display:block; width:100px; height:51px; font-family:{T['font']};
+                          font-size:20px; font-weight:700; color:{T['primary']};" />
             </td>
           </tr>
 
@@ -523,8 +501,6 @@ TOKEN_MAP = [
      "#005EB8, 8px radius, 12/24px, 16px/1.5, w500"),
     ("Info notice", "<code>SuccessToast</code> geometry", "#EFF6FF, 8px radius, 12/16px"),
     ("Caution notice", "same geometry", "#FFF8EC"),
-    ("Masthead button", "<code>OutlineButton</code>, <code>AuthUI.tsx:603</code>",
-     "white, 1px #005EB8, 8px radius, 14px"),
     ("Typeface", "<code>--font-sans</code>", "Noto Sans"),
     ("Text colours", "<code>--color-text-*</code>", "#212121 / #6E6E6E / #8D8D8D"),
 ]

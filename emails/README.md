@@ -13,7 +13,7 @@ like the same product.
 
 Open `preview.html` in a browser to see all four rendered at 600px with sample data.
 
-The emails have no footer. Masthead, one card, nothing else.
+The emails have no footer. Logo, one card, nothing else.
 
 ---
 
@@ -96,7 +96,6 @@ Nothing here is a new visual language. Every value is lifted from
 | CTA button | `PrimaryButton`, `AuthUI.tsx:585` | `#005EB8`, white, 8px radius, 12px/24px, 16px/1.5, weight 500 |
 | Info notice | `SuccessToast` geometry, `AuthUI.tsx:625` | `--color-bg-info` `#EFF6FF`, 8px radius, 12px/16px |
 | Caution notice | same geometry | `--color-bg-caution` `#FFF8EC` |
-| Masthead button | `OutlineButton`, `AuthUI.tsx:603` | white, 1px `#005EB8`, 8px radius, 14px |
 | Type | `--font-sans` + scale | Noto Sans; 26/1.25 heading, 16/1.5 body, 14/1.4 small, 13/1.5 fine |
 | Text colours | `--color-text-*` | `#212121` / `#6E6E6E` / `#8D8D8D`; links `#0D6EFD` |
 
