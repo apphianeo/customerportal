@@ -97,9 +97,8 @@ Benefit rows, each a bold title and a body line:
 |---|---|---|
 | 1 | All your policies in one place | Motor, travel, home, helper and personal accident, each with its policy number, coverage dates and renewal status. |
 | 2 | Documents on demand | Download policy documents, schedules and receipts yourself, at any hour. |
-| 3 | Claims start from the policy | Open the policy, submit the claim. The details we hold are already attached. |
-| 4 | Update your own details | Change your contact details, your password or your login ID, without paperwork. |
-| 5 | Rewards for UOI customers | Member offers and perks, refreshed regularly. |
+| 3 | Update your own details | Change your contact details, your password or your login ID, without paperwork. |
+| 4 | Rewards for UOI customers | Member offers and perks, refreshed regularly. |
 
 Closing:
 
@@ -131,6 +130,7 @@ Edited once in `shell()` in `build.py`, so a change lands on all five at once.
 ## Notes on editing
 
 - `[square brackets]` mark link text. The destination is set in `build.py`, not here.
+  `[here]` opens the portal's WhatsApp support line.
 - **Bold** in the tables is bold in the email.
 - Tier 1 is the bold line introducing the next action. Tier 2 is the tinted box.
   Tier 3 is the muted fine print behind a hairline rule. Moving a line between

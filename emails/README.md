@@ -140,7 +140,9 @@ per-template copy is in the `TEMPLATES` section near the bottom.
 | `{{reset_url}}` | 2 |
 | `{{change_password_url}}` | 1 |
 
-Template 5 links to `PORTAL_URL`, a constant rather than a merge field.
+Template 5's button links to `PORTAL_URL`; the `here` support link in all five
+points at `SUPPORT_URL`, the same WhatsApp line the portal uses
+(`AuthUI.tsx`). Both are constants, not merge fields.
 
 3. **Send a plain-text alternative.** Transactional mail without a `text/plain`
    part takes a spam-score hit. The code and the URL are all it needs to contain.

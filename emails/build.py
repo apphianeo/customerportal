@@ -40,8 +40,11 @@ TERMS_URL = "https://www.uoi.com.sg/uoi/important-information.page"
 PRIVACY_URL = "https://www.uoi.com.sg/privacy.page"
 UOI_URL = "https://www.uoi.com.sg"
 PORTAL_URL = "https://portal.uoi.com.sg"
-# Confirm the production host before sending; /help is the portal route (App.tsx:119).
-SUPPORT_URL = "https://portal.uoi.com.sg/help"
+# Same WhatsApp support line the portal uses (AuthUI.tsx SUPPORT_URL).
+# Ampersands escaped: these files declare XHTML, where a raw & in an attribute
+# is invalid and some ESP parsers reject it.
+SUPPORT_URL = ("https://api.whatsapp.com/send/?phone=6580814843"
+               "&amp;text&amp;type=phone_number&amp;app_absent=0")
 SUPPORT_EMAIL = "contactus@uoi.com.sg"
 SUPPORT_TEL = "+6562227733"
 SUPPORT_TEL_DISPLAY = "(+65) 6222 7733"
@@ -484,8 +487,6 @@ add(
              "number, coverage dates and renewal status."),
             ("Documents on demand",
              "Download policy documents, schedules and receipts yourself, at any hour."),
-            ("Claims start from the policy",
-             "Open the policy, submit the claim. The details we hold are already attached."),
             ("Update your own details",
              "Change your contact details, your password or your login ID, "
              "without paperwork."),
