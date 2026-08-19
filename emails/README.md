@@ -13,7 +13,7 @@ design system so the email and the screen it leads to look like the same product
 
 Open `preview.html` in a browser to see all five rendered at 600px with sample data.
 
-The emails have no footer. Logo, one card, nothing else.
+Logo, one card, then the legal block at 11px on the canvas below it.
 
 ---
 
@@ -50,13 +50,12 @@ One-Time Password (OTP) for you. Please enter this OTP on the portal login page
 to proceed."* After: *"Enter this code to finish signing in to UOI Customer Portal."*
 Nobody reads a transactional email; they scan it for one thing.
 
-**6. The footer is gone.**
-The legal block, the link row and the blue copyright bar are removed outright.
-None of it was load-bearing in a message whose whole job is to deliver one code,
-and together they ran longer than the message itself. What still earns its place,
-the anti-phishing line and the support route, moves inside the card as closing
-fine print. *If Legal requires a disclaimer on outbound mail, it goes back as a
-fourth line in the `fine()` block, not as a footer.*
+**6. The footer is legal text only.**
+The blue copyright bar and the link row are gone. What remains is the required
+legal block: no-reply notice, privacy link, copyright, and the UOI email
+disclaimer. It sits below the card on the page canvas at 11px, the smallest type
+in the email, so it reads as document chrome rather than message content. The
+support route moved inside the card as closing fine print at 13px.
 
 **6b. Three fixed tiers after the code.**
 Everything below the code or button reads in the same three steps, so no one has
@@ -91,6 +90,7 @@ Nothing here is a new visual language. Every value is lifted from
 | Caution notice | same geometry | `--color-bg-caution` `#FFF8EC` |
 | Type | `--font-sans` + scale | Noto Sans; 26/1.25 heading, 16/1.5 body, 14/1.4 small, 13/1.5 fine |
 | Text colours | `--color-text-*` | `#212121` / `#6E6E6E` / `#8D8D8D`; links `#0D6EFD` |
+| Legal block | below the card | 11px/1.55, `#6E6E6E`, hairline above |
 
 Two deliberate deviations, both forced by the medium:
 

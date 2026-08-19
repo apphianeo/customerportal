@@ -110,6 +110,24 @@ Closing:
 
 ---
 
+## Legal block (all five emails)
+
+Sits below the card on the page canvas, not inside it, so it reads as document
+chrome rather than message content. At 11px it is the smallest type in the
+email; the fine print above it is 13px.
+
+| Slot | Copy |
+|---|---|
+| Line 1 | This is an automatically generated email, please do not reply. |
+| Line 2 | Visit [www.uoi.com.sg] to learn more about our privacy and security notice. |
+| Line 3 | Copyright © 2026 United Overseas Insurance Limited Co Reg. No. 197100152R. All Rights Reserved. |
+| Label | UOI EMAIL DISCLAIMER |
+| Disclaimer | Any person receiving this email and any attachment(s) contained, shall treat the information as confidential and not misuse, copy, disclose, distribute or retain the information in any way that amounts to a breach of confidentiality. If you are not the intended recipient, please delete all copies of this email from your computer system. As the integrity of this message cannot be guaranteed, neither UOI nor any entity in the UOB Group shall be responsible for the contents. Any opinion in this email may not necessarily represent the opinion of UOI or any entity in the UOB Group. |
+
+Edited once in `shell()` in `build.py`, so a change lands on all five at once.
+
+---
+
 ## Notes on editing
 
 - `[square brackets]` mark link text. The destination is set in `build.py`, not here.

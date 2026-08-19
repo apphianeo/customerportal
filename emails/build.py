@@ -46,7 +46,7 @@ SUPPORT_EMAIL = "contactus@uoi.com.sg"
 SUPPORT_TEL = "+6562227733"
 SUPPORT_TEL_DISPLAY = "(+65) 6222 7733"
 COPYRIGHT = ("Copyright © 2026 United Overseas Insurance Limited "
-             "Co. Reg. No. 197100152R.")
+             "Co Reg. No. 197100152R.")
 RIGHTS = "All Rights Reserved."
 
 # Replace with the absolute HTTPS URL you host the logo at before sending.
@@ -279,6 +279,37 @@ def shell(title, preheader, blocks):
                 </tr>
               </table>
 
+            </td>
+          </tr>
+
+          <!-- Legal. Outside the card: chrome, not message. 11px is the smallest
+               type in the email, per the brief. -->
+          <tr>
+            <td class="pad" style="padding:24px 4px 0 4px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="border-top:1px solid {T['border']}; padding-top:16px;
+                             font-family:{T['font']}; font-size:11px; line-height:1.55;
+                             color:{T['text_secondary']};">
+                    <p style="margin:0;">This is an automatically generated email, please do not reply.</p>
+                    <p style="margin:8px 0 0 0;">Visit
+                      <a href="{UOI_URL}" style="color:{T['text_secondary']};">www.uoi.com.sg</a>
+                      to learn more about our privacy and security notice.</p>
+                    <p style="margin:8px 0 0 0;">{COPYRIGHT} {RIGHTS}</p>
+                    <p style="margin:16px 0 0 0; font-weight:600; letter-spacing:0.04em;
+                              color:{T['text_secondary']};">UOI EMAIL DISCLAIMER</p>
+                    <p style="margin:4px 0 0 0; color:{T['text_tertiary']};">Any person receiving this
+                      email and any attachment(s) contained, shall treat the information as
+                      confidential and not misuse, copy, disclose, distribute or retain the
+                      information in any way that amounts to a breach of confidentiality. If you
+                      are not the intended recipient, please delete all copies of this email from
+                      your computer system. As the integrity of this message cannot be guaranteed,
+                      neither UOI nor any entity in the UOB Group shall be responsible for the
+                      contents. Any opinion in this email may not necessarily represent the opinion
+                      of UOI or any entity in the UOB Group.</p>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
 
@@ -526,12 +557,11 @@ CHANGES = [
      "generated a One-Time Password (OTP) for you. Please enter this OTP on the portal "
      "login page to proceed.\u201d</em> After: <em>\u201cEnter this code to finish signing in "
      "to UOI Customer Portal.\u201d</em>"),
-    ("The footer is gone",
-     "The legal block, the link row and the blue copyright bar are removed outright. "
-     "None of it was load-bearing in a message whose whole job is to deliver one code, "
-     "and together they ran longer than the message. What still earns its place, the "
-     "anti-phishing line and the support route, moves inside the card as closing "
-     "fine print."),
+    ("The footer is legal text only",
+     "The blue copyright bar and the link row are gone. What remains is the required "
+     "legal block, which sits below the card at 11px, the smallest type in the email, "
+     "so it reads as document chrome rather than message content. The support route "
+     "moved inside the card as closing fine print at 13px."),
     ("Three fixed tiers after the code",
      "Everything below the code or button now reads in the same three steps, so no one "
      "has to work out what matters: a <strong>bold lead-in</strong> for the next action, "
