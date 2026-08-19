@@ -669,7 +669,7 @@ export function OtpBoxes({
 
   return (
     <div
-      className="flex gap-2 w-full"
+      className="flex gap-[12px] w-full items-center justify-center"
       onFocus={() => onFocusChange?.(true)}
       /* Moving between boxes keeps focus inside the group — only report a
          real exit, or the keypad would flicker on every hop. */
@@ -689,7 +689,9 @@ export function OtpBoxes({
           onChange={(e) => setChar(i, e.target.value)}
           onKeyDown={(e) => onKeyDown(i, e)}
           onPaste={onPaste}
-          className={`flex-1 aspect-square min-w-0 text-center bg-white border rounded-[8px] text-[20px] text-[#212121] outline-none ${
+          /* 60x60 per the design. flex-1 with a max width lets the row shrink
+             on a narrow phone without the boxes growing tall to match. */
+          className={`flex-1 min-w-0 max-w-[60px] h-[60px] text-center bg-white border rounded-[8px] text-[16px] text-[#212121] outline-none ${
             error
               ? 'border-[#dc2626]'
               : 'border-[rgba(0,0,0,0.09)] focus:border-[#005eb8] focus:shadow-[0px_0px_0px_3px_rgba(0,94,184,0.2)]'
