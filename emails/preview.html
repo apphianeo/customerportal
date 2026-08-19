@@ -170,7 +170,7 @@
   <header class="mast">
     <p class="eyebrow">Design proposal &middot; Customer Portal</p>
     <h1>Auth emails, rebuilt on the portal&rsquo;s own system</h1>
-    <p class="lede">Four transactional templates for UOI Customer Portal &mdash; login, password
+    <p class="lede">Four transactional templates for UOI Customer Portal: login, password
       reset, registration and change of login ID. Same tokens, same button, same card,
       same footer as the screens they lead to, so the email and the product stop looking
       like two different companies.</p>
@@ -191,7 +191,7 @@
     <div class="changes">
         <div class="change">
           <h3>The hero photo is gone</h3>
-          <p>In the current email the stock photo is the largest element and carries no information — on a phone it pushes the code below the fold. A 4px rule in the portal blue does the branding instead. Most corporate clients block images by default, so the photo-led version currently arrives as a grey box; this one doesn’t depend on images at all.</p>
+          <p>In the current email the stock photo is the largest element and carries no information. On a phone it pushes the code below the fold. A 4px rule in the portal blue does the branding instead. Most corporate clients block images by default, so the photo-led version currently arrives as a grey box; this one doesn’t depend on images at all.</p>
         </div>
         <div class="change">
           <h3>The code is an object, not a sentence</h3>
@@ -199,7 +199,7 @@
         </div>
         <div class="change">
           <h3>One expiry, stated correctly</h3>
-          <p>The spec table says 3 minutes; the current email says 5. Templates use 3 throughout — drive it from one backend value so copy and token can’t drift apart again.</p>
+          <p>The spec table says 3 minutes; the current email says 5. Templates use 3 throughout. Drive it from one backend value so copy and token can’t drift apart again.</p>
         </div>
         <div class="change">
           <h3>The yellow highlighter is gone</h3>
@@ -211,7 +211,7 @@
         </div>
         <div class="change">
           <h3>A proportionate disclaimer</h3>
-          <p>The current legal block runs six lines of ~7px grey text — physically larger than the message itself. Compressed to two sentences at 11px and moved outside the card so it reads as chrome. Worth a Legal check before sending.</p>
+          <p>The current legal block runs six lines of ~7px grey text, physically larger than the message itself. Compressed to two sentences at 11px and moved outside the card so it reads as chrome. Worth a Legal check before sending.</p>
         </div>
         <div class="change">
           <h3>A “we will never ask” strip</h3>
@@ -219,7 +219,7 @@
         </div>
         <div class="change">
           <h3>Every email says what to do if it wasn’t you</h3>
-          <p>Login → change your password. Reset → ignore it, nothing happens. Change login ID → call us now, don’t enter the code. The highest-value copy in a security email, and the current template has none of it.</p>
+          <p>Login: change your password. Reset: ignore it, nothing happens. Change login ID: call us now, don’t enter the code. The highest-value copy in a security email, and the current template has none of it.</p>
         </div>
     </div>
   </section>
@@ -299,7 +299,7 @@
             </td>
           </tr>
 
-          <!-- Card: portal surface — white, 8px radius, 1px hairline border -->
+          <!-- Card: portal surface. White, 8px radius, 1px hairline border -->
           <tr>
             <td style=&quot;background-color:#FFFFFF; border:1px solid #EBEBEB;
                        border-radius:8px;&quot;>
@@ -375,16 +375,15 @@
           <tr>
             <td class=&quot;pad&quot; align=&quot;center&quot; style=&quot;padding:24px 32px 0 32px; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
                        font-size:14px; line-height:1.5; color:#6E6E6E;&quot;>
-              Need help? Email <a href=&quot;mailto:contactus@uoi.com.sg&quot; style=&quot;color:#0D6EFD; text-decoration:underline;&quot;>contactus@uoi.com.sg</a>
-              or call <a href=&quot;tel:+6562227733&quot; style=&quot;color:#0D6EFD; text-decoration:underline;&quot;>(+65) 6222 7733</a>.
+              Need help? Reach out to our support team <a href=&quot;https://portal.uoi.com.sg/help&quot; style=&quot;color:#0D6EFD; text-decoration:underline;&quot;>here</a>.
             </td>
           </tr>
 
-          <!-- Legal — compressed from 6 paragraphs to 2 lines -->
+          <!-- Legal: compressed from 6 paragraphs to 2 lines -->
           <tr>
             <td class=&quot;pad&quot; align=&quot;center&quot; style=&quot;padding:16px 32px 0 32px; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
                        font-size:11px; line-height:1.5; color:#8D8D8D;&quot;>
-              This is an automated message — please do not reply.
+              This is an automated message. Please do not reply.
               This email and any attachment are confidential and intended only for the named
               recipient. If it reached you in error, please delete it and notify us.
               <br /><br />
@@ -396,7 +395,7 @@
 
           <tr><td style=&quot;height:16px; line-height:16px; font-size:0;&quot;>&nbsp;</td></tr>
 
-          <!-- Footer bar — ports FooterShort.tsx: primary blue, 12px white -->
+          <!-- Footer bar: ports FooterShort.tsx, primary blue, 12px white -->
           <tr>
             <td class=&quot;pad&quot; align=&quot;center&quot;
                 style=&quot;background-color:#005EB8; border-radius:8px;
@@ -425,7 +424,7 @@
             <dt>Subject</dt><dd class="mono">Reset your UOI Customer Portal password</dd>
             <dt>Preheader</dt><dd>Your reset link expires in 30 minutes.</dd>
           </dl>
-          <p class="why">Link, not a code — a reset is a click-through, so don't make the user retype anything.</p>
+          <p class="why">Link, not a code. A reset is a click-through, so don't make the user retype anything.</p>
         </div>
         <div class="tpl-render">
           <span class="viewport-label">600&#8202;px render</span>
@@ -485,7 +484,7 @@
             </td>
           </tr>
 
-          <!-- Card: portal surface — white, 8px radius, 1px hairline border -->
+          <!-- Card: portal surface. White, 8px radius, 1px hairline border -->
           <tr>
             <td style=&quot;background-color:#FFFFFF; border:1px solid #EBEBEB;
                        border-radius:8px;&quot;>
@@ -536,7 +535,7 @@
                 <tr>
                   <td style=&quot;background-color:#EFF6FF; border-radius:8px;
                              padding:12px 16px; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:14px;
-                             line-height:1.5; color:#212121;&quot;><strong>Didn't request this?</strong> Ignore this email — your password stays exactly as it is, and no one can reset it without this link.</td>
+                             line-height:1.5; color:#212121;&quot;><strong>Didn't request this?</strong> Ignore this email. Your password stays exactly as it is, and no one can reset it without this link.</td>
                 </tr>
               </table>
 
@@ -571,16 +570,15 @@
           <tr>
             <td class=&quot;pad&quot; align=&quot;center&quot; style=&quot;padding:24px 32px 0 32px; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
                        font-size:14px; line-height:1.5; color:#6E6E6E;&quot;>
-              Need help? Email <a href=&quot;mailto:contactus@uoi.com.sg&quot; style=&quot;color:#0D6EFD; text-decoration:underline;&quot;>contactus@uoi.com.sg</a>
-              or call <a href=&quot;tel:+6562227733&quot; style=&quot;color:#0D6EFD; text-decoration:underline;&quot;>(+65) 6222 7733</a>.
+              Need help? Reach out to our support team <a href=&quot;https://portal.uoi.com.sg/help&quot; style=&quot;color:#0D6EFD; text-decoration:underline;&quot;>here</a>.
             </td>
           </tr>
 
-          <!-- Legal — compressed from 6 paragraphs to 2 lines -->
+          <!-- Legal: compressed from 6 paragraphs to 2 lines -->
           <tr>
             <td class=&quot;pad&quot; align=&quot;center&quot; style=&quot;padding:16px 32px 0 32px; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
                        font-size:11px; line-height:1.5; color:#8D8D8D;&quot;>
-              This is an automated message — please do not reply.
+              This is an automated message. Please do not reply.
               This email and any attachment are confidential and intended only for the named
               recipient. If it reached you in error, please delete it and notify us.
               <br /><br />
@@ -592,7 +590,7 @@
 
           <tr><td style=&quot;height:16px; line-height:16px; font-size:0;&quot;>&nbsp;</td></tr>
 
-          <!-- Footer bar — ports FooterShort.tsx: primary blue, 12px white -->
+          <!-- Footer bar: ports FooterShort.tsx, primary blue, 12px white -->
           <tr>
             <td class=&quot;pad&quot; align=&quot;center&quot;
                 style=&quot;background-color:#005EB8; border-radius:8px;
@@ -621,7 +619,7 @@
             <dt>Subject</dt><dd class="mono">946683 is your UOI Customer Portal verification code</dd>
             <dt>Preheader</dt><dd>Verify your email to finish creating your account.</dd>
           </dl>
-          <p class="why">Reassures rather than warns — a stranger receiving this has nothing at risk yet.</p>
+          <p class="why">Reassures rather than warns. A stranger receiving this has nothing at risk yet.</p>
         </div>
         <div class="tpl-render">
           <span class="viewport-label">600&#8202;px render</span>
@@ -681,7 +679,7 @@
             </td>
           </tr>
 
-          <!-- Card: portal surface — white, 8px radius, 1px hairline border -->
+          <!-- Card: portal surface. White, 8px radius, 1px hairline border -->
           <tr>
             <td style=&quot;background-color:#FFFFFF; border:1px solid #EBEBEB;
                        border-radius:8px;&quot;>
@@ -727,7 +725,7 @@
                 <tr>
                   <td style=&quot;background-color:#EFF6FF; border-radius:8px;
                              padding:12px 16px; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:14px;
-                             line-height:1.5; color:#212121;&quot;>Once verified you can view your policies, download documents and file a claim — all in one place.</td>
+                             line-height:1.5; color:#212121;&quot;>Once verified you can view your policies, download documents and file a claim, all in one place.</td>
                 </tr>
               </table>
 
@@ -762,16 +760,15 @@
           <tr>
             <td class=&quot;pad&quot; align=&quot;center&quot; style=&quot;padding:24px 32px 0 32px; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
                        font-size:14px; line-height:1.5; color:#6E6E6E;&quot;>
-              Need help? Email <a href=&quot;mailto:contactus@uoi.com.sg&quot; style=&quot;color:#0D6EFD; text-decoration:underline;&quot;>contactus@uoi.com.sg</a>
-              or call <a href=&quot;tel:+6562227733&quot; style=&quot;color:#0D6EFD; text-decoration:underline;&quot;>(+65) 6222 7733</a>.
+              Need help? Reach out to our support team <a href=&quot;https://portal.uoi.com.sg/help&quot; style=&quot;color:#0D6EFD; text-decoration:underline;&quot;>here</a>.
             </td>
           </tr>
 
-          <!-- Legal — compressed from 6 paragraphs to 2 lines -->
+          <!-- Legal: compressed from 6 paragraphs to 2 lines -->
           <tr>
             <td class=&quot;pad&quot; align=&quot;center&quot; style=&quot;padding:16px 32px 0 32px; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
                        font-size:11px; line-height:1.5; color:#8D8D8D;&quot;>
-              This is an automated message — please do not reply.
+              This is an automated message. Please do not reply.
               This email and any attachment are confidential and intended only for the named
               recipient. If it reached you in error, please delete it and notify us.
               <br /><br />
@@ -783,7 +780,7 @@
 
           <tr><td style=&quot;height:16px; line-height:16px; font-size:0;&quot;>&nbsp;</td></tr>
 
-          <!-- Footer bar — ports FooterShort.tsx: primary blue, 12px white -->
+          <!-- Footer bar: ports FooterShort.tsx, primary blue, 12px white -->
           <tr>
             <td class=&quot;pad&quot; align=&quot;center&quot;
                 style=&quot;background-color:#005EB8; border-radius:8px;
@@ -812,7 +809,7 @@
             <dt>Subject</dt><dd class="mono">946683 is your code to confirm your new login ID</dd>
             <dt>Preheader</dt><dd>Confirm your new UOI Customer Portal login ID. Expires in 3 minutes.</dd>
           </dl>
-          <p class="why">The highest-risk email of the four — states both addresses so a hijack is obvious on sight.</p>
+          <p class="why">The highest-risk email of the four. It states both addresses, so a hijack is obvious on sight.</p>
         </div>
         <div class="tpl-render">
           <span class="viewport-label">600&#8202;px render</span>
@@ -872,7 +869,7 @@
             </td>
           </tr>
 
-          <!-- Card: portal surface — white, 8px radius, 1px hairline border -->
+          <!-- Card: portal surface. White, 8px radius, 1px hairline border -->
           <tr>
             <td style=&quot;background-color:#FFFFFF; border:1px solid #EBEBEB;
                        border-radius:8px;&quot;>
@@ -918,7 +915,7 @@
                 <tr>
                   <td style=&quot;background-color:#FFF8EC; border-radius:8px;
                              padding:12px 16px; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:14px;
-                             line-height:1.5; color:#212121;&quot;><strong>Didn't request this change?</strong> Your account may be at risk. Call us now at <a href=&quot;tel:+6562227733&quot; style=&quot;color:#0D6EFD; text-decoration:underline;&quot;>(+65) 6222 7733</a> — don't enter the code above.</td>
+                             line-height:1.5; color:#212121;&quot;><strong>Didn't request this change?</strong> Your account may be at risk. Call us now at <a href=&quot;tel:+6562227733&quot; style=&quot;color:#0D6EFD; text-decoration:underline;&quot;>(+65) 6222 7733</a> and don't enter the code above.</td>
                 </tr>
               </table>
 
@@ -953,16 +950,15 @@
           <tr>
             <td class=&quot;pad&quot; align=&quot;center&quot; style=&quot;padding:24px 32px 0 32px; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
                        font-size:14px; line-height:1.5; color:#6E6E6E;&quot;>
-              Need help? Email <a href=&quot;mailto:contactus@uoi.com.sg&quot; style=&quot;color:#0D6EFD; text-decoration:underline;&quot;>contactus@uoi.com.sg</a>
-              or call <a href=&quot;tel:+6562227733&quot; style=&quot;color:#0D6EFD; text-decoration:underline;&quot;>(+65) 6222 7733</a>.
+              Need help? Reach out to our support team <a href=&quot;https://portal.uoi.com.sg/help&quot; style=&quot;color:#0D6EFD; text-decoration:underline;&quot;>here</a>.
             </td>
           </tr>
 
-          <!-- Legal — compressed from 6 paragraphs to 2 lines -->
+          <!-- Legal: compressed from 6 paragraphs to 2 lines -->
           <tr>
             <td class=&quot;pad&quot; align=&quot;center&quot; style=&quot;padding:16px 32px 0 32px; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
                        font-size:11px; line-height:1.5; color:#8D8D8D;&quot;>
-              This is an automated message — please do not reply.
+              This is an automated message. Please do not reply.
               This email and any attachment are confidential and intended only for the named
               recipient. If it reached you in error, please delete it and notify us.
               <br /><br />
@@ -974,7 +970,7 @@
 
           <tr><td style=&quot;height:16px; line-height:16px; font-size:0;&quot;>&nbsp;</td></tr>
 
-          <!-- Footer bar — ports FooterShort.tsx: primary blue, 12px white -->
+          <!-- Footer bar: ports FooterShort.tsx, primary blue, 12px white -->
           <tr>
             <td class=&quot;pad&quot; align=&quot;center&quot;
                 style=&quot;background-color:#005EB8; border-radius:8px;
@@ -1032,18 +1028,18 @@
         <li><strong>Host the logo.</strong> <code>LOGO_URL</code> points at a placeholder.
           Upload <code>assets/uoi-logo.png</code> to a public HTTPS path and update it.
           Alt text is <code>UOI</code>, so a blocked image degrades cleanly.</li>
-        <li><strong>Wire the merge fields.</strong> Currently Handlebars-style
-          &mdash; swap the delimiters for whatever your ESP uses.</li>
+        <li><strong>Wire the merge fields.</strong> Currently Handlebars-style.
+          Swap the delimiters for whatever your ESP uses.</li>
         <li><strong>Send a plain-text alternative.</strong> Transactional mail without a
           <code>text/plain</code> part takes a spam-score hit.</li>
         <li><strong>Check SPF, DKIM and DMARC.</strong> No amount of design makes an
           unauthenticated OTP email trustworthy.</li>
         <li><strong>Decide on the code in the subject line.</strong> Google, Stripe and
-          Apple all do it &mdash; readable from the lock screen without opening the mail.
+          Apple all do it, so the code is readable from the lock screen without opening the mail.
           The tradeoff is shoulder-surfing. Templates 1, 3 and 4 currently do it.</li>
         <li><strong>Confirm the reset-link TTL.</strong> Template 2 says 30 minutes.</li>
         <li><strong>Send me row 5.</strong> The &ldquo;Others&rdquo; section was cut off in
-          the screenshot &mdash; those scenarios slot into the same shell.</li>
+          the screenshot. Those scenarios slot into the same shell.</li>
       </ul>
     </div>
   </section>

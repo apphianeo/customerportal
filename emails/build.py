@@ -39,7 +39,8 @@ T = {
 TERMS_URL = "https://www.uoi.com.sg/uoi/important-information.page"
 PRIVACY_URL = "https://www.uoi.com.sg/privacy.page"
 UOI_URL = "https://www.uoi.com.sg"
-SUPPORT_EMAIL = "contactus@uoi.com.sg"
+# Confirm the production host before sending; /help is the portal route (App.tsx:119).
+SUPPORT_URL = "https://portal.uoi.com.sg/help"
 SUPPORT_TEL = "+6562227733"
 SUPPORT_TEL_DISPLAY = "(+65) 6222 7733"
 COPYRIGHT = ("Copyright © 2026 United Overseas Insurance Limited "
@@ -189,7 +190,7 @@ def shell(title, preheader, blocks):
             </td>
           </tr>
 
-          <!-- Card: portal surface — white, 8px radius, 1px hairline border -->
+          <!-- Card: portal surface. White, 8px radius, 1px hairline border -->
           <tr>
             <td style="background-color:{T['bg_white']}; border:1px solid {T['border']};
                        border-radius:{T['radius']};">
@@ -233,16 +234,15 @@ def shell(title, preheader, blocks):
           <tr>
             <td class="pad" align="center" style="padding:24px 32px 0 32px; font-family:{T['font']};
                        font-size:14px; line-height:1.5; color:{T['text_secondary']};">
-              Need help? Email {link(SUPPORT_EMAIL, 'mailto:' + SUPPORT_EMAIL)}
-              or call {link(SUPPORT_TEL_DISPLAY, 'tel:' + SUPPORT_TEL)}.
+              Need help? Reach out to our support team {link('here', SUPPORT_URL)}.
             </td>
           </tr>
 
-          <!-- Legal — compressed from 6 paragraphs to 2 lines -->
+          <!-- Legal: compressed from 6 paragraphs to 2 lines -->
           <tr>
             <td class="pad" align="center" style="padding:16px 32px 0 32px; font-family:{T['font']};
                        font-size:11px; line-height:1.5; color:{T['text_tertiary']};">
-              This is an automated message — please do not reply.
+              This is an automated message. Please do not reply.
               This email and any attachment are confidential and intended only for the named
               recipient. If it reached you in error, please delete it and notify us.
               <br /><br />
@@ -254,7 +254,7 @@ def shell(title, preheader, blocks):
 
           <tr><td style="height:16px; line-height:16px; font-size:0;">&nbsp;</td></tr>
 
-          <!-- Footer bar — ports FooterShort.tsx: primary blue, 12px white -->
+          <!-- Footer bar: ports FooterShort.tsx, primary blue, 12px white -->
           <tr>
             <td class="pad" align="center"
                 style="background-color:{T['primary']}; border-radius:{T['radius']};
@@ -338,14 +338,14 @@ add(
         para("This link expires in 30 minutes and can be used once.",
              14, T["text_tertiary"]),
         spacer(24),
-        notice("<strong>Didn't request this?</strong> Ignore this email — your password "
+        notice("<strong>Didn't request this?</strong> Ignore this email. Your password "
                "stays exactly as it is, and no one can reset it without this link.", "info"),
         spacer(24),
         para('Button not working? Paste this into your browser:<br />'
              f'<span style="color:{T["text_link"]}; word-break:break-all;">{RESET_URL}</span>',
              12, T["text_tertiary"]),
     ],
-    "Link, not a code — a reset is a click-through, so don't make the user retype anything.",
+    "Link, not a code. A reset is a click-through, so don't make the user retype anything.",
 )
 
 # 3 — Manual account registration OTP
@@ -363,12 +363,12 @@ add(
         code_plate("{{otp_code}}", "Expires in 3 minutes"),
         spacer(24),
         notice("Once verified you can view your policies, download documents and "
-               "file a claim — all in one place.", "info"),
+               "file a claim, all in one place.", "info"),
         spacer(24),
         para("If you didn't sign up for UOI Customer Portal, you can safely ignore this email. "
              "No account will be created.", 14, T["text_tertiary"]),
     ],
-    "Reassures rather than warns — a stranger receiving this has nothing at risk yet.",
+    "Reassures rather than warns. A stranger receiving this has nothing at risk yet.",
 )
 
 # 4 — Change Login ID OTP
@@ -387,13 +387,13 @@ add(
         code_plate("{{otp_code}}", "Expires in 3 minutes"),
         spacer(24),
         notice("<strong>Didn't request this change?</strong> Your account may be at risk. "
-               f'Call us now at {link(SUPPORT_TEL_DISPLAY, "tel:" + SUPPORT_TEL)} — '
+               f'Call us now at {link(SUPPORT_TEL_DISPLAY, "tel:" + SUPPORT_TEL)} and '
                "don't enter the code above.", "caution"),
         spacer(24),
         para("Until the change is confirmed, keep signing in with your current login ID. "
              "We've also notified your previous address.", 14, T["text_tertiary"]),
     ],
-    "The highest-risk email of the four — states both addresses so a hijack is obvious on sight.",
+    "The highest-risk email of the four. It states both addresses, so a hijack is obvious on sight.",
 )
 
 
@@ -450,7 +450,7 @@ def build_preview():
 CHANGES = [
     ("The hero photo is gone",
      "In the current email the stock photo is the largest element and carries no "
-     "information \u2014 on a phone it pushes the code below the fold. A 4px rule in the "
+     "information. On a phone it pushes the code below the fold. A 4px rule in the "
      "portal blue does the branding instead. Most corporate clients block images by "
      "default, so the photo-led version currently arrives as a grey box; this one "
      "doesn\u2019t depend on images at all."),
@@ -460,7 +460,7 @@ CHANGES = [
      "tracking, with its expiry inside the same plate. One thing to read, not two."),
     ("One expiry, stated correctly",
      "The spec table says 3 minutes; the current email says 5. Templates use 3 "
-     "throughout \u2014 drive it from one backend value so copy and token can\u2019t drift "
+     "throughout. Drive it from one backend value so copy and token can\u2019t drift "
      "apart again."),
     ("The yellow highlighter is gone",
      "Highlighting on \u201cOTP\u201d reads as an unfinished Word document. Emphasis comes "
@@ -471,7 +471,7 @@ CHANGES = [
      "login page to proceed.\u201d</em> After: <em>\u201cEnter this code to finish signing in "
      "to UOI Customer Portal.\u201d</em>"),
     ("A proportionate disclaimer",
-     "The current legal block runs six lines of ~7px grey text \u2014 physically larger "
+     "The current legal block runs six lines of ~7px grey text, physically larger "
      "than the message itself. Compressed to two sentences at 11px and moved outside "
      "the card so it reads as chrome. Worth a Legal check before sending."),
     ("A \u201cwe will never ask\u201d strip",
@@ -479,8 +479,8 @@ CHANGES = [
      "template, plus the absence of the generic stock photo phishing kits also use, "
      "makes the real email easier to trust and the fake one easier to spot."),
     ("Every email says what to do if it wasn\u2019t you",
-     "Login \u2192 change your password. Reset \u2192 ignore it, nothing happens. Change login "
-     "ID \u2192 call us now, don\u2019t enter the code. The highest-value copy in a security "
+     "Login: change your password. Reset: ignore it, nothing happens. Change login "
+     "ID: call us now, don\u2019t enter the code. The highest-value copy in a security "
      "email, and the current template has none of it."),
 ]
 
@@ -697,7 +697,7 @@ PREVIEW_SHELL = """<title>UOI Customer Portal Auth Emails</title>
   <header class="mast">
     <p class="eyebrow">Design proposal &middot; Customer Portal</p>
     <h1>Auth emails, rebuilt on the portal&rsquo;s own system</h1>
-    <p class="lede">Four transactional templates for UOI Customer Portal &mdash; login, password
+    <p class="lede">Four transactional templates for UOI Customer Portal: login, password
       reset, registration and change of login ID. Same tokens, same button, same card,
       same footer as the screens they lead to, so the email and the product stop looking
       like two different companies.</p>
@@ -753,18 +753,18 @@ PREVIEW_SHELL = """<title>UOI Customer Portal Auth Emails</title>
         <li><strong>Host the logo.</strong> <code>LOGO_URL</code> points at a placeholder.
           Upload <code>assets/uoi-logo.png</code> to a public HTTPS path and update it.
           Alt text is <code>UOI</code>, so a blocked image degrades cleanly.</li>
-        <li><strong>Wire the merge fields.</strong> Currently Handlebars-style
-          &mdash; swap the delimiters for whatever your ESP uses.</li>
+        <li><strong>Wire the merge fields.</strong> Currently Handlebars-style.
+          Swap the delimiters for whatever your ESP uses.</li>
         <li><strong>Send a plain-text alternative.</strong> Transactional mail without a
           <code>text/plain</code> part takes a spam-score hit.</li>
         <li><strong>Check SPF, DKIM and DMARC.</strong> No amount of design makes an
           unauthenticated OTP email trustworthy.</li>
         <li><strong>Decide on the code in the subject line.</strong> Google, Stripe and
-          Apple all do it &mdash; readable from the lock screen without opening the mail.
+          Apple all do it, so the code is readable from the lock screen without opening the mail.
           The tradeoff is shoulder-surfing. Templates 1, 3 and 4 currently do it.</li>
         <li><strong>Confirm the reset-link TTL.</strong> Template 2 says 30 minutes.</li>
         <li><strong>Send me row 5.</strong> The &ldquo;Others&rdquo; section was cut off in
-          the screenshot &mdash; those scenarios slot into the same shell.</li>
+          the screenshot. Those scenarios slot into the same shell.</li>
       </ul>
     </div>
   </section>
