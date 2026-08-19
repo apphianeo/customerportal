@@ -192,10 +192,6 @@ def spacer(h):
     return f'\n              <div style="height:{h}px; line-height:{h}px; font-size:0;">&nbsp;</div>'
 
 
-NEVER_ASK = (f'<strong style="color:{T["text_secondary"]};">UOI will never ask you</strong> '
-             'for your OTP, password or card details by phone, email or SMS. '
-             f'If someone does, hang up and call {link(SUPPORT_TEL_DISPLAY, "tel:" + SUPPORT_TEL, T["text_tertiary"])}.')
-
 HELP_LINE = (f'Need help? Reach out to our support team {link("here", SUPPORT_URL, T["text_tertiary"])} '
              f'or email {link(SUPPORT_EMAIL, "mailto:" + SUPPORT_EMAIL, T["text_tertiary"])}.')
 
@@ -315,22 +311,22 @@ def add(filename, subject, preheader, title, blocks, notes):
 # 1. Login OTP
 add(
     "01-login-otp.html",
-    "{{otp_code}} is your UOI Customer Portal login code",
+    "{{otp}} is your UOI Customer Portal login code",
     "Expires in 3 minutes. UOI will never ask you for this code.",
     "Your UOI Customer Portal login code",
     [
         heading("Your login code"),
-        para("Hi {{first_name}}, please enter this code in the window where you "
-             "started signing in to UOI Customer Portal.", 16, T["text_secondary"], 14),
+        para("Hi {{first_name}}, please enter this One-Time Password (OTP) to sign in "
+             "to UOI Customer Portal", 16, T["text_secondary"], 14),
         spacer(26),
-        code_plate("{{otp_code}}", "Expires in 3 minutes"),
+        code_plate("{{otp}}", "Expires in 3 minutes"),
         spacer(26),
         lead("Didn't try to sign in?"),
         para("Someone may know your password. "
              f'{link("Change it now", CHANGE_PW_URL)} to keep your account secure.', 16,
              T["text_secondary"], 8),
         spacer(24),
-        fine([NEVER_ASK, HELP_LINE]),
+        fine([HELP_LINE]),
     ],
     "Code in the subject line so it is readable from the notification without opening the email.",
 )
@@ -359,7 +355,7 @@ add(
         fine([
             'Button not working? Paste this into your browser:<br />'
             f'<span style="color:{T["text_link"]}; word-break:break-all;">{RESET_URL}</span>',
-            NEVER_ASK, HELP_LINE,
+            HELP_LINE,
         ]),
     ],
     "Link, not a code. A reset is a click-through, so don't make the user retype anything.",
@@ -368,7 +364,7 @@ add(
 # 3. Manual account registration OTP
 add(
     "03-registration-otp.html",
-    "{{otp_code}} is your UOI Customer Portal verification code",
+    "{{otp}} is your UOI Customer Portal verification code",
     "Verify your email to finish creating your account.",
     "Verify your email address",
     [
@@ -378,7 +374,7 @@ add(
              "<strong style=\"color:%s;\">{{login_id}}</strong>." % T["text_primary"],
              16, T["text_secondary"], 14),
         spacer(26),
-        code_plate("{{otp_code}}", "Expires in 3 minutes"),
+        code_plate("{{otp}}", "Expires in 3 minutes"),
         spacer(26),
         lead("Once verified, your account is ready."),
         para("View your policies, download documents and file a claim, all in one place.",
@@ -387,7 +383,7 @@ add(
         fine([
             "If you didn't sign up for UOI Customer Portal, you can safely ignore this "
             "email. No account will be created.",
-            NEVER_ASK, HELP_LINE,
+            HELP_LINE,
         ]),
     ],
     "Reassures rather than warns. A stranger receiving this has nothing at risk yet.",
@@ -396,7 +392,7 @@ add(
 # 4. Change Login ID OTP
 add(
     "04-change-login-id-otp.html",
-    "{{otp_code}} is your code to confirm your new login ID",
+    "{{otp}} is your code to confirm your new login ID",
     "Confirm your new UOI Customer Portal login ID. Expires in 3 minutes.",
     "Confirm your new login ID",
     [
@@ -407,7 +403,7 @@ add(
              "code in the window where you started the change."
              % (T["text_primary"], T["text_primary"]), 16, T["text_secondary"], 14),
         spacer(26),
-        code_plate("{{otp_code}}", "Expires in 3 minutes"),
+        code_plate("{{otp}}", "Expires in 3 minutes"),
         spacer(26),
         notice("<strong>Didn't request this change?</strong> Your account may be at risk. "
                f'Call us now at {link(SUPPORT_TEL_DISPLAY, "tel:" + SUPPORT_TEL)} and '
@@ -415,7 +411,7 @@ add(
         spacer(24),
         fine([
             "Until the change is confirmed, keep signing in with your current login ID.",
-            NEVER_ASK, HELP_LINE,
+            HELP_LINE,
         ]),
     ],
     "The highest-risk email of the four. It states both addresses, so a hijack is obvious on sight.",
@@ -460,7 +456,7 @@ add(
         fine([
             "You are receiving this because an account was created for "
             "<strong>{{login_id}}</strong> on UOI Customer Portal.",
-            NEVER_ASK, HELP_LINE,
+            HELP_LINE,
         ]),
     ],
     "The only email of the five that sells rather than authenticates, so it earns "
@@ -475,7 +471,7 @@ add(
 # Sample values so the preview reads as a real email rather than a template
 SAMPLE = {
     "{{first_name}}": "Wei Ling",
-    "{{otp_code}}": "946683",
+    "{{otp}}": "946683",
     "{{login_id}}": "weiling.tan@gmail.com",
     "{{old_login_id}}": "weiling.tan@gmail.com",
     "{{new_login_id}}": "wl.tan@outlook.sg",
@@ -552,10 +548,6 @@ CHANGES = [
      "has to work out what matters: a <strong>bold lead-in</strong> for the next action, "
      "a tinted box for what to do if it was not you, and muted 13px fine print behind a "
      "hairline rule for the security note and support."),
-    ("A \u201cwe will never ask\u201d strip",
-     "An OTP email is the most spoofed message an insurer sends. One line in tier three "
-     "of every template, plus the absence of the generic stock photo phishing kits "
-     "also use, makes the real email easier to trust and the fake one easier to spot."),
     ("Every email says what to do if it wasn\u2019t you",
      "Login: change your password. Reset: ignore it, nothing happens. Change login "
      "ID: call us now, don\u2019t enter the code. The highest-value copy in a security "
@@ -788,7 +780,7 @@ PREVIEW_SHELL = """<title>UOI Customer Portal Auth Emails</title>
   <section>
     <div class="prose">
       <h2>What changes, and why</h2>
-      <p class="sub">Nine moves, each one aimed at the same thing: get the reader to the
+      <p class="sub">Eight moves, each one aimed at the same thing: get the reader to the
         code or the button faster, and make a forged copy of this email harder to pass off.</p>
     </div>
     <div class="changes">__CHANGES__

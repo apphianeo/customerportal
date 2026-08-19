@@ -68,13 +68,6 @@ to work out what matters:
 | 2 | `notice()` | tinted box, 8px radius | what to do if it was not you |
 | 3 | `fine()` | 13px, `#8D8D8D`, behind a hairline | security note, support |
 
-**7. A "we will never ask" line.**
-Every template carries one line in tier 3: *UOI will never ask you for your OTP,
-password or card details by phone, email or SMS.* An OTP email is the single most
-spoofed message an insurer sends. This line, plus the absence of the generic stock
-photo that phishing kits also use, makes the real email easier to trust and the
-fake one easier to spot.
-
 **8. Each email states what to do if it wasn't you.**
 Login OTP: change your password. Reset link: ignore it, nothing happens.
 Change Login ID: call us now, don't enter the code. This is the highest-value
@@ -131,7 +124,7 @@ per-template copy is in the `TEMPLATES` section near the bottom.
 | Field | Used in |
 |---|---|
 | `{{first_name}}` | 1, 2, 4, 5 |
-| `{{otp_code}}` | 1, 3, 4 (subject + body) |
+| `{{otp}}` | 1, 3, 4 (subject + body) |
 | `{{login_id}}` | 2, 3, 5 |
 | `{{old_login_id}}` / `{{new_login_id}}` | 4 |
 | `{{reset_url}}` | 2 |
