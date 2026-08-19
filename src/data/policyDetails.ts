@@ -46,18 +46,18 @@ const TRAVEL_ADD_ONS =
 /* ─── Shared blocks (same policyholder across this demo account) ───────── */
 const POLICYHOLDER: Field[] = [
   { label: 'Salutation', value: 'Mr' },
-  { label: 'Name', value: 'Chris Wong' },
+  { label: 'Name', value: 'CHRIS WONG' },
   { label: 'NRIC/FIN', value: 'S1234567A' },
   { label: 'Date of birth', value: '12/02/1966' },
   { label: 'Email', value: 'chriswong@gmail.com' },
   { label: 'Mobile number', value: '+65 9123 4567' },
-  { label: 'Address', value: '123 Silat Avenue, Singapore 164123' },
+  { label: 'Address', value: '123 SILAT AVENUE, SINGAPORE 164123' },
 ]
 
 const CONTACT: Field[] = [
   { label: 'Contact number', value: '+65 9123 4567' },
   { label: 'Email address', value: 'chriswong@gmail.com' },
-  { label: 'Mailing address', value: '123 Silat Avenue, Singapore 164123' },
+  { label: 'Mailing address', value: '123 SILAT AVENUE, SINGAPORE 164123' },
 ]
 
 const AGENT: Field[] = [
@@ -82,7 +82,7 @@ const PAYMENTS: PaymentRow[] = [
 const INSURED_ADULT = {
   title: 'Insured 1 (Adult)',
   fields: [
-    { label: 'Name', value: 'Chris Wong' },
+    { label: 'Name', value: 'CHRIS WONG' },
     { label: 'NRIC/FIN', value: 'S1234567A' },
     { label: 'Date of birth', value: '12/02/1966' },
   ] as Field[],
@@ -148,7 +148,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
       {
         title: 'Named driver 1',
         fields: [
-          { label: 'Name', value: 'Chris Wong' },
+          { label: 'Name', value: 'CHRIS WONG' },
           { label: 'NRIC/FIN', value: 'S1234567A' },
           { label: 'Date of birth', value: '12/02/1966' },
         ],
@@ -172,7 +172,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
       { label: 'Product', value: 'UniHelper' },
       { label: 'Policy no.', value: 'PNF320104124A24' },
       { label: 'Plan', value: 'Value' },
-      { label: 'Helper name', value: 'Maria Santos' },
+      { label: 'Helper name', value: 'MARIA SANTOS' },
       { label: 'Work permit no.', value: 'W1234567N' },
       { label: 'Security bond', value: '$5,000.00' },
       { label: 'Policy effective date', value: '02/01/2026' },
@@ -188,7 +188,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
       {
         title: 'Insured helper',
         fields: [
-          { label: 'Name', value: 'Maria Santos' },
+          { label: 'Name', value: 'MARIA SANTOS' },
           { label: 'Work permit no.', value: 'W1234567N' },
           { label: 'Date of birth', value: '04/07/1992' },
           { label: 'Nationality', value: 'Filipino' },
@@ -213,7 +213,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
       { label: 'Product', value: 'UniHelper' },
       { label: 'Policy no.', value: 'PNF320104124A23' },
       { label: 'Plan', value: 'Value' },
-      { label: 'Helper name', value: 'Rina Dewi' },
+      { label: 'Helper name', value: 'RINA DEWI' },
       { label: 'Work permit no.', value: 'W7654321N' },
       { label: 'Security bond', value: '$5,000.00' },
       { label: 'Policy effective date', value: '12/11/2025' },
@@ -229,7 +229,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
       {
         title: 'Insured helper',
         fields: [
-          { label: 'Name', value: 'Rina Dewi' },
+          { label: 'Name', value: 'RINA DEWI' },
           { label: 'Work permit no.', value: 'W7654321N' },
           { label: 'Date of birth', value: '18/03/1990' },
           { label: 'Nationality', value: 'Indonesian' },
@@ -255,7 +255,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
       { label: 'Policy no.', value: 'PNF320104124A25' },
       { label: 'Plan', value: 'Premier' },
       { label: 'Property type', value: 'HDB — 4 Room' },
-      { label: 'Property address', value: { kind: 'expandable', text: '123 Silat Avenue, Singapore 164123' } },
+      { label: 'Property address', value: { kind: 'expandable', text: '123 SILAT AVENUE, SINGAPORE 164123' } },
       { label: 'Sum insured (renovation)', value: '$100,000.00' },
       { label: 'Sum insured (contents)', value: '$50,000.00' },
       { label: 'Policy effective date', value: '01/03/2026' },
@@ -271,7 +271,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
       {
         title: 'Insured property',
         fields: [
-          { label: 'Property address', value: '123 Silat Avenue, Singapore 164123' },
+          { label: 'Property address', value: '123 SILAT AVENUE, SINGAPORE 164123' },
           { label: 'Property type', value: 'HDB — 4 Room' },
           { label: 'Occupancy', value: 'Owner-occupied' },
         ],
