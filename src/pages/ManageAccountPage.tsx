@@ -19,6 +19,7 @@ function Field({
   placeholder,
   inputMode,
   maxLength,
+  autoCapitalize,
 }: {
   label: string
   value: string
@@ -27,6 +28,7 @@ function Field({
   placeholder?: string
   inputMode?: 'text' | 'numeric' | 'tel' | 'email'
   maxLength?: number
+  autoCapitalize?: 'none' | 'words' | 'characters'
 }) {
   return (
     <label className="flex flex-col gap-[12px] w-full">
@@ -41,6 +43,7 @@ function Field({
           placeholder={placeholder}
           inputMode={inputMode}
           maxLength={maxLength}
+          autoCapitalize={autoCapitalize}
           onChange={e => onChange?.(e.target.value)}
           className="bg-white border border-[rgba(0,0,0,0.09)] rounded-[8px] px-[16px] py-[12px] w-full text-[16px] text-[#212121] leading-[1.5] outline-none placeholder:text-[#949494] focus:border-[#005eb8] focus:shadow-[0px_0px_0px_3px_rgba(0,94,184,0.2)]"
         />
@@ -144,18 +147,19 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
   const seed = account ?? ACCOUNTS[0]
 
   // Personal (editable only for account-created users)
-  const [first, setFirst] = useState(seed.firstName)
-  const [last, setLast] = useState(seed.lastName)
+  // Name and address fields are upper case throughout, seeded values included
+  const [first, setFirst] = useState(seed.firstName.toUpperCase())
+  const [last, setLast] = useState(seed.lastName.toUpperCase())
   const [dob, setDob] = useState(seed.dob)
   const [nric, setNric] = useState(seed.nric)
 
   // Address
   const [resPostal, setResPostal] = useState(seed.residentialPostal)
-  const [resAddr, setResAddr] = useState(seed.residentialAddress)
+  const [resAddr, setResAddr] = useState(seed.residentialAddress.toUpperCase())
   const [resUnit, setResUnit] = useState(seed.residentialUnit)
   const [mailingSame, setMailingSame] = useState(seed.mailingSameAsResidential)
   const [mailPostal, setMailPostal] = useState(seed.mailingPostal)
-  const [mailAddr, setMailAddr] = useState(seed.mailingAddress)
+  const [mailAddr, setMailAddr] = useState(seed.mailingAddress.toUpperCase())
   const [mailUnit, setMailUnit] = useState(seed.mailingUnit)
 
   // Contact
@@ -186,7 +190,7 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
     setDob(SINGPASS_IDENTITY.dob)
     setNric(SINGPASS_IDENTITY.nric)
     setResPostal(SINGPASS_IDENTITY.residentialPostal)
-    setResAddr(SINGPASS_IDENTITY.residentialAddress)
+    setResAddr(SINGPASS_IDENTITY.residentialAddress.toUpperCase())
     setResUnit(SINGPASS_IDENTITY.residentialUnit)
     setRetrieved(true)
     setToast('Details retrieved from MyInfo')
@@ -256,8 +260,20 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
           <div className="flex flex-col gap-[16px] w-full">
             <span className="text-[14px] font-semibold text-[#212121] leading-[1.5]">Personal details</span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
-              <Field label="First name" value={first} onChange={setFirst} disabled={locked} />
-              <Field label="Last name" value={last} onChange={setLast} disabled={locked} />
+              <Field
+                label="First name"
+                value={first}
+                onChange={v => setFirst(v.toUpperCase())}
+                disabled={locked}
+                autoCapitalize="characters"
+              />
+              <Field
+                label="Last name"
+                value={last}
+                onChange={v => setLast(v.toUpperCase())}
+                disabled={locked}
+                autoCapitalize="characters"
+              />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
               <DatePicker label="Date of birth" value={dob} onChange={setDob} disabled={locked} />
@@ -276,7 +292,13 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
                 inputMode="numeric"
                 maxLength={6}
               />
-              <Field label="Address" value={resAddr} onChange={setResAddr} disabled={locked} />
+              <Field
+                label="Address"
+                value={resAddr}
+                onChange={v => setResAddr(v.toUpperCase())}
+                disabled={locked}
+                autoCapitalize="characters"
+              />
             </div>
             {/* Half width, like the pair above — not the full card */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
@@ -297,7 +319,13 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
                   inputMode="numeric"
                   maxLength={6}
                 />
-                <Field label="Address" value={mailAddr} onChange={setMailAddr} placeholder="Enter address" />
+                <Field
+                  label="Address"
+                  value={mailAddr}
+                  onChange={v => setMailAddr(v.toUpperCase())}
+                  placeholder="Enter address"
+                  autoCapitalize="characters"
+                />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
                 <Field label="Unit number" value={mailUnit} onChange={setMailUnit} placeholder="Enter unit number" />

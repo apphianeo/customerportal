@@ -22,7 +22,6 @@ import {
   MESSAGES,
   PASSWORD_RULES,
   attemptLogin,
-  capitalizeWords,
   maskEmail,
   passwordMeetsRules,
   validateEmail,
@@ -654,17 +653,17 @@ function RegisterDetails({
           <Field
             label="First name"
             value={first}
-            onChange={(v) => { setFirst(capitalizeWords(v)); firstRequired.reset() }}
+            onChange={(v) => { setFirst(v.toUpperCase()); firstRequired.reset() }}
             placeholder="Enter first name"
-            autoCapitalize="words"
+            autoCapitalize="characters"
             error={firstRequired.error}
           />
           <Field
             label="Last name"
             value={last}
-            onChange={(v) => { setLast(capitalizeWords(v)); lastRequired.reset() }}
+            onChange={(v) => { setLast(v.toUpperCase()); lastRequired.reset() }}
             placeholder="Enter last name"
-            autoCapitalize="words"
+            autoCapitalize="characters"
             error={lastRequired.error}
           />
           {/* No onBlur — opening the calendar blurs the input, which would
@@ -715,8 +714,9 @@ function RegisterDetails({
           <Field
             label="Address"
             value={line}
-            onChange={(v) => { setLine(v); lineRequired.reset() }}
+            onChange={(v) => { setLine(v.toUpperCase()); lineRequired.reset() }}
             placeholder="Enter address"
+            autoCapitalize="characters"
             error={lineRequired.error}
           />
           {/* Optional — a landed address has no unit */}
@@ -753,8 +753,9 @@ function RegisterDetails({
             <Field
               label="Address"
               value={mailLine}
-              onChange={(v) => { setMailLine(v); mailLineRequired.reset() }}
+              onChange={(v) => { setMailLine(v.toUpperCase()); mailLineRequired.reset() }}
               placeholder="Enter address"
+              autoCapitalize="characters"
               error={mailLineRequired.error}
             />
             <Field

@@ -31,13 +31,6 @@ export function maskEmail(email: string) {
   return `${head}${'*'.repeat(Math.max(name.length - 2, 3))}@${domain}`
 }
 
-/* ─── Text casing ──────────────────────────────────────────────
-   Only ever raises a letter that starts a word, so casing the user
-   typed on purpose ("McDonald", "d'Souza") survives untouched. */
-export function capitalizeWords(value: string) {
-  return value.replace(/(^|[\s'-])([a-z])/g, (_, sep: string, ch: string) => sep + ch.toUpperCase())
-}
-
 /* ─── NRIC / FIN ───────────────────────────────────────────────
    Singapore NRIC/FIN: prefix S/T/F/G/M, 7 digits, checksum letter. */
 const NRIC_RE = /^[STFGM]\d{7}[A-Z]$/i

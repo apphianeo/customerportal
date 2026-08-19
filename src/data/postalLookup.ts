@@ -29,13 +29,6 @@ type OneMapResult = {
 /** Singapore postal codes are exactly six digits. */
 export const isCompletePostalCode = (value: string) => /^\d{6}$/.test(value.trim())
 
-/** OneMap returns SHOUTING CAPS; the form shows normal case. */
-function toTitleCase(value: string) {
-  return value
-    .toLowerCase()
-    .replace(/\b[a-z]/g, c => c.toUpperCase())
-}
-
 export async function lookupPostalCode(code: string): Promise<PostalAddress | null> {
   const postal = code.trim()
   if (!isCompletePostalCode(postal)) return null
@@ -58,7 +51,8 @@ export async function lookupPostalCode(code: string): Promise<PostalAddress | nu
     const street = [best.BLK_NO, best.ROAD_NAME].filter(Boolean).join(' ').trim()
     if (!street) return null
 
-    return { address: toTitleCase(street) }
+    // The address fields are upper case, and OneMap already shouts
+    return { address: street.toUpperCase() }
   } catch {
     // Network problem — leave the field to the user
     return null
