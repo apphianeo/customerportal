@@ -251,6 +251,7 @@
   <meta name=&quot;color-scheme&quot; content=&quot;light only&quot; />
   <meta name=&quot;supported-color-schemes&quot; content=&quot;light only&quot; />
   <title>Your UOI Customer Portal login OTP</title>
+  <!-- LOGO IS INLINED AS A DATA URI, FOR REVIEW ONLY. Gmail and Outlook strip these. Before sending, host assets/uoi-logo.png and rebuild: EMAIL_LOGO_URL=https://your.host/uoi-logo.png python3 emails/build.py -->
   <!--[if mso]>
   <xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml>
   <![endif]-->
@@ -425,6 +426,7 @@
   <meta name=&quot;color-scheme&quot; content=&quot;light only&quot; />
   <meta name=&quot;supported-color-schemes&quot; content=&quot;light only&quot; />
   <title>Reset your UOI Customer Portal password</title>
+  <!-- LOGO IS INLINED AS A DATA URI, FOR REVIEW ONLY. Gmail and Outlook strip these. Before sending, host assets/uoi-logo.png and rebuild: EMAIL_LOGO_URL=https://your.host/uoi-logo.png python3 emails/build.py -->
   <!--[if mso]>
   <xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml>
   <![endif]-->
@@ -614,6 +616,7 @@
   <meta name=&quot;color-scheme&quot; content=&quot;light only&quot; />
   <meta name=&quot;supported-color-schemes&quot; content=&quot;light only&quot; />
   <title>Verify your email address</title>
+  <!-- LOGO IS INLINED AS A DATA URI, FOR REVIEW ONLY. Gmail and Outlook strip these. Before sending, host assets/uoi-logo.png and rebuild: EMAIL_LOGO_URL=https://your.host/uoi-logo.png python3 emails/build.py -->
   <!--[if mso]>
   <xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml>
   <![endif]-->
@@ -782,6 +785,7 @@
   <meta name=&quot;color-scheme&quot; content=&quot;light only&quot; />
   <meta name=&quot;supported-color-schemes&quot; content=&quot;light only&quot; />
   <title>Confirm your new login ID</title>
+  <!-- LOGO IS INLINED AS A DATA URI, FOR REVIEW ONLY. Gmail and Outlook strip these. Before sending, host assets/uoi-logo.png and rebuild: EMAIL_LOGO_URL=https://your.host/uoi-logo.png python3 emails/build.py -->
   <!--[if mso]>
   <xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml>
   <![endif]-->
@@ -960,6 +964,7 @@
   <meta name=&quot;color-scheme&quot; content=&quot;light only&quot; />
   <meta name=&quot;supported-color-schemes&quot; content=&quot;light only&quot; />
   <title>Welcome to UOI Customer Portal</title>
+  <!-- LOGO IS INLINED AS A DATA URI, FOR REVIEW ONLY. Gmail and Outlook strip these. Before sending, host assets/uoi-logo.png and rebuild: EMAIL_LOGO_URL=https://your.host/uoi-logo.png python3 emails/build.py -->
   <!--[if mso]>
   <xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml>
   <![endif]-->
@@ -1196,9 +1201,11 @@
     <div class="prose">
       <h2>Before these go out</h2>
       <ul class="steps">
-        <li><strong>Host the logo.</strong> <code>LOGO_URL</code> points at a placeholder.
-          Upload <code>assets/uoi-logo.png</code> to a public HTTPS path and update it.
-          Alt text is <code>UOI</code>, so a blocked image degrades cleanly.</li>
+        <li><strong>Host the logo and rebuild.</strong> The logo is inlined as a data
+          URI by default so these files render on their own. Gmail and Outlook strip
+          data-URI images, so before sending, host <code>assets/uoi-logo.png</code> and
+          rebuild with <code>EMAIL_LOGO_URL=https://&hellip; python3 emails/build.py</code>.
+          Alt text is <code>UOI</code>, so a blocked image degrades to the brand name.</li>
         <li><strong>Wire the merge fields.</strong> Currently Handlebars-style.
           Swap the delimiters for whatever your ESP uses.</li>
         <li><strong>Send a plain-text alternative.</strong> Transactional mail without a

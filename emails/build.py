@@ -49,8 +49,27 @@ COPYRIGHT = ("Copyright © 2026 United Overseas Insurance Limited "
              "Co Reg. No. 197100152R.")
 RIGHTS = "All Rights Reserved."
 
-# Replace with the absolute HTTPS URL you host the logo at before sending.
-LOGO_URL = "https://www.uoi.com.sg/email/uoi-logo.png"
+# Logo source.
+#
+# Default: the PNG inlined as a data URI, so every generated file renders on its
+# own, with no hosting and no assets folder beside it. That is what review needs.
+#
+# For SENDING, that is the wrong choice: Gmail and Outlook strip data-URI images.
+# Host assets/uoi-logo.png at a public HTTPS path and rebuild with it:
+#
+#     EMAIL_LOGO_URL=https://www.uoi.com.sg/email/uoi-logo.png python3 emails/build.py
+#
+# Either way the alt text is "UOI", so a blocked image degrades to the brand name.
+def _logo_src():
+    hosted = os.environ.get("EMAIL_LOGO_URL")
+    if hosted:
+        return hosted, False
+    import base64
+    with open(os.path.join(OUT, "assets", "uoi-logo.png"), "rb") as f:
+        return "data:image/png;base64," + base64.b64encode(f.read()).decode(), True
+
+
+LOGO_URL, LOGO_IS_INLINE = _logo_src()
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -211,6 +230,7 @@ def shell(title, preheader, blocks):
   <meta name="color-scheme" content="light only" />
   <meta name="supported-color-schemes" content="light only" />
   <title>{title}</title>
+  {'<!-- LOGO IS INLINED AS A DATA URI, FOR REVIEW ONLY. Gmail and Outlook strip these. Before sending, host assets/uoi-logo.png and rebuild: EMAIL_LOGO_URL=https://your.host/uoi-logo.png python3 emails/build.py -->' if LOGO_IS_INLINE else '<!-- Logo served from a hosted URL. -->'}
   <!--[if mso]>
   <xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml>
   <![endif]-->
@@ -501,13 +521,9 @@ SAMPLE = {
 
 
 def build_preview():
-    import base64
-    with open(os.path.join(OUT, "assets", "uoi-logo.png"), "rb") as f:
-        logo_data = "data:image/png;base64," + base64.b64encode(f.read()).decode()
-
     cards = []
     for n, t in enumerate(TEMPLATES, start=1):
-        rendered = t["html"].replace(LOGO_URL, logo_data)
+        rendered = t["html"]
         subject = t["subject"]
         for k, v in SAMPLE.items():
             rendered = rendered.replace(k, v)
@@ -837,9 +853,11 @@ PREVIEW_SHELL = """<title>UOI Customer Portal Auth Emails</title>
     <div class="prose">
       <h2>Before these go out</h2>
       <ul class="steps">
-        <li><strong>Host the logo.</strong> <code>LOGO_URL</code> points at a placeholder.
-          Upload <code>assets/uoi-logo.png</code> to a public HTTPS path and update it.
-          Alt text is <code>UOI</code>, so a blocked image degrades cleanly.</li>
+        <li><strong>Host the logo and rebuild.</strong> The logo is inlined as a data
+          URI by default so these files render on their own. Gmail and Outlook strip
+          data-URI images, so before sending, host <code>assets/uoi-logo.png</code> and
+          rebuild with <code>EMAIL_LOGO_URL=https://&hellip; python3 emails/build.py</code>.
+          Alt text is <code>UOI</code>, so a blocked image degrades to the brand name.</li>
         <li><strong>Wire the merge fields.</strong> Currently Handlebars-style.
           Swap the delimiters for whatever your ESP uses.</li>
         <li><strong>Send a plain-text alternative.</strong> Transactional mail without a

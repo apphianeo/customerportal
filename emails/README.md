@@ -115,9 +115,19 @@ per-template copy is in the `TEMPLATES` section near the bottom.
 
 ### Before you send
 
-1. **Host the logo.** `LOGO_URL` in `build.py` points at a placeholder. Upload
-   `assets/uoi-logo.png` (300×150, displayed at 100×51) to a public HTTPS path
-   and update the constant. Alt text is `UOI` so a blocked image degrades cleanly.
+1. **Host the logo and rebuild.** By default the logo is inlined as a data URI,
+   so every generated file renders on its own with no hosting and no assets
+   folder beside it. That is right for review and wrong for sending: Gmail and
+   Outlook strip data-URI images. Upload `assets/uoi-logo.png` (300×150,
+   displayed at 100×51) to a public HTTPS path, then rebuild with it:
+
+   ```bash
+   EMAIL_LOGO_URL=https://www.uoi.com.sg/email/uoi-logo.png python3 emails/build.py
+   ```
+
+   Files built the default way carry a warning comment in the head; files built
+   with `EMAIL_LOGO_URL` do not, so you can tell them apart at a glance. Alt text
+   is `UOI` either way, so a blocked image degrades to the brand name.
 2. **Wire the merge fields.** Currently Handlebars-style; swap the delimiters for
    whatever your ESP uses.
 
