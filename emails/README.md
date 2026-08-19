@@ -1,4 +1,4 @@
-# UOI Connect — transactional email templates
+# UOI Customer Portal — transactional email templates
 
 Four HTML email templates for the customer portal's authentication flows, built
 from the portal's own design system so the email and the screen it leads to look
@@ -44,7 +44,7 @@ from type scale and the plate, which is what the portal does.
 **5. Copy cut by roughly half.**
 Before: *"To ensure secure access to your UOIConnect account, we've generated a
 One-Time Password (OTP) for you. Please enter this OTP on the portal login page
-to proceed."* After: *"Enter this code to finish signing in to UOI Connect."*
+to proceed."* After: *"Enter this code to finish signing in to UOI Customer Portal."*
 Nobody reads a transactional email; they scan it for one thing.
 
 **6. The disclaimer is proportionate.**
@@ -130,7 +130,7 @@ per-template copy is in the `TEMPLATES` section near the bottom.
 
 ### Open questions for the team
 
-- **Code in the subject line** (`946683 is your UOI Connect login code`) — this is
+- **Code in the subject line** (`946683 is your UOI Customer Portal login code`) — this is
   what Google, Stripe and Apple do; the code is readable from the lock-screen
   notification without opening the mail. The tradeoff is shoulder-surfing. Worth a
   decision either way; templates 1, 3 and 4 currently do it.

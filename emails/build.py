@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Builds the UOI Connect transactional email templates.
+Builds the UOI Customer Portal transactional email templates.
 
 Every colour, radius, font size and component treatment below is lifted from the
 customer portal's own design system (src/index.css @theme + src/pages/auth/AuthUI.tsx)
@@ -304,12 +304,12 @@ def add(filename, subject, preheader, title, blocks, notes):
 # 1 — Login OTP
 add(
     "01-login-otp.html",
-    "{{otp_code}} is your UOI Connect login code",
+    "{{otp_code}} is your UOI Customer Portal login code",
     "Expires in 3 minutes. UOI will never ask you for this code.",
-    "Your UOI Connect login code",
+    "Your UOI Customer Portal login code",
     [
         heading("Your login code"),
-        para("Hi {{first_name}}, enter this code to finish signing in to UOI Connect.",
+        para("Hi {{first_name}}, enter this code to finish signing in to UOI Customer Portal.",
              16, T["text_secondary"], 12),
         spacer(24),
         code_plate("{{otp_code}}", "Expires in 3 minutes"),
@@ -324,9 +324,9 @@ add(
 # 2 — Forgot password → reset link
 add(
     "02-forgot-password-reset.html",
-    "Reset your UOI Connect password",
+    "Reset your UOI Customer Portal password",
     "Your reset link expires in 30 minutes.",
-    "Reset your UOI Connect password",
+    "Reset your UOI Customer Portal password",
     [
         heading("Reset your password"),
         para("Hi {{first_name}}, we received a request to reset the password for "
@@ -351,12 +351,12 @@ add(
 # 3 — Manual account registration OTP
 add(
     "03-registration-otp.html",
-    "{{otp_code}} is your UOI Connect verification code",
+    "{{otp_code}} is your UOI Customer Portal verification code",
     "Verify your email to finish creating your account.",
     "Verify your email address",
     [
         heading("Verify your email address"),
-        para("Welcome to UOI Connect. Enter this code to confirm "
+        para("Welcome to UOI Customer Portal. Enter this code to confirm "
              "<strong style=\"color:%s;\">{{login_id}}</strong> and finish setting up "
              "your account." % T["text_primary"], 16, T["text_secondary"], 12),
         spacer(24),
@@ -365,7 +365,7 @@ add(
         notice("Once verified you can view your policies, download documents and "
                "file a claim — all in one place.", "info"),
         spacer(24),
-        para("If you didn't sign up for UOI Connect, you can safely ignore this email. "
+        para("If you didn't sign up for UOI Customer Portal, you can safely ignore this email. "
              "No account will be created.", 14, T["text_tertiary"]),
     ],
     "Reassures rather than warns — a stranger receiving this has nothing at risk yet.",
@@ -375,7 +375,7 @@ add(
 add(
     "04-change-login-id-otp.html",
     "{{otp_code}} is your code to confirm your new login ID",
-    "Confirm your new UOI Connect login ID. Expires in 3 minutes.",
+    "Confirm your new UOI Customer Portal login ID. Expires in 3 minutes.",
     "Confirm your new login ID",
     [
         heading("Confirm your new login ID"),
@@ -469,7 +469,7 @@ CHANGES = [
      "Before: <em>\u201cTo ensure secure access to your UOIConnect account, we\u2019ve "
      "generated a One-Time Password (OTP) for you. Please enter this OTP on the portal "
      "login page to proceed.\u201d</em> After: <em>\u201cEnter this code to finish signing in "
-     "to UOI Connect.\u201d</em>"),
+     "to UOI Customer Portal.\u201d</em>"),
     ("A proportionate disclaimer",
      "The current legal block runs six lines of ~7px grey text \u2014 physically larger "
      "than the message itself. Compressed to two sentences at 11px and moved outside "
@@ -525,7 +525,7 @@ TPL_CARD = """
         </div>
       </article>"""
 
-PREVIEW_SHELL = """<title>UOI Connect Auth Emails</title>
+PREVIEW_SHELL = """<title>UOI Customer Portal Auth Emails</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -697,7 +697,7 @@ PREVIEW_SHELL = """<title>UOI Connect Auth Emails</title>
   <header class="mast">
     <p class="eyebrow">Design proposal &middot; Customer Portal</p>
     <h1>Auth emails, rebuilt on the portal&rsquo;s own system</h1>
-    <p class="lede">Four transactional templates for UOI&nbsp;Connect &mdash; login, password
+    <p class="lede">Four transactional templates for UOI Customer Portal &mdash; login, password
       reset, registration and change of login ID. Same tokens, same button, same card,
       same footer as the screens they lead to, so the email and the product stop looking
       like two different companies.</p>
