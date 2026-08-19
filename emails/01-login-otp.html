@@ -17,16 +17,17 @@
     table { border-collapse:collapse !important; mso-table-lspace:0pt; mso-table-rspace:0pt; }
     img { border:0; outline:none; text-decoration:none; -ms-interpolation-mode:bicubic; }
     a { text-decoration:underline; }
-    /* Stop iOS auto-linking phone numbers/dates into blue system links */
+    /* Stop iOS auto-linking phone numbers and dates into blue system links */
     a[x-apple-data-detectors] { color:inherit !important; text-decoration:none !important;
                                  font-size:inherit !important; font-weight:inherit !important; }
 
     @media screen and (max-width:600px) {
       .wrap    { width:100% !important; }
-      .pad     { padding-left:20px !important; padding-right:20px !important; }
-      .h1      { font-size:20px !important; }   /* portal --font-size-h2-mob step */
-      .code    { font-size:28px !important; letter-spacing:6px !important; text-indent:6px !important; }
+      .pad     { padding-left:22px !important; padding-right:22px !important; }
+      .h1      { font-size:22px !important; }
+      .code    { font-size:30px !important; letter-spacing:7px !important; text-indent:7px !important; }
       .btn a   { display:block !important; }
+      .ghost   { display:none !important; }
     }
   </style>
 </head>
@@ -40,17 +41,37 @@
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
          style="background-color:#F6F8FC;">
     <tr>
-      <td align="center" style="padding:32px 12px;">
+      <td align="center" style="padding:32px 12px 40px 12px;">
 
         <table role="presentation" class="wrap" width="600" cellpadding="0" cellspacing="0" border="0"
                style="width:600px; max-width:600px;">
 
-          <!-- Masthead: logo on the page canvas, above the card -->
+          <!-- Masthead: logo left, a way back into the portal on the right -->
           <tr>
-            <td class="pad" style="padding:0 32px 16px 32px;">
-              <img src="https://www.uoi.com.sg/email/uoi-logo.png" width="100" height="51" alt="UOI"
-                   style="display:block; width:100px; height:51px; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
-                          font-size:20px; font-weight:700; color:#005EB8;" />
+            <td class="pad" style="padding:0 4px 18px 4px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td align="left" valign="middle">
+                    <img src="https://www.uoi.com.sg/email/uoi-logo.png" width="100" height="51" alt="UOI"
+                         style="display:block; width:100px; height:51px; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
+                                font-size:20px; font-weight:700; color:#005EB8;" />
+                  </td>
+                  <td align="right" valign="middle" class="ghost">
+                    <!-- Ports OutlineButton (AuthUI.tsx) at small size -->
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td align="center" bgcolor="#FFFFFF"
+                            style="border:1px solid #005EB8; border-radius:8px;">
+                          <a href="https://portal.uoi.com.sg"
+                             style="display:inline-block; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:14px;
+                                    line-height:1.4; font-weight:500; color:#005EB8;
+                                    text-decoration:none; padding:8px 16px;">Go to portal</a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
 
@@ -69,98 +90,57 @@
 
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td class="pad" style="padding:32px;">
+                  <td class="pad" style="padding:36px 32px 32px 32px;">
 
-              <h1 class="h1" style="margin:0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:24px;
-                        line-height:1.2; font-weight:600; color:#212121;">Your login code</h1>
+              <h1 class="h1" style="margin:0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:26px;
+                        line-height:1.25; font-weight:700; letter-spacing:-0.01em;
+                        color:#212121;">Your login code</h1>
 
-              <p style="margin:12px 0 0 0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:16px;
-                        line-height:1.5; color:#6E6E6E;">Hi {{first_name}}, enter this code to finish signing in to UOI Customer Portal.</p>
+              <p style="margin:14px 0 0 0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:16px;
+                        line-height:1.5; color:#6E6E6E;">Hi {{first_name}}, please enter this code in the window where you started signing in to UOI Customer Portal.</p>
 
-              <div style="height:24px; line-height:24px; font-size:0;">&nbsp;</div>
+              <div style="height:26px; line-height:26px; font-size:0;">&nbsp;</div>
 
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
-                     style="border-collapse:separate;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td align="center"
-                      style="background-color:#FFFFFF; border:1px solid #EBEBEB;
-                             border-radius:8px; padding:20px 16px 16px 16px;">
-                    <div style="font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:34px; line-height:1.2;
-                                font-weight:600; color:#212121;
-                                letter-spacing:8px; text-indent:8px; white-space:nowrap;">{{otp_code}}</div>
+                      style="background-color:#F6F8FC; border-radius:8px;
+                             padding:28px 16px 22px 16px;">
+                    <div class="code" style="font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:38px; line-height:1.1;
+                                font-weight:700; color:#212121;
+                                letter-spacing:9px; text-indent:9px; white-space:nowrap;">{{otp_code}}</div>
                     <div style="font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:12px; line-height:1.4;
-                                color:#8D8D8D; padding-top:10px;">Expires in 3 minutes</div>
+                                color:#8D8D8D; padding-top:12px;">Expires in 3 minutes</div>
                   </td>
                 </tr>
               </table>
+
+              <div style="height:26px; line-height:26px; font-size:0;">&nbsp;</div>
+
+              <p style="margin:0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:16px; line-height:1.5;
+                        font-weight:600; color:#212121;">Didn't try to sign in?</p>
+
+              <p style="margin:8px 0 0 0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:16px;
+                        line-height:1.5; color:#6E6E6E;">Someone may know your password. <a href="{{change_password_url}}" style="color:#0D6EFD; text-decoration:underline;">Change it now</a> to keep your account secure.</p>
 
               <div style="height:24px; line-height:24px; font-size:0;">&nbsp;</div>
 
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="background-color:#FFF8EC; border-radius:8px;
-                             padding:12px 16px; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:14px;
-                             line-height:1.5; color:#212121;"><strong>Didn't try to sign in?</strong> Someone may know your password. <a href="{{change_password_url}}" style="color:#0D6EFD; text-decoration:underline;">Change it now</a>.</td>
+                  <td style="border-top:1px solid #F0F0F0; padding-top:20px;">
+                <p style="margin:0px 0 0 0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
+                          font-size:13px; line-height:1.5; color:#8D8D8D;"><strong style="color:#6E6E6E;">UOI will never ask you</strong> for your OTP, password or card details by phone, email or SMS. If someone does, hang up and call <a href="tel:+6562227733" style="color:#8D8D8D; text-decoration:underline;">(+65) 6222 7733</a>.</p>
+                <p style="margin:10px 0 0 0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
+                          font-size:13px; line-height:1.5; color:#8D8D8D;">Need help? Reach out to our support team <a href="https://portal.uoi.com.sg/help" style="color:#8D8D8D; text-decoration:underline;">here</a> or email <a href="mailto:contactus@uoi.com.sg" style="color:#8D8D8D; text-decoration:underline;">contactus@uoi.com.sg</a>.</p>
+                  </td>
                 </tr>
               </table>
                   </td>
                 </tr>
               </table>
 
-              <!-- Anti-phishing strip: the one line that makes this email hard to fake -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td class="pad" style="background-color:#F6F8FC; padding:16px 32px;
-                             border-top:1px solid #F0F0F0;
-                             border-radius:0 0 8px 8px;
-                             font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:12px; line-height:1.5;
-                             color:#6E6E6E;">
-                    <strong style="color:#212121;">UOI will never ask you</strong>
-                    for your OTP, password or card details by phone, email or SMS.
-                    If someone does, hang up and call us at
-                    <a href="tel:+6562227733" style="color:#6E6E6E;">(+65) 6222 7733</a>.
-                  </td>
-                </tr>
-              </table>
-
             </td>
           </tr>
-
-          <!-- Help -->
-          <tr>
-            <td class="pad" align="center" style="padding:24px 32px 0 32px; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
-                       font-size:14px; line-height:1.5; color:#6E6E6E;">
-              Need help? Reach out to our support team <a href="https://portal.uoi.com.sg/help" style="color:#0D6EFD; text-decoration:underline;">here</a>
-              or email <a href="mailto:contactus@uoi.com.sg" style="color:#0D6EFD; text-decoration:underline;">contactus@uoi.com.sg</a>.
-            </td>
-          </tr>
-
-          <!-- Legal: compressed from 6 paragraphs to 2 lines -->
-          <tr>
-            <td class="pad" align="center" style="padding:16px 32px 0 32px; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
-                       font-size:11px; line-height:1.5; color:#8D8D8D;">
-              This is an automated message. Please do not reply.
-              This email and any attachment are confidential and intended only for the named
-              recipient. If it reached you in error, please delete it and notify us.
-              <br /><br />
-              <a href="https://www.uoi.com.sg" style="color:#8D8D8D;">uoi.com.sg</a> &nbsp;&middot;&nbsp;
-              <a href="https://www.uoi.com.sg/privacy.page" style="color:#8D8D8D;">Privacy Notice</a> &nbsp;&middot;&nbsp;
-              <a href="https://www.uoi.com.sg/uoi/important-information.page" style="color:#8D8D8D;">Important Information</a>
-            </td>
-          </tr>
-
-          <tr><td style="height:16px; line-height:16px; font-size:0;">&nbsp;</td></tr>
-
-          <!-- Footer bar: ports FooterShort.tsx, primary blue, 12px white -->
-          <tr>
-            <td class="pad" align="center"
-                style="background-color:#005EB8; border-radius:8px;
-                       padding:12px 24px; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
-                       font-size:12px; line-height:1.5; color:#FFFFFF;">
-              Copyright © 2026 United Overseas Insurance Limited Co. Reg. No. 197100152R. All Rights Reserved.
-            </td>
-          </tr>
-          <tr><td style="height:24px; line-height:24px; font-size:0;">&nbsp;</td></tr>
 
         </table>
       </td>

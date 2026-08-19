@@ -39,6 +39,7 @@ T = {
 TERMS_URL = "https://www.uoi.com.sg/uoi/important-information.page"
 PRIVACY_URL = "https://www.uoi.com.sg/privacy.page"
 UOI_URL = "https://www.uoi.com.sg"
+PORTAL_URL = "https://portal.uoi.com.sg"
 # Confirm the production host before sending; /help is the portal route (App.tsx:119).
 SUPPORT_URL = "https://portal.uoi.com.sg/help"
 SUPPORT_EMAIL = "contactus@uoi.com.sg"
@@ -53,30 +54,34 @@ LOGO_URL = "https://www.uoi.com.sg/email/uoi-logo.png"
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Components — email-HTML ports of the portal's React components
+# Components. Email-HTML ports of the portal's React components.
+#
+# Hierarchy after the code plate or button runs in three fixed tiers, so the
+# reader never has to work out what matters:
+#   Tier 1  lead()   16px/600 ink      the next thing to do
+#   Tier 2  notice() tinted box        what to do if it was not you
+#   Tier 3  fine()   13px tertiary     security note and support, behind a rule
 # ─────────────────────────────────────────────────────────────────────────────
 
 def code_plate(code, expiry):
-    """OTP display.
+    """OTP display: a filled block, no border.
 
-    Ports the portal's OTP digit box (AuthUI.tsx: white surface, 1px
-    rgba(0,0,0,0.09) border, 8px radius, 20px #212121, centred) to a single
-    plate. Deliberately ONE contiguous string rather than six separate boxes:
-    split cells would break tap-to-copy and iOS/Android one-time-code autofill.
-    Wide tracking restores the read-as-separate-digits feel.
+    Uses the portal's page tint as a fill rather than the OTP input's white
+    surface, because white on a white card gives the code no weight of its own.
+    One contiguous string, never split cells: split digits break tap-to-copy
+    and iOS/Android one-time-code autofill. Wide tracking keeps them legible.
     """
     return f"""
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
-                     style="border-collapse:separate;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td align="center"
-                      style="background-color:{T['bg_white']}; border:1px solid {T['border']};
-                             border-radius:{T['radius']}; padding:20px 16px 16px 16px;">
-                    <div style="font-family:{T['font']}; font-size:34px; line-height:1.2;
-                                font-weight:600; color:{T['text_primary']};
-                                letter-spacing:8px; text-indent:8px; white-space:nowrap;">{code}</div>
+                      style="background-color:{T['bg_page']}; border-radius:{T['radius']};
+                             padding:28px 16px 22px 16px;">
+                    <div class="code" style="font-family:{T['font']}; font-size:38px; line-height:1.1;
+                                font-weight:700; color:{T['text_primary']};
+                                letter-spacing:9px; text-indent:9px; white-space:nowrap;">{code}</div>
                     <div style="font-family:{T['font']}; font-size:12px; line-height:1.4;
-                                color:{T['text_tertiary']}; padding-top:10px;">{expiry}</div>
+                                color:{T['text_tertiary']}; padding-top:12px;">{expiry}</div>
                   </td>
                 </tr>
               </table>"""
@@ -84,7 +89,7 @@ def code_plate(code, expiry):
 
 def primary_button(label, url):
     """Ports PrimaryButton (AuthUI.tsx): #005EB8, white, 8px radius,
-    12px/24px padding, 16px/1.5, weight 500. VML fallback for Outlook."""
+    12px/24px padding, 16px/1.5, weight 500. Spacers keep Outlook honest."""
     return f"""
               <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                 <tr>
@@ -103,34 +108,76 @@ def primary_button(label, url):
 
 
 def notice(body, tone="info"):
-    """Ports the portal's notice/toast surface (AuthUI.tsx SuccessToast):
+    """Tier 2. Ports the portal's notice surface (AuthUI.tsx SuccessToast):
     tinted background, 8px radius, 16px/12px padding."""
     bg = T["bg_info"] if tone == "info" else T["bg_caution"]
     return f"""
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td style="background-color:{bg}; border-radius:{T['radius']};
-                             padding:12px 16px; font-family:{T['font']}; font-size:14px;
+                             padding:14px 16px; font-family:{T['font']}; font-size:14px;
                              line-height:1.5; color:{T['text_primary']};">{body}</td>
                 </tr>
               </table>"""
 
 
+def lead(text):
+    """Tier 1. The bold line that introduces the next action."""
+    return (f"""
+              <p style="margin:0; font-family:{T['font']}; font-size:16px; line-height:1.5;
+                        font-weight:600; color:{T['text_primary']};">{text}</p>""")
+
+
+def fine(lines):
+    """Tier 3. Closing block: a hairline rule, then muted 13px lines."""
+    body = "".join(
+        f"""
+                <p style="margin:{0 if i == 0 else 10}px 0 0 0; font-family:{T['font']};
+                          font-size:13px; line-height:1.5; color:{T['text_tertiary']};">{t}</p>"""
+        for i, t in enumerate(lines))
+    return f"""
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="border-top:1px solid {T['border_split']}; padding-top:20px;">{body}
+                  </td>
+                </tr>
+              </table>"""
+
+
 def para(text, size=16, color=None, top=0):
-    color = color or T["text_primary"]
+    color = color or T["text_secondary"]
     lh = "1.5" if size >= 16 else "1.4"
     return (f"""
               <p style="margin:{top}px 0 0 0; font-family:{T['font']}; font-size:{size}px;
                         line-height:{lh}; color:{color};">{text}</p>""")
 
 
-def link(text, url):
-    return (f'<a href="{url}" style="color:{T["text_link"]}; text-decoration:underline;">'
-            f'{text}</a>')
+def link(text, url, color=None):
+    return (f'<a href="{url}" style="color:{color or T["text_link"]}; '
+            f'text-decoration:underline;">{text}</a>')
+
+
+def heading(text):
+    return (f"""
+              <h1 class="h1" style="margin:0; font-family:{T['font']}; font-size:26px;
+                        line-height:1.25; font-weight:700; letter-spacing:-0.01em;
+                        color:{T['text_primary']};">{text}</h1>""")
+
+
+def spacer(h):
+    return f'\n              <div style="height:{h}px; line-height:{h}px; font-size:0;">&nbsp;</div>'
+
+
+NEVER_ASK = (f'<strong style="color:{T["text_secondary"]};">UOI will never ask you</strong> '
+             'for your OTP, password or card details by phone, email or SMS. '
+             f'If someone does, hang up and call {link(SUPPORT_TEL_DISPLAY, "tel:" + SUPPORT_TEL, T["text_tertiary"])}.')
+
+HELP_LINE = (f'Need help? Reach out to our support team {link("here", SUPPORT_URL, T["text_tertiary"])} '
+             f'or email {link(SUPPORT_EMAIL, "mailto:" + SUPPORT_EMAIL, T["text_tertiary"])}.')
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Shell
+# Shell. Masthead, one card, no footer.
 # ─────────────────────────────────────────────────────────────────────────────
 
 def shell(title, preheader, blocks):
@@ -154,16 +201,17 @@ def shell(title, preheader, blocks):
     table {{ border-collapse:collapse !important; mso-table-lspace:0pt; mso-table-rspace:0pt; }}
     img {{ border:0; outline:none; text-decoration:none; -ms-interpolation-mode:bicubic; }}
     a {{ text-decoration:underline; }}
-    /* Stop iOS auto-linking phone numbers/dates into blue system links */
+    /* Stop iOS auto-linking phone numbers and dates into blue system links */
     a[x-apple-data-detectors] {{ color:inherit !important; text-decoration:none !important;
                                  font-size:inherit !important; font-weight:inherit !important; }}
 
     @media screen and (max-width:600px) {{
       .wrap    {{ width:100% !important; }}
-      .pad     {{ padding-left:20px !important; padding-right:20px !important; }}
-      .h1      {{ font-size:20px !important; }}   /* portal --font-size-h2-mob step */
-      .code    {{ font-size:28px !important; letter-spacing:6px !important; text-indent:6px !important; }}
+      .pad     {{ padding-left:22px !important; padding-right:22px !important; }}
+      .h1      {{ font-size:22px !important; }}
+      .code    {{ font-size:30px !important; letter-spacing:7px !important; text-indent:7px !important; }}
       .btn a   {{ display:block !important; }}
+      .ghost   {{ display:none !important; }}
     }}
   </style>
 </head>
@@ -177,17 +225,37 @@ def shell(title, preheader, blocks):
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
          style="background-color:{T['bg_page']};">
     <tr>
-      <td align="center" style="padding:32px 12px;">
+      <td align="center" style="padding:32px 12px 40px 12px;">
 
         <table role="presentation" class="wrap" width="600" cellpadding="0" cellspacing="0" border="0"
                style="width:600px; max-width:600px;">
 
-          <!-- Masthead: logo on the page canvas, above the card -->
+          <!-- Masthead: logo left, a way back into the portal on the right -->
           <tr>
-            <td class="pad" style="padding:0 32px 16px 32px;">
-              <img src="{LOGO_URL}" width="100" height="51" alt="UOI"
-                   style="display:block; width:100px; height:51px; font-family:{T['font']};
-                          font-size:20px; font-weight:700; color:{T['primary']};" />
+            <td class="pad" style="padding:0 4px 18px 4px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td align="left" valign="middle">
+                    <img src="{LOGO_URL}" width="100" height="51" alt="UOI"
+                         style="display:block; width:100px; height:51px; font-family:{T['font']};
+                                font-size:20px; font-weight:700; color:{T['primary']};" />
+                  </td>
+                  <td align="right" valign="middle" class="ghost">
+                    <!-- Ports OutlineButton (AuthUI.tsx) at small size -->
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td align="center" bgcolor="{T['bg_white']}"
+                            style="border:1px solid {T['primary']}; border-radius:{T['radius']};">
+                          <a href="{PORTAL_URL}"
+                             style="display:inline-block; font-family:{T['font']}; font-size:14px;
+                                    line-height:1.4; font-weight:500; color:{T['primary']};
+                                    text-decoration:none; padding:8px 16px;">Go to portal</a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
 
@@ -206,66 +274,14 @@ def shell(title, preheader, blocks):
 
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td class="pad" style="padding:32px;">
+                  <td class="pad" style="padding:36px 32px 32px 32px;">
 {body}
                   </td>
                 </tr>
               </table>
 
-              <!-- Anti-phishing strip: the one line that makes this email hard to fake -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td class="pad" style="background-color:{T['bg_page']}; padding:16px 32px;
-                             border-top:1px solid {T['border_split']};
-                             border-radius:0 0 {T['radius']} {T['radius']};
-                             font-family:{T['font']}; font-size:12px; line-height:1.5;
-                             color:{T['text_secondary']};">
-                    <strong style="color:{T['text_primary']};">UOI will never ask you</strong>
-                    for your OTP, password or card details by phone, email or SMS.
-                    If someone does, hang up and call us at
-                    <a href="tel:{SUPPORT_TEL}" style="color:{T['text_secondary']};">{SUPPORT_TEL_DISPLAY}</a>.
-                  </td>
-                </tr>
-              </table>
-
             </td>
           </tr>
-
-          <!-- Help -->
-          <tr>
-            <td class="pad" align="center" style="padding:24px 32px 0 32px; font-family:{T['font']};
-                       font-size:14px; line-height:1.5; color:{T['text_secondary']};">
-              Need help? Reach out to our support team {link('here', SUPPORT_URL)}
-              or email {link(SUPPORT_EMAIL, 'mailto:' + SUPPORT_EMAIL)}.
-            </td>
-          </tr>
-
-          <!-- Legal: compressed from 6 paragraphs to 2 lines -->
-          <tr>
-            <td class="pad" align="center" style="padding:16px 32px 0 32px; font-family:{T['font']};
-                       font-size:11px; line-height:1.5; color:{T['text_tertiary']};">
-              This is an automated message. Please do not reply.
-              This email and any attachment are confidential and intended only for the named
-              recipient. If it reached you in error, please delete it and notify us.
-              <br /><br />
-              <a href="{UOI_URL}" style="color:{T['text_tertiary']};">uoi.com.sg</a> &nbsp;&middot;&nbsp;
-              <a href="{PRIVACY_URL}" style="color:{T['text_tertiary']};">Privacy Notice</a> &nbsp;&middot;&nbsp;
-              <a href="{TERMS_URL}" style="color:{T['text_tertiary']};">Important Information</a>
-            </td>
-          </tr>
-
-          <tr><td style="height:16px; line-height:16px; font-size:0;">&nbsp;</td></tr>
-
-          <!-- Footer bar: ports FooterShort.tsx, primary blue, 12px white -->
-          <tr>
-            <td class="pad" align="center"
-                style="background-color:{T['primary']}; border-radius:{T['radius']};
-                       padding:12px 24px; font-family:{T['font']};
-                       font-size:12px; line-height:1.5; color:#FFFFFF;">
-              {COPYRIGHT} {RIGHTS}
-            </td>
-          </tr>
-          <tr><td style="height:24px; line-height:24px; font-size:0;">&nbsp;</td></tr>
 
         </table>
       </td>
@@ -274,16 +290,6 @@ def shell(title, preheader, blocks):
 </body>
 </html>
 """
-
-
-def heading(text):
-    return (f"""
-              <h1 class="h1" style="margin:0; font-family:{T['font']}; font-size:24px;
-                        line-height:1.2; font-weight:600; color:{T['text_primary']};">{text}</h1>""")
-
-
-def spacer(h):
-    return f'\n              <div style="height:{h}px; line-height:{h}px; font-size:0;">&nbsp;</div>'
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -303,7 +309,7 @@ def add(filename, subject, preheader, title, blocks, notes):
     })
 
 
-# 1 — Login OTP
+# 1. Login OTP
 add(
     "01-login-otp.html",
     "{{otp_code}} is your UOI Customer Portal login code",
@@ -311,19 +317,22 @@ add(
     "Your UOI Customer Portal login code",
     [
         heading("Your login code"),
-        para("Hi {{first_name}}, enter this code to finish signing in to UOI Customer Portal.",
-             16, T["text_secondary"], 12),
-        spacer(24),
+        para("Hi {{first_name}}, please enter this code in the window where you "
+             "started signing in to UOI Customer Portal.", 16, T["text_secondary"], 14),
+        spacer(26),
         code_plate("{{otp_code}}", "Expires in 3 minutes"),
+        spacer(26),
+        lead("Didn't try to sign in?"),
+        para("Someone may know your password. "
+             f'{link("Change it now", CHANGE_PW_URL)} to keep your account secure.', 16,
+             T["text_secondary"], 8),
         spacer(24),
-        notice(
-            "<strong>Didn't try to sign in?</strong> Someone may know your password. "
-            f'{link("Change it now", CHANGE_PW_URL)}.', "caution"),
+        fine([NEVER_ASK, HELP_LINE]),
     ],
     "Code in the subject line so it is readable from the notification without opening the email.",
 )
 
-# 2 — Forgot password → reset link
+# 2. Forgot password, reset link
 add(
     "02-forgot-password-reset.html",
     "Reset your UOI Customer Portal password",
@@ -333,24 +342,27 @@ add(
         heading("Reset your password"),
         para("Hi {{first_name}}, we received a request to reset the password for "
              "<strong style=\"color:%s;\">{{login_id}}</strong>." % T["text_primary"],
-             16, T["text_secondary"], 12),
-        spacer(24),
+             16, T["text_secondary"], 14),
+        spacer(26),
+        lead("Click this button to choose a new password:"),
+        spacer(14),
         f'<div class="btn">{primary_button("Reset password", RESET_URL)}</div>',
-        spacer(20),
-        para("This link expires in 30 minutes and can be used once.",
-             14, T["text_tertiary"]),
-        spacer(24),
+        spacer(14),
+        para("The link expires in 30 minutes and can be used once.", 14, T["text_tertiary"]),
+        spacer(26),
         notice("<strong>Didn't request this?</strong> Ignore this email. Your password "
                "stays exactly as it is, and no one can reset it without this link.", "info"),
         spacer(24),
-        para('Button not working? Paste this into your browser:<br />'
-             f'<span style="color:{T["text_link"]}; word-break:break-all;">{RESET_URL}</span>',
-             12, T["text_tertiary"]),
+        fine([
+            'Button not working? Paste this into your browser:<br />'
+            f'<span style="color:{T["text_link"]}; word-break:break-all;">{RESET_URL}</span>',
+            NEVER_ASK, HELP_LINE,
+        ]),
     ],
     "Link, not a code. A reset is a click-through, so don't make the user retype anything.",
 )
 
-# 3 — Manual account registration OTP
+# 3. Manual account registration OTP
 add(
     "03-registration-otp.html",
     "{{otp_code}} is your UOI Customer Portal verification code",
@@ -358,22 +370,27 @@ add(
     "Verify your email address",
     [
         heading("Verify your email address"),
-        para("Welcome to UOI Customer Portal. Enter this code to confirm "
-             "<strong style=\"color:%s;\">{{login_id}}</strong> and finish setting up "
-             "your account." % T["text_primary"], 16, T["text_secondary"], 12),
-        spacer(24),
+        para("Welcome to UOI Customer Portal. Please enter this code in the window "
+             "where you started creating your account for "
+             "<strong style=\"color:%s;\">{{login_id}}</strong>." % T["text_primary"],
+             16, T["text_secondary"], 14),
+        spacer(26),
         code_plate("{{otp_code}}", "Expires in 3 minutes"),
+        spacer(26),
+        lead("Once verified, your account is ready."),
+        para("View your policies, download documents and file a claim, all in one place.",
+             16, T["text_secondary"], 8),
         spacer(24),
-        notice("Once verified you can view your policies, download documents and "
-               "file a claim, all in one place.", "info"),
-        spacer(24),
-        para("If you didn't sign up for UOI Customer Portal, you can safely ignore this email. "
-             "No account will be created.", 14, T["text_tertiary"]),
+        fine([
+            "If you didn't sign up for UOI Customer Portal, you can safely ignore this "
+            "email. No account will be created.",
+            NEVER_ASK, HELP_LINE,
+        ]),
     ],
     "Reassures rather than warns. A stranger receiving this has nothing at risk yet.",
 )
 
-# 4 — Change Login ID OTP
+# 4. Change Login ID OTP
 add(
     "04-change-login-id-otp.html",
     "{{otp_code}} is your code to confirm your new login ID",
@@ -383,17 +400,21 @@ add(
         heading("Confirm your new login ID"),
         para("Hi {{first_name}}, you asked to change the email you sign in with from "
              "<strong style=\"color:%s;\">{{old_login_id}}</strong> to "
-             "<strong style=\"color:%s;\">{{new_login_id}}</strong>."
-             % (T["text_primary"], T["text_primary"]), 16, T["text_secondary"], 12),
-        spacer(24),
+             "<strong style=\"color:%s;\">{{new_login_id}}</strong>. Please enter this "
+             "code in the window where you started the change."
+             % (T["text_primary"], T["text_primary"]), 16, T["text_secondary"], 14),
+        spacer(26),
         code_plate("{{otp_code}}", "Expires in 3 minutes"),
-        spacer(24),
+        spacer(26),
         notice("<strong>Didn't request this change?</strong> Your account may be at risk. "
                f'Call us now at {link(SUPPORT_TEL_DISPLAY, "tel:" + SUPPORT_TEL)} and '
                "don't enter the code above.", "caution"),
         spacer(24),
-        para("Until the change is confirmed, keep signing in with your current login ID. "
-             "We've also notified your previous address.", 14, T["text_tertiary"]),
+        fine([
+            "Until the change is confirmed, keep signing in with your current login ID. "
+            "We've also notified your previous address.",
+            NEVER_ASK, HELP_LINE,
+        ]),
     ],
     "The highest-risk email of the four. It states both addresses, so a hijack is obvious on sight.",
 )
@@ -410,8 +431,8 @@ SAMPLE = {
     "{{login_id}}": "weiling.tan@gmail.com",
     "{{old_login_id}}": "weiling.tan@gmail.com",
     "{{new_login_id}}": "wl.tan@outlook.sg",
-    "{{reset_url}}": "https://connect.uoi.com.sg/reset?t=a7f3c2e9",
-    "{{change_password_url}}": "https://connect.uoi.com.sg/account/password",
+    "{{reset_url}}": "https://portal.uoi.com.sg/reset?t=a7f3c2e9",
+    "{{change_password_url}}": "https://portal.uoi.com.sg/account/password",
 }
 
 
@@ -472,14 +493,21 @@ CHANGES = [
      "generated a One-Time Password (OTP) for you. Please enter this OTP on the portal "
      "login page to proceed.\u201d</em> After: <em>\u201cEnter this code to finish signing in "
      "to UOI Customer Portal.\u201d</em>"),
-    ("A proportionate disclaimer",
-     "The current legal block runs six lines of ~7px grey text, physically larger "
-     "than the message itself. Compressed to two sentences at 11px and moved outside "
-     "the card so it reads as chrome. Worth a Legal check before sending."),
+    ("The footer is gone",
+     "The legal block, the link row and the blue copyright bar are removed outright. "
+     "None of it was load-bearing in a message whose whole job is to deliver one code, "
+     "and together they ran longer than the message. What still earns its place, the "
+     "anti-phishing line and the support route, moves inside the card as closing "
+     "fine print."),
+    ("Three fixed tiers after the code",
+     "Everything below the code or button now reads in the same three steps, so no one "
+     "has to work out what matters: a <strong>bold lead-in</strong> for the next action, "
+     "a tinted box for what to do if it was not you, and muted 13px fine print behind a "
+     "hairline rule for the security note and support."),
     ("A \u201cwe will never ask\u201d strip",
-     "An OTP email is the most spoofed message an insurer sends. One line on every "
-     "template, plus the absence of the generic stock photo phishing kits also use, "
-     "makes the real email easier to trust and the fake one easier to spot."),
+     "An OTP email is the most spoofed message an insurer sends. One line in tier three "
+     "of every template, plus the absence of the generic stock photo phishing kits "
+     "also use, makes the real email easier to trust and the fake one easier to spot."),
     ("Every email says what to do if it wasn\u2019t you",
      "Login: change your password. Reset: ignore it, nothing happens. Change login "
      "ID: call us now, don\u2019t enter the code. The highest-value copy in a security "
@@ -490,12 +518,13 @@ TOKEN_MAP = [
     ("Page canvas", "<code>--color-bg-page</code>", "#F6F8FC"),
     ("Card surface", "menu surface, <code>AuthUI.tsx:425</code>", "white, 1px hairline, 8px radius"),
     ("Brand rule", "<code>--color-primary</code>", "#005EB8, 4px"),
-    ("Code plate", "OTP digit box, <code>AuthUI.tsx:557</code>", "white, 1px hairline, 8px radius"),
+    ("Code block", "<code>--color-bg-page</code> fill", "#F6F8FC, 8px radius, no border"),
     ("CTA button", "<code>PrimaryButton</code>, <code>AuthUI.tsx:585</code>",
      "#005EB8, 8px radius, 12/24px, 16px/1.5, w500"),
     ("Info notice", "<code>SuccessToast</code> geometry", "#EFF6FF, 8px radius, 12/16px"),
     ("Caution notice", "same geometry", "#FFF8EC"),
-    ("Footer bar", "<code>FooterShort.tsx</code>", "#005EB8 bar, 12px white"),
+    ("Masthead button", "<code>OutlineButton</code>, <code>AuthUI.tsx:603</code>",
+     "white, 1px #005EB8, 8px radius, 14px"),
     ("Typeface", "<code>--font-sans</code>", "Noto Sans"),
     ("Text colours", "<code>--color-text-*</code>", "#212121 / #6E6E6E / #8D8D8D"),
 ]
@@ -714,7 +743,7 @@ PREVIEW_SHELL = """<title>UOI Customer Portal Auth Emails</title>
   <section>
     <div class="prose">
       <h2>What changes, and why</h2>
-      <p class="sub">Eight moves, each one aimed at the same thing: get the reader to the
+      <p class="sub">Nine moves, each one aimed at the same thing: get the reader to the
         code or the button faster, and make a forged copy of this email harder to pass off.</p>
     </div>
     <div class="changes">__CHANGES__

@@ -13,6 +13,8 @@ like the same product.
 
 Open `preview.html` in a browser to see all four rendered at 600px with sample data.
 
+The emails have no footer. Masthead, one card, nothing else.
+
 ---
 
 ## What changed from the current design, and why
@@ -28,9 +30,10 @@ images at all.
 
 **2. The code is an object, not a sentence.**
 `Your OTP: 946683` inside a paragraph is not scannable. The code now sits in a
-bordered plate reusing the portal's OTP input treatment (white, 1px hairline,
-8px radius), at 34px with wide tracking, with the expiry directly beneath it
-inside the same plate. Code and validity are one thing to read, not two.
+filled block at 38px with wide tracking, with the expiry directly beneath it
+inside the same block. The fill is the portal's page tint (`#F6F8FC`, no
+border): on a white card a bordered white plate gives the code no weight of its
+own. Code and validity are one thing to read, not two.
 
 **3. Expiry is stated once and stated correctly.**
 The spec table says 3 minutes; the current email says 5. The templates use 3
@@ -47,18 +50,30 @@ One-Time Password (OTP) for you. Please enter this OTP on the portal login page
 to proceed."* After: *"Enter this code to finish signing in to UOI Customer Portal."*
 Nobody reads a transactional email; they scan it for one thing.
 
-**6. The disclaimer is proportionate.**
-The current legal block runs six lines of ~7px grey text and is physically larger
-than the message. Compressed to two sentences at 11px, and moved outside the card
-so it reads as chrome rather than content. *Check this wording with Legal before
-sending. It is a condensation, not a legal review.*
+**6. The footer is gone.**
+The legal block, the link row and the blue copyright bar are removed outright.
+None of it was load-bearing in a message whose whole job is to deliver one code,
+and together they ran longer than the message itself. What still earns its place,
+the anti-phishing line and the support route, moves inside the card as closing
+fine print. *If Legal requires a disclaimer on outbound mail, it goes back as a
+fourth line in the `fine()` block, not as a footer.*
 
-**7. A "we will never ask" strip.**
-Every template carries one line: *UOI will never ask you for your OTP, password
-or card details by phone, email or SMS.* An OTP email is the single most spoofed
-message an insurer sends. This line, plus the absence of the generic stock photo
-that phishing kits also use, makes the real email easier to trust and the fake
-one easier to spot.
+**6b. Three fixed tiers after the code.**
+Everything below the code or button reads in the same three steps, so no one has
+to work out what matters:
+
+| Tier | Component | Style | Carries |
+|---|---|---|---|
+| 1 | `lead()` | 16px/600, `#212121` | the next action |
+| 2 | `notice()` | tinted box, 8px radius | what to do if it was not you |
+| 3 | `fine()` | 13px, `#8D8D8D`, behind a hairline | security note, support |
+
+**7. A "we will never ask" line.**
+Every template carries one line in tier 3: *UOI will never ask you for your OTP,
+password or card details by phone, email or SMS.* An OTP email is the single most
+spoofed message an insurer sends. This line, plus the absence of the generic stock
+photo that phishing kits also use, makes the real email easier to trust and the
+fake one easier to spot.
 
 **8. Each email states what to do if it wasn't you.**
 Login OTP: change your password. Reset link: ignore it, nothing happens.
@@ -77,12 +92,12 @@ Nothing here is a new visual language. Every value is lifted from
 | Page canvas | `--color-bg-page` | `#F6F8FC` |
 | Card surface | menu/card surface, `AuthUI.tsx:425` | white, 1px hairline, `--radius-sm` 8px |
 | Brand rule | `--color-primary` | `#005EB8`, 4px |
-| Code plate | OTP digit box, `AuthUI.tsx:557` | white, 1px `rgba(0,0,0,.09)`, 8px radius, centred |
+| Code block | `--color-bg-page` fill | `#F6F8FC`, 8px radius, no border, centred |
 | CTA button | `PrimaryButton`, `AuthUI.tsx:585` | `#005EB8`, white, 8px radius, 12px/24px, 16px/1.5, weight 500 |
 | Info notice | `SuccessToast` geometry, `AuthUI.tsx:625` | `--color-bg-info` `#EFF6FF`, 8px radius, 12px/16px |
 | Caution notice | same geometry | `--color-bg-caution` `#FFF8EC` |
-| Footer bar | `FooterShort.tsx` | `--color-primary` bar, 12px white |
-| Type | `--font-sans` + scale | Noto Sans; 24/1.2 heading, 16/1.5 body, 14/1.4 small, 12/1.4 caption |
+| Masthead button | `OutlineButton`, `AuthUI.tsx:603` | white, 1px `#005EB8`, 8px radius, 14px |
+| Type | `--font-sans` + scale | Noto Sans; 26/1.25 heading, 16/1.5 body, 14/1.4 small, 13/1.5 fine |
 | Text colours | `--color-text-*` | `#212121` / `#6E6E6E` / `#8D8D8D`; links `#0D6EFD` |
 
 Two deliberate deviations, both forced by the medium:
