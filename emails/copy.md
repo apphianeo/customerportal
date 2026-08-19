@@ -13,17 +13,17 @@ changes all five.
 
 ## 1. Login OTP · `01-login-otp.html`
 
-- **Subject:** {{otp}} is your UOI Customer Portal login code
-- **Preheader:** Expires in 3 minutes. UOI will never ask you for this code.
+- **Subject:** {{otp}} is your UOI Customer Portal OTP
+- **Preheader:** Expires in 3 minutes. UOI will never ask you for this OTP.
 
 | Slot | Copy |
 |---|---|
-| Heading | Your login code |
-| Intro | Hi {{first_name}}, please enter this One-Time Password (OTP) to sign in to UOI Customer Portal |
+| Heading | Your login OTP |
+| Intro | Hi {{first_name}}, enter this OTP in the window where you started signing in to UOI Customer Portal. |
 | Code | {{otp}} |
 | Code caption | Expires in 3 minutes |
 | Tier 1, bold | Didn't try to sign in? |
-| Tier 1, body | Someone may know your password. [Change it now] to keep your account secure. |
+| Tier 1, body | Someone else may know your password. [Change it now]. |
 | Tier 3, SHARED | Need help? Reach out to our support team [here] or email [contactus@uoi.com.sg]. |
 
 ---
@@ -37,10 +37,10 @@ changes all five.
 |---|---|
 | Heading | Reset your password |
 | Intro | Hi {{first_name}}, we received a request to reset the password for **{{login_id}}**. |
-| Tier 1, bold | Click this button to choose a new password: |
+| Tier 1, bold | Choose a new password: |
 | Button | Reset password |
-| Under button | The link expires in 30 minutes and can be used once. |
-| Tier 2, box | **Didn't request this?** Ignore this email. Your password stays exactly as it is, and no one can reset it without this link. |
+| Under button | This link expires in 30 minutes and works once. |
+| Tier 2, box | **Didn't request this?** Ignore this email. Your password stays as it is, and no one can reset it without this link. |
 | Tier 3 | Button not working? Paste this into your browser: {{reset_url}} |
 | Tier 3, SHARED | Need help? Reach out to our support team [here] or email [contactus@uoi.com.sg]. |
 
@@ -48,35 +48,33 @@ changes all five.
 
 ## 3. Registration OTP · `03-registration-otp.html`
 
-- **Subject:** {{otp}} is your UOI Customer Portal verification code
+- **Subject:** {{otp}} is your UOI Customer Portal sign-up OTP
 - **Preheader:** Verify your email to finish creating your account.
 
 | Slot | Copy |
 |---|---|
 | Heading | Verify your email address |
-| Intro | Welcome to UOI Customer Portal. Please enter this code in the window where you started creating your account for **{{login_id}}**. |
+| Intro | Welcome to UOI Customer Portal. Enter this OTP to verify **{{login_id}}** and finish setting up your account. |
 | Code | {{otp}} |
 | Code caption | Expires in 3 minutes |
-| Tier 1, bold | Once verified, your account is ready. |
-| Tier 1, body | View your policies, download documents and file a claim, all in one place. |
-| Tier 3 | If you didn't sign up for UOI Customer Portal, you can safely ignore this email. No account will be created. |
+| Tier 3 | If you didn't sign up for UOI Customer Portal, ignore this email. No account will be created. |
 | Tier 3, SHARED | Need help? Reach out to our support team [here] or email [contactus@uoi.com.sg]. |
 
 ---
 
 ## 4. Change Login ID OTP · `04-change-login-id-otp.html`
 
-- **Subject:** {{otp}} is your code to confirm your new login ID
+- **Subject:** {{otp}} is your OTP to confirm your new UOI login ID
 - **Preheader:** Confirm your new UOI Customer Portal login ID. Expires in 3 minutes.
 
 | Slot | Copy |
 |---|---|
 | Heading | Confirm your new login ID |
-| Intro | Hi {{first_name}}, you asked to change the email you sign in with from **{{old_login_id}}** to **{{new_login_id}}**. Please enter this code in the window where you started the change. |
+| Intro | Hi {{first_name}}, you asked to change your login ID from **{{old_login_id}}** to **{{new_login_id}}**. Enter this OTP to confirm. |
 | Code | {{otp}} |
 | Code caption | Expires in 3 minutes |
-| Tier 2, box | **Didn't request this change?** Your account may be at risk. Call us now at [(+65) 6222 7733] and don't enter the code above. |
-| Tier 3 | Until the change is confirmed, keep signing in with your current login ID. |
+| Tier 2, box | **Didn't request this change?** Your account may be at risk. Call us now at [(+65) 6222 7733] and don't enter the OTP above. |
+| Tier 3 | Until you confirm, keep signing in with your current login ID. |
 | Tier 3, SHARED | Need help? Reach out to our support team [here] or email [contactus@uoi.com.sg]. |
 
 ---
@@ -89,7 +87,7 @@ changes all five.
 | Slot | Copy |
 |---|---|
 | Heading | Welcome to UOI Customer Portal |
-| Intro | Hi {{first_name}}, your account is ready. Everything to do with your UOI policies now lives in one place, available whenever you need it. |
+| Intro | Hi {{first_name}}, your account is ready. Everything to do with your UOI policies now lives in one place. |
 | Tier 1, bold | Sign in to get started: |
 | Button | Go to my dashboard |
 
@@ -97,11 +95,11 @@ Benefit rows, each a bold title and a body line:
 
 | # | Title | Body |
 |---|---|---|
-| 1 | Every policy on one screen | Motor, travel, home, helper and personal accident, each with its policy number, coverage period and status. You will see what is active and what is coming up for renewal without hunting through email. |
-| 2 | Documents whenever you need them | Download policy documents, schedules and payment receipts yourself, at any hour, instead of calling to request a copy. |
-| 3 | Start a claim from the policy it belongs to | Open the policy, submit the claim. The details we already hold are attached for you. |
-| 4 | Keep your own details current | Update your contact details, change your password or change the email you sign in with, without paperwork. |
-| 5 | Rewards for UOI customers | Member offers and perks, refreshed from time to time. Worth a look when you sign in. |
+| 1 | All your policies in one place | Motor, travel, home, helper and personal accident, each with its policy number, coverage dates and renewal status. |
+| 2 | Documents on demand | Download policy documents, schedules and receipts yourself, at any hour. |
+| 3 | Claims start from the policy | Open the policy, submit the claim. The details we hold are already attached. |
+| 4 | Update your own details | Change your contact details, your password or your login ID, without paperwork. |
+| 5 | Rewards for UOI customers | Member offers and perks, refreshed regularly. |
 
 Closing:
 

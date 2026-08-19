@@ -311,24 +311,23 @@ def add(filename, subject, preheader, title, blocks, notes):
 # 1. Login OTP
 add(
     "01-login-otp.html",
-    "{{otp}} is your UOI Customer Portal login code",
-    "Expires in 3 minutes. UOI will never ask you for this code.",
-    "Your UOI Customer Portal login code",
+    "{{otp}} is your UOI Customer Portal OTP",
+    "Expires in 3 minutes. UOI will never ask you for this OTP.",
+    "Your UOI Customer Portal login OTP",
     [
-        heading("Your login code"),
-        para("Hi {{first_name}}, please enter this One-Time Password (OTP) to sign in "
-             "to UOI Customer Portal", 16, T["text_secondary"], 14),
+        heading("Your login OTP"),
+        para("Hi {{first_name}}, enter this OTP in the window where you started signing "
+             "in to UOI Customer Portal.", 16, T["text_secondary"], 14),
         spacer(26),
         code_plate("{{otp}}", "Expires in 3 minutes"),
         spacer(26),
         lead("Didn't try to sign in?"),
-        para("Someone may know your password. "
-             f'{link("Change it now", CHANGE_PW_URL)} to keep your account secure.', 16,
-             T["text_secondary"], 8),
+        para("Someone else may know your password. "
+             f'{link("Change it now", CHANGE_PW_URL)}.', 16, T["text_secondary"], 8),
         spacer(24),
         fine([HELP_LINE]),
     ],
-    "Code in the subject line so it is readable from the notification without opening the email.",
+    "OTP in the subject line so it is readable from the notification without opening the email.",
 )
 
 # 2. Forgot password, reset link
@@ -343,14 +342,14 @@ add(
              "<strong style=\"color:%s;\">{{login_id}}</strong>." % T["text_primary"],
              16, T["text_secondary"], 14),
         spacer(26),
-        lead("Click this button to choose a new password:"),
+        lead("Choose a new password:"),
         spacer(14),
         f'<div class="btn">{primary_button("Reset password", RESET_URL)}</div>',
         spacer(14),
-        para("The link expires in 30 minutes and can be used once.", 14, T["text_tertiary"]),
+        para("This link expires in 30 minutes and works once.", 14, T["text_tertiary"]),
         spacer(26),
         notice("<strong>Didn't request this?</strong> Ignore this email. Your password "
-               "stays exactly as it is, and no one can reset it without this link.", "info"),
+               "stays as it is, and no one can reset it without this link.", "info"),
         spacer(24),
         fine([
             'Button not working? Paste this into your browser:<br />'
@@ -364,25 +363,20 @@ add(
 # 3. Manual account registration OTP
 add(
     "03-registration-otp.html",
-    "{{otp}} is your UOI Customer Portal verification code",
+    "{{otp}} is your UOI Customer Portal sign-up OTP",
     "Verify your email to finish creating your account.",
     "Verify your email address",
     [
         heading("Verify your email address"),
-        para("Welcome to UOI Customer Portal. Please enter this code in the window "
-             "where you started creating your account for "
-             "<strong style=\"color:%s;\">{{login_id}}</strong>." % T["text_primary"],
-             16, T["text_secondary"], 14),
+        para("Welcome to UOI Customer Portal. Enter this OTP to verify "
+             "<strong style=\"color:%s;\">{{login_id}}</strong> and finish setting up "
+             "your account." % T["text_primary"], 16, T["text_secondary"], 14),
         spacer(26),
         code_plate("{{otp}}", "Expires in 3 minutes"),
         spacer(26),
-        lead("Once verified, your account is ready."),
-        para("View your policies, download documents and file a claim, all in one place.",
-             16, T["text_secondary"], 8),
-        spacer(24),
         fine([
-            "If you didn't sign up for UOI Customer Portal, you can safely ignore this "
-            "email. No account will be created.",
+            "If you didn't sign up for UOI Customer Portal, ignore this email. "
+            "No account will be created.",
             HELP_LINE,
         ]),
     ],
@@ -392,25 +386,25 @@ add(
 # 4. Change Login ID OTP
 add(
     "04-change-login-id-otp.html",
-    "{{otp}} is your code to confirm your new login ID",
+    "{{otp}} is your OTP to confirm your new UOI login ID",
     "Confirm your new UOI Customer Portal login ID. Expires in 3 minutes.",
     "Confirm your new login ID",
     [
         heading("Confirm your new login ID"),
-        para("Hi {{first_name}}, you asked to change the email you sign in with from "
+        para("Hi {{first_name}}, you asked to change your login ID from "
              "<strong style=\"color:%s;\">{{old_login_id}}</strong> to "
-             "<strong style=\"color:%s;\">{{new_login_id}}</strong>. Please enter this "
-             "code in the window where you started the change."
-             % (T["text_primary"], T["text_primary"]), 16, T["text_secondary"], 14),
+             "<strong style=\"color:%s;\">{{new_login_id}}</strong>. Enter this OTP "
+             "to confirm." % (T["text_primary"], T["text_primary"]),
+             16, T["text_secondary"], 14),
         spacer(26),
         code_plate("{{otp}}", "Expires in 3 minutes"),
         spacer(26),
         notice("<strong>Didn't request this change?</strong> Your account may be at risk. "
                f'Call us now at {link(SUPPORT_TEL_DISPLAY, "tel:" + SUPPORT_TEL)} and '
-               "don't enter the code above.", "caution"),
+               "don't enter the OTP above.", "caution"),
         spacer(24),
         fine([
-            "Until the change is confirmed, keep signing in with your current login ID.",
+            "Until you confirm, keep signing in with your current login ID.",
             HELP_LINE,
         ]),
     ],
@@ -427,30 +421,25 @@ add(
     [
         heading("Welcome to UOI Customer Portal"),
         para("Hi {{first_name}}, your account is ready. Everything to do with your "
-             "UOI policies now lives in one place, available whenever you need it.",
-             16, T["text_secondary"], 14),
+             "UOI policies now lives in one place.", 16, T["text_secondary"], 14),
         spacer(26),
         lead("Sign in to get started:"),
         spacer(14),
         f'<div class="btn">{primary_button("Go to my dashboard", PORTAL_URL)}</div>',
         spacer(30),
         benefits([
-            ("Every policy on one screen",
+            ("All your policies in one place",
              "Motor, travel, home, helper and personal accident, each with its policy "
-             "number, coverage period and status. You will see what is active and what "
-             "is coming up for renewal without hunting through email."),
-            ("Documents whenever you need them",
-             "Download policy documents, schedules and payment receipts yourself, "
-             "at any hour, instead of calling to request a copy."),
-            ("Start a claim from the policy it belongs to",
-             "Open the policy, submit the claim. The details we already hold are "
-             "attached for you."),
-            ("Keep your own details current",
-             "Update your contact details, change your password or change the email "
-             "you sign in with, without paperwork."),
+             "number, coverage dates and renewal status."),
+            ("Documents on demand",
+             "Download policy documents, schedules and receipts yourself, at any hour."),
+            ("Claims start from the policy",
+             "Open the policy, submit the claim. The details we hold are already attached."),
+            ("Update your own details",
+             "Change your contact details, your password or your login ID, "
+             "without paperwork."),
             ("Rewards for UOI customers",
-             "Member offers and perks, refreshed from time to time. Worth a look "
-             "when you sign in."),
+             "Member offers and perks, refreshed regularly."),
         ]),
         spacer(28),
         fine([
