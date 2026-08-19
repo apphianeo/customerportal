@@ -198,6 +198,17 @@ export function draftAccount(input: Partial<Account> & { email: string }): Accou
 
 export const fullName = (a: Account) => `${a.firstName} ${a.lastName}`.trim()
 
+/**
+ * Names are stored exactly as entered — the profile form and MyInfo both
+ * shout — but they read as prose wherever someone is greeted by name, so
+ * soften them there. Presentation only: the stored value stays authoritative,
+ * and casing the user meant ("McDonald") does not survive the round trip.
+ */
+export const titleCaseName = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/(^|[\s'-])([a-z])/g, (_, sep: string, ch: string) => sep + ch.toUpperCase())
+
 export const initials = (a: Account) =>
   `${a.firstName[0] ?? ''}${a.lastName[0] ?? ''}`.toUpperCase()
 
