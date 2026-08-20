@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Check } from 'lucide-react'
+import { Check, ChevronDown } from 'lucide-react'
 import singpassBtn from '../../assets/singpass-btn.png'
-import singpassLogin from '../../assets/singpass-login.png'
 import singpassLogo from '../../assets/singpass-logo.png'
+import uoiLogo from '../../assets/uoi-logo.svg'
 import closeIcon from '../../assets/icons/close.svg'
 import { useDebouncedValue } from '../../hooks/useDebouncedValue'
 import { useInlineValidation } from '../../hooks/useInlineValidation'
@@ -367,24 +367,133 @@ function Landing({
 /* ────────────── Singpass login (QR) — Singpass's own page ───────
    A screenshot of Singpass's page with the two sign-in options made
    clickable, since we cannot host their app. */
-function SingpassLogin({ onScan }: { onScan: () => void }) {
+/* ── Decorative QR ──
+   The real page shows a live session token, and here "scanning" is a click,
+   so this only has to read as a QR. Drawn as SVG so it stays sharp at any
+   size — the screenshot it replaces went soft on any HiDPI display. */
+const QR_MODULES = 25
+
+const QR_CELLS = (() => {
+  let seed = 20260701
+  const rand = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648
+  return Array.from({ length: QR_MODULES }, () =>
+    Array.from({ length: QR_MODULES }, () => rand() > 0.47),
+  )
+})()
+
+function QrCode() {
+  const n = QR_MODULES
+  // Corner finders are drawn separately, and the badge sits over the middle
+  const isFinder = (x: number, y: number) =>
+    (x < 8 && y < 8) || (x >= n - 8 && y < 8) || (x < 8 && y >= n - 8)
+  const isBadge = (x: number, y: number) => x >= 9 && x <= 15 && y >= 9 && y <= 15
+
   return (
-    <div className="min-h-screen w-full bg-white overflow-auto">
-      <div className="relative w-full">
-        <img src={singpassLogin} alt="Log in with Singpass" className="block w-full h-auto" />
-        <button
-          onClick={onScan}
-          aria-label="Scan QR code with Singpass app"
-          className="absolute cursor-pointer"
-          style={{ left: '55.4%', top: '21%', width: '11.2%', height: '15.5%' }}
-        />
-        <button
-          onClick={onScan}
-          aria-label="Use Singpass password"
-          className="absolute cursor-pointer"
-          style={{ left: '52.6%', top: '38.2%', width: '16.7%', height: '4.5%' }}
-        />
+    <svg viewBox={`0 0 ${n} ${n}`} className="block w-full h-full" role="img" aria-label="Singpass QR code">
+      <rect width={n} height={n} fill="#ffffff" />
+      {QR_CELLS.map((row, y) =>
+        row.map((on, x) =>
+          on && !isFinder(x, y) && !isBadge(x, y) ? (
+            <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" fill="#111111" />
+          ) : null,
+        ),
+      )}
+      {[[0, 0], [n - 7, 0], [0, n - 7]].map(([fx, fy]) => (
+        <g key={`${fx}-${fy}`}>
+          <rect x={fx} y={fy} width="7" height="7" fill="#111111" />
+          <rect x={fx + 1} y={fy + 1} width="5" height="5" fill="#ffffff" />
+          <rect x={fx + 2} y={fy + 2} width="3" height="3" fill="#111111" />
+        </g>
+      ))}
+    </svg>
+  )
+}
+
+/* ── Singpass log-in page ──
+   Singpass's own page, rebuilt in markup rather than shown as a screenshot so
+   it renders crisply at every window size. Their styling, not ours. */
+function SingpassLogin({ onScan }: { onScan: () => void }) {
+  const footerLinks = ['Contact us', 'FAQs', 'Terms of use', 'Privacy statement', 'Report vulnerability']
+
+  return (
+    <div className="min-h-screen w-full bg-[#f0eeec] flex flex-col font-sans">
+      {/* Government identity banner */}
+      <div className="bg-[#ebe9e7] px-[24px] py-[4px] flex items-center gap-[8px] text-[12px] text-[#333333]">
+        <span aria-hidden="true" className="text-[#d0021b]">◤</span>
+        <span>A Singapore Government Agency Website</span>
+        <button type="button" className="flex items-center gap-[3px] text-[#0f70cf] bg-transparent border-0 p-0 cursor-pointer">
+          How to identify <ChevronDown size={12} aria-hidden="true" />
+        </button>
       </div>
+
+      <header className="px-[56px] py-[24px]">
+        <img src={singpassLogo} alt="Singpass" className="h-[22px] w-auto" />
+      </header>
+
+      <main className="flex-1 flex flex-col items-center px-4 pt-[80px]">
+        <div className="w-[620px] max-w-full">
+          <div className="bg-white rounded-[8px] p-[28px] flex flex-col sm:flex-row gap-[40px] sm:gap-[68px]">
+            {/* Who you are logging in to */}
+            <div className="flex-1 min-w-0">
+              <div className="size-[40px] rounded-[8px] border border-[rgba(0,0,0,0.08)] bg-white flex items-center justify-center">
+                <img src={uoiLogo} alt="" className="h-[16px] w-auto" />
+              </div>
+              <p className="mt-[26px] text-[13px] leading-[1.5] text-[#6e6e6e] m-0">You are logging in to</p>
+              <p className="mt-[6px] text-[20px] font-semibold leading-[1.3] text-[#212121] m-0">
+                UOI Insurance Customer Portal
+              </p>
+            </div>
+
+            {/* Choose a login method */}
+            <div className="w-full sm:w-[242px] shrink-0 flex flex-col items-center">
+              <p className="text-[13px] leading-[1.5] text-[#6e6e6e] m-0">Choose a login method</p>
+              <button
+                type="button"
+                onClick={onScan}
+                aria-label="Scan QR code with Singpass app"
+                className="mt-[16px] w-[152px] rounded-[8px] border-2 border-[#d0021b] bg-white p-[10px] cursor-pointer flex flex-col items-center gap-[6px]"
+              >
+                <span className="relative block size-[112px]">
+                  <QrCode />
+                  {/* Singpass badge, as on the real code */}
+                  <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 size-[30px] rounded-[7px] bg-[#d0021b] flex items-center justify-center text-white text-[17px] font-semibold leading-none">
+                    i
+                  </span>
+                </span>
+                <img src={singpassLogo} alt="" className="h-[11px] w-auto" />
+              </button>
+              <button
+                type="button"
+                onClick={onScan}
+                className="mt-[22px] w-full rounded-[4px] bg-[#f5f5f5] px-[16px] py-[12px] border-0 cursor-pointer flex items-center justify-center gap-[10px] text-[15px] font-semibold text-[#212121]"
+              >
+                <span aria-hidden="true" className="text-[#d0021b] tracking-[1px] leading-none">•••</span>
+                Use password
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-[16px] flex justify-end gap-[24px] text-[12px] text-[#6e6e6e]">
+            <span>Register for Singpass</span>
+            <span>Download Singpass app</span>
+          </div>
+        </div>
+      </main>
+
+      <footer className="px-[24px] py-[16px] flex flex-wrap items-end justify-between gap-[16px] text-[13px] text-[#333333]">
+        <div className="flex flex-wrap gap-[20px]">
+          {footerLinks.map(link => <span key={link}>{link}</span>)}
+        </div>
+        <div className="flex items-end gap-[24px]">
+          <span className="text-[13px] text-[#333333]">Last updated 1 July 2026</span>
+          <span className="text-[8px] leading-[1.3] tracking-[0.5px] text-[#6e6e6e] uppercase">
+            Powered by<br /><strong className="text-[11px] text-[#333333]">GovTech Singapore</strong>
+          </span>
+          <span className="text-[8px] leading-[1.3] tracking-[0.5px] text-[#6e6e6e] uppercase">
+            In support of<br /><strong className="text-[11px] text-[#333333]">Smart Nation Singapore</strong>
+          </span>
+        </div>
+      </footer>
     </div>
   )
 }
