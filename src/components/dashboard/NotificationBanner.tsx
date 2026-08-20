@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react'
-import { ExclamationCircleFilled } from '@ant-design/icons'
+import { ExclamationCircleFilled, InfoCircleFilled } from '@ant-design/icons'
 import { ArrowForwardIcon } from '../icons'
 import closeIcon from '../../assets/icons/close.svg'
 
@@ -8,9 +8,13 @@ type Props = {
   description: ReactNode
   ctaLabel?: string
   onCtaClick?: () => void
+  /** caution = amber, for something the user must act on. info = brand
+      gradient, for a standing note about the page. */
+  tone?: 'caution' | 'info'
 }
 
-export default function NotificationBanner({ title, description, ctaLabel, onCtaClick }: Props) {
+export default function NotificationBanner({ title, description, ctaLabel, onCtaClick, tone = 'caution' }: Props) {
+  const info = tone === 'info'
   const [dismissed, setDismissed] = useState(false)
   if (dismissed) return null
 
@@ -18,7 +22,11 @@ export default function NotificationBanner({ title, description, ctaLabel, onCta
     <div className="flex items-center drop-shadow-[0px_1px_2px_rgba(0,0,0,0.05)]">
       {/* Left accent bar — flex items-center self-stretch per Figma spec */}
       <div className="flex items-center self-stretch shrink-0">
-        <div className="w-[8px] h-full bg-caution rounded-tl-[8px] rounded-bl-[8px]" />
+        <div
+          className={`w-[8px] h-full rounded-tl-[8px] rounded-bl-[8px] ${
+            info ? 'bg-gradient-to-r from-[#005eb8] to-[#5c55eb]' : 'bg-caution'
+          }`}
+        />
       </div>
 
       {/* Content */}
@@ -27,8 +35,10 @@ export default function NotificationBanner({ title, description, ctaLabel, onCta
 
           {/* Warning icon — 2px top pad aligns with first text line */}
           <div className="flex items-center pt-[2px] shrink-0">
-            <span className="size-4 flex items-center justify-center text-caution">
-              <ExclamationCircleFilled style={{ fontSize: 16 }} />
+            <span className={`size-4 flex items-center justify-center ${info ? 'text-[#005eb8]' : 'text-caution'}`}>
+              {info
+                ? <InfoCircleFilled style={{ fontSize: 16 }} />
+                : <ExclamationCircleFilled style={{ fontSize: 16 }} />}
             </span>
           </div>
 
