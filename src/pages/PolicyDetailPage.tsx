@@ -389,8 +389,15 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
 
         <SectionCard id="section-documents" title="Documents">
           <DataTable
-            columns={['Document', 'Type', 'Date', 'Action']}
-            rows={policy.documents.map(d => [d.name, d.type, d.date, downloadIcon])}
+            columns={['Document', 'Type', 'Premium', 'Payment Method', 'Status', 'Action']}
+            rows={policy.documents.map(d => [
+              d.name,
+              d.type,
+              d.premium,
+              <PaymentMethodValue key="pm" last4={d.last4} />,
+              <StatusBadge key="st" status={d.status} />,
+              d.status === 'success' ? downloadIcon : downloadIconMuted,
+            ])}
           />
           <p className="text-[14px] text-[#949494] m-0">
             Showing 1-{policy.documents.length} of {policy.documents.length}
