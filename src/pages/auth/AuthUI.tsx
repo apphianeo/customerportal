@@ -447,6 +447,9 @@ export function DateField({
 /* ── Country code dropdown — searchable, keyboard accessible ── */
 const MENU_WIDTH = 356
 const MENU_GAP = 12
+const MENU_EDGE = 8
+/** Below this the list is not worth showing, so flipping wins over shrinking. */
+const MENU_MIN_HEIGHT = 160
 
 function CountrySelect({
   country,
@@ -461,7 +464,7 @@ function CountrySelect({
   const menuRef = useRef<HTMLDivElement>(null)
   const searchRef = useRef<HTMLInputElement>(null)
   /** Viewport coords — the menu is portalled out so cards cannot clip it. */
-  const [pos, setPos] = useState({ top: 0, left: 0 })
+  const [pos, setPos] = useState({ top: 0, bottom: 0, left: 0, width: MENU_WIDTH, maxHeight: 240, up: false })
 
   const selected = COUNTRIES.find(c => c.code === country) ?? COUNTRIES[0]
   const matches = COUNTRIES.filter(c =>
@@ -472,10 +475,25 @@ function CountrySelect({
     const anchor = ref.current
     if (!anchor) return
     const r = anchor.getBoundingClientRect()
-    const width = Math.min(MENU_WIDTH, window.innerWidth - 16)
+    const width = Math.min(MENU_WIDTH, window.innerWidth - MENU_EDGE * 2)
+
+    // Drop down while the viewport has room for a usable list; otherwise flip
+    // above the field. Either way the height is capped to the space that is
+    // actually there, so the list scrolls inside itself rather than running
+    // off the bottom of the page and over the footer.
+    const spaceBelow = window.innerHeight - r.bottom - MENU_GAP - MENU_EDGE
+    const spaceAbove = r.top - MENU_GAP - MENU_EDGE
+    const up = spaceBelow < MENU_MIN_HEIGHT && spaceAbove > spaceBelow
+
     setPos({
       top: r.bottom + MENU_GAP,
-      left: Math.min(Math.max(8, r.left), window.innerWidth - width - 8),
+      // Anchored from the bottom when flipped, so it grows upwards without
+      // having to be measured first.
+      bottom: window.innerHeight - r.top + MENU_GAP,
+      left: Math.min(Math.max(MENU_EDGE, r.left), window.innerWidth - width - MENU_EDGE),
+      width,
+      maxHeight: Math.max(MENU_MIN_HEIGHT, up ? spaceAbove : spaceBelow),
+      up,
     })
   }, [])
 
@@ -540,8 +558,14 @@ function CountrySelect({
           ref={menuRef}
           role="listbox"
           aria-label="Country code"
-          style={{ position: 'fixed', top: pos.top, left: pos.left, width: Math.min(MENU_WIDTH, window.innerWidth - 16) }}
-          className="z-[100] bg-white rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] border border-[rgba(0,0,0,0.09)] overflow-hidden"
+          style={{
+            position: 'fixed',
+            left: pos.left,
+            width: pos.width,
+            maxHeight: pos.maxHeight,
+            ...(pos.up ? { bottom: pos.bottom } : { top: pos.top }),
+          }}
+          className="z-[100] flex flex-col bg-white rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] border border-[rgba(0,0,0,0.09)] overflow-hidden"
         >
           <input
             ref={searchRef}
@@ -549,9 +573,9 @@ function CountrySelect({
             onChange={e => setQuery(e.target.value)}
             placeholder="Search"
             aria-label="Search country"
-            className="w-full px-[12px] py-[12px] text-[16px] text-[#212121] leading-[1.5] outline-none placeholder:text-[#949494] border-b border-[rgba(0,0,0,0.09)]"
+            className="w-full shrink-0 px-[12px] py-[12px] text-[16px] text-[#212121] leading-[1.5] outline-none placeholder:text-[#949494] border-b border-[rgba(0,0,0,0.09)]"
           />
-          <div className="max-h-[240px] overflow-y-auto">
+          <div className="flex-1 min-h-0 overflow-y-auto">
             {matches.length === 0 ? (
               <p className="px-[12px] py-[12px] text-[16px] text-[#949494] leading-[1.5] m-0">
                 No matches
@@ -669,7 +693,7 @@ export function OtpBoxes({
 
   return (
     <div
-      className="flex gap-2 w-full"
+      className="flex gap-[12px] w-full items-center justify-center"
       onFocus={() => onFocusChange?.(true)}
       /* Moving between boxes keeps focus inside the group — only report a
          real exit, or the keypad would flicker on every hop. */
@@ -689,7 +713,9 @@ export function OtpBoxes({
           onChange={(e) => setChar(i, e.target.value)}
           onKeyDown={(e) => onKeyDown(i, e)}
           onPaste={onPaste}
-          className={`flex-1 aspect-square min-w-0 text-center bg-white border rounded-[8px] text-[20px] text-[#212121] outline-none ${
+          /* 60x60 per the design. flex-1 with a max width lets the row shrink
+             on a narrow phone without the boxes growing tall to match. */
+          className={`flex-1 min-w-0 max-w-[60px] h-[60px] text-center bg-white border rounded-[8px] text-[16px] text-[#212121] outline-none ${
             error
               ? 'border-[#dc2626]'
               : 'border-[rgba(0,0,0,0.09)] focus:border-[#005eb8] focus:shadow-[0px_0px_0px_3px_rgba(0,94,184,0.2)]'
