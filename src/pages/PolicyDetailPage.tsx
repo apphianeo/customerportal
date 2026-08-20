@@ -100,11 +100,11 @@ function SectionCard({
       className="rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] overflow-hidden bg-white"
       style={{ scrollMarginTop: 110 }}
     >
-      <div className="border-b border-[rgba(0,0,0,0.09)] px-[24px] py-[16px] flex flex-col gap-[4px]">
+      <div className="border-b border-[rgba(0,0,0,0.09)] p-[16px] flex flex-col gap-[4px]">
         <h2 className="font-h3-title font-semibold text-[#212121] m-0">{title}</h2>
         {subtitle && <p className="text-[14px] text-[#6e6e6e] m-0 leading-[1.5]">{subtitle}</p>}
       </div>
-      <div className="p-[24px] flex flex-col gap-[24px]">{children}</div>
+      <div className="p-[16px] flex flex-col gap-[24px]">{children}</div>
     </div>
   )
 }

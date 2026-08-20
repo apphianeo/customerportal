@@ -116,7 +116,7 @@ function PolicyCard({ policy, onSelect }: { policy: PolicyData; onSelect?: (slug
       className="w-full text-left border-0 cursor-pointer bg-white rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] hover:shadow-pop transition-shadow overflow-hidden"
     >
       {/* Header */}
-      <div className="flex items-center gap-[8px] px-[24px] py-[16px]">
+      <div className="flex items-center gap-[8px] p-[16px]">
         <div className="flex items-center gap-[8px] flex-wrap flex-1 min-w-0">
           <span className="text-[16px] font-medium text-[#212121] leading-[1.5]">{policy.name}</span>
           <StatusTag status={policy.status} label={policy.statusLabel} />
@@ -125,10 +125,10 @@ function PolicyCard({ policy, onSelect }: { policy: PolicyData; onSelect?: (slug
       </div>
 
       {/* Divider */}
-      <div className="h-px bg-[rgba(0,0,0,0.09)] mx-[24px]" />
+      <div className="h-px bg-[rgba(0,0,0,0.09)] mx-[16px]" />
 
       {/* Labelled rows */}
-      <div className="flex flex-col gap-[12px] px-[24px] py-[16px]">
+      <div className="flex flex-col gap-[12px] p-[16px]">
         <DetailRow label="Policy no." value={policy.policyNo} />
         <DetailRow label="Coverage period" value={policy.coveragePeriod} />
       </div>
