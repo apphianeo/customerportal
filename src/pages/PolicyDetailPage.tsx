@@ -60,7 +60,7 @@ function FieldValueView({ value }: { value: FieldValue }) {
   if (value.kind === 'payment') return <PaymentMethodValue last4={value.last4} />
   if (value.kind === 'link') {
     return (
-      <a href={value.href} className="text-[16px] text-text-secondary underline leading-[1.5] truncate">
+      <a href={value.href} className="text-[16px] text-[#212121] no-underline leading-[1.5] truncate">
         {value.text}
       </a>
     )
@@ -110,14 +110,28 @@ function SectionCard({
 }
 
 /* ─── Documents / Payments table ─────────────────────────── */
+/**
+ * The last column is the row action. It stays pinned to the right edge while
+ * the rest of the table scrolls under it, so the action is reachable on a
+ * phone without scrolling to the end first. A left border and a soft shadow
+ * mark where the scrolling content passes beneath.
+ */
 function DataTable({ columns, rows }: { columns: string[]; rows: React.ReactNode[][] }) {
+  const lastCol = columns.length - 1
+  const pinned = 'sticky right-0 z-[1] w-[72px] shadow-[-6px_0_6px_-6px_rgba(0,0,0,0.12)] before:absolute before:inset-y-0 before:left-0 before:w-px before:bg-[rgba(0,0,0,0.09)]'
+
   return (
     <div className="bg-white border border-[rgba(0,0,0,0.09)] rounded-[8px] overflow-x-auto">
       <table className="w-full border-collapse min-w-[600px]">
         <thead>
           <tr className="bg-[#f9fafb] border-b border-[rgba(0,0,0,0.09)]">
-            {columns.map(col => (
-              <th key={col} className="text-left px-[16px] py-[12px] text-[14px] font-medium text-[#949494] whitespace-nowrap">
+            {columns.map((col, j) => (
+              <th
+                key={col}
+                className={`text-left px-[16px] py-[12px] text-[14px] font-medium text-[#949494] whitespace-nowrap ${
+                  j === lastCol ? `bg-[#f9fafb] ${pinned}` : ''
+                }`}
+              >
                 {col}
               </th>
             ))}
@@ -127,7 +141,12 @@ function DataTable({ columns, rows }: { columns: string[]; rows: React.ReactNode
           {rows.map((row, i) => (
             <tr key={i} className={i < rows.length - 1 ? 'border-b border-[rgba(0,0,0,0.09)]' : ''}>
               {row.map((cell, j) => (
-                <td key={j} className="px-[16px] py-[12px] text-[14px] text-[#212121] whitespace-nowrap">
+                <td
+                  key={j}
+                  className={`px-[16px] py-[12px] text-[14px] text-[#212121] whitespace-nowrap ${
+                    j === lastCol ? `bg-white ${pinned}` : ''
+                  }`}
+                >
                   {cell}
                 </td>
               ))}
@@ -268,7 +287,7 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
   return (
     <div className="bg-bg-page min-h-full">
       {/* ── Breadcrumb + title — scroll away normally ── */}
-      <div className="bg-bg-page pt-[48px] px-4 sm:px-6 lg:px-8">
+      <div className="bg-bg-page pt-[24px] sm:pt-[32px] px-4">
         <div className="w-full max-w-[980px] mx-auto flex flex-col gap-[32px]">
 
         {/* ── Breadcrumbs ── */}
@@ -295,6 +314,13 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
             <PolicyStatusTag status={policy.status} label={policy.statusLabel} />
           </div>
           <div className="flex flex-col sm:flex-row gap-[16px] sm:items-center shrink-0">
+            <button
+              onClick={() => console.log('Download policy', policy.slug)}
+              className="flex items-center justify-center gap-2 bg-[#005eb8] text-white px-[24px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-medium text-[16px] border-0 whitespace-nowrap cursor-pointer"
+            >
+              Download Policy
+              <DownloadOutlined style={{ fontSize: 20 }} />
+            </button>
             <a
               href="https://www.uoi.com.sg/claims-assistance.page"
               target="_blank"
@@ -303,13 +329,6 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
             >
               Submit Claim
             </a>
-            <button
-              onClick={() => console.log('Download policy', policy.slug)}
-              className="flex items-center justify-center gap-2 bg-[#005eb8] text-white px-[24px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-medium text-[16px] border-0 whitespace-nowrap cursor-pointer"
-            >
-              Download Policy
-              <DownloadOutlined style={{ fontSize: 20 }} />
-            </button>
           </div>
         </div>
 
@@ -317,9 +336,14 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
       </div>
 
       {/* ── Tabs — anchored to the top while the content scrolls ── */}
-      <div className="sticky top-0 z-10 bg-bg-page pt-[32px] pb-[24px] px-4 sm:px-6 lg:px-8">
+      <div className="sticky top-0 z-10 bg-bg-page pt-[24px] sm:pt-[32px] pb-[24px] px-4">
         <div className="w-full max-w-[980px] mx-auto">
-        <div className="flex gap-[4px] overflow-x-auto scrollbar-hide border-b border-[rgba(0,0,0,0.09)]">
+        <div
+          className="flex gap-[4px] overflow-x-auto scrollbar-hide select-none border-b border-[rgba(0,0,0,0.09)]"
+          /* pan-x hands the gesture to the scroller, so a drag scrolls the
+             strip instead of picking up and sliding the label under the finger */
+          style={{ touchAction: 'pan-x', overscrollBehaviorX: 'contain' }}
+        >
           {TABS.map(tab => (
             <button
               key={tab.key}
@@ -338,7 +362,7 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
       </div>
 
       {/* ── Section cards ── */}
-      <div className="px-4 sm:px-6 lg:px-8 pb-8">
+      <div className="px-4 pb-8">
         <div className="w-full max-w-[980px] mx-auto flex flex-col gap-[24px]">
 
         {/* ── Sections ── */}
@@ -365,8 +389,15 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
 
         <SectionCard id="section-documents" title="Documents">
           <DataTable
-            columns={['Document', 'Type', 'Date', 'Action']}
-            rows={policy.documents.map(d => [d.name, d.type, d.date, downloadIcon])}
+            columns={['Document', 'Type', 'Premium', 'Payment Method', 'Status', 'Action']}
+            rows={policy.documents.map(d => [
+              d.name,
+              d.type,
+              d.premium,
+              <PaymentMethodValue key="pm" last4={d.last4} />,
+              <StatusBadge key="st" status={d.status} />,
+              d.status === 'success' ? downloadIcon : downloadIconMuted,
+            ])}
           />
           <p className="text-[14px] text-[#949494] m-0">
             Showing 1-{policy.documents.length} of {policy.documents.length}
@@ -386,8 +417,8 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
             ])}
           />
           {/* Count sits left; pagination is centred in the card at all widths */}
-          <div className="relative flex flex-col sm:block gap-[12px] items-center sm:items-stretch">
-            <p className="text-[14px] text-[#949494] m-0 sm:absolute sm:left-0 sm:top-1/2 sm:-translate-y-1/2">
+          <div className="relative flex flex-col sm:block gap-[12px] items-stretch">
+            <p className="text-[14px] text-[#949494] m-0 text-left sm:absolute sm:left-0 sm:top-1/2 sm:-translate-y-1/2">
               Showing 1-{policy.payments.length} of {policy.paymentsTotal}
             </p>
             <div className="flex justify-center">

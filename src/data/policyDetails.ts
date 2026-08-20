@@ -11,7 +11,13 @@ export type FieldValue =
 
 export type Field = { label: string; value: FieldValue }
 
-export type DocumentRow = { name: string; type: string; date: string }
+export type DocumentRow = {
+  name: string
+  type: string
+  premium: string
+  last4: string
+  status: 'success' | 'rejected'
+}
 export type PaymentRow = {
   date: string
   type: string
@@ -67,8 +73,8 @@ const AGENT: Field[] = [
 ]
 
 const DOCUMENTS: DocumentRow[] = [
-  { name: 'Policy Schedule', type: 'Statement', date: '20 Jan 2026' },
-  { name: 'Endorsement', type: 'Statement', date: '20 Jan 2026' },
+  { name: 'Policy Schedule', type: 'Statement', premium: 'S$245.80', last4: '9111', status: 'success' },
+  { name: 'Endorsement', type: 'Statement', premium: 'S$1,250.00', last4: '9111', status: 'rejected' },
 ]
 
 const PAYMENTS: PaymentRow[] = [

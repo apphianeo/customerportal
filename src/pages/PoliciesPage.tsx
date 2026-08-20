@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import NotificationBanner from '../components/dashboard/NotificationBanner'
+import { SUPPORT_URL } from './auth/AuthUI'
 import { CartIcon, ChevronRightIcon, ArrowForwardIcon } from '../components/icons'
 import recHome     from '../assets/rec-home.png'
 import recAccident from '../assets/rec-accident.png'
@@ -227,6 +229,27 @@ export default function PoliciesPage({ onSelectPolicy, onNavigateToDashboard, ha
   return (
     <div className="bg-bg-page min-h-full">
       <div className="screen-container flex flex-col gap-[32px]">
+
+        {/* ── Standing note: the portal is not the system of record ── */}
+        <NotificationBanner
+          tone="info"
+          title="Policy information displayed in this portal may not reflect all recent changes made to your policy"
+          description={
+            <>
+              Please refer to your latest policy documents for the most accurate and up-to-date
+              information. If you need assistance or have any questions, please contact us{' '}
+              <a
+                href={SUPPORT_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-text-secondary underline"
+              >
+                here
+              </a>
+              .
+            </>
+          }
+        />
 
         {/* ── Breadcrumbs ── */}
         <div className="flex items-center gap-[4px]">

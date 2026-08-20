@@ -445,7 +445,6 @@ export function DateField({
 }
 
 /* ── Country code dropdown — searchable, keyboard accessible ── */
-const MENU_WIDTH = 356
 const MENU_GAP = 12
 const MENU_EDGE = 8
 /** Below this the list is not worth showing, so flipping wins over shrinking. */
@@ -464,7 +463,7 @@ function CountrySelect({
   const menuRef = useRef<HTMLDivElement>(null)
   const searchRef = useRef<HTMLInputElement>(null)
   /** Viewport coords — the menu is portalled out so cards cannot clip it. */
-  const [pos, setPos] = useState({ top: 0, bottom: 0, left: 0, width: MENU_WIDTH, maxHeight: 240, up: false })
+  const [pos, setPos] = useState({ top: 0, bottom: 0, left: 0, width: 0, maxHeight: 240, up: false })
 
   const selected = COUNTRIES.find(c => c.code === country) ?? COUNTRIES[0]
   const matches = COUNTRIES.filter(c =>
@@ -475,7 +474,10 @@ function CountrySelect({
     const anchor = ref.current
     if (!anchor) return
     const r = anchor.getBoundingClientRect()
-    const width = Math.min(MENU_WIDTH, window.innerWidth - MENU_EDGE * 2)
+    // Span the whole phone field — dial code plus number — rather than a fixed
+    // width, which overhung the field on a narrow phone.
+    const field = (anchor.parentElement ?? anchor).getBoundingClientRect()
+    const width = Math.min(field.width, window.innerWidth - MENU_EDGE * 2)
 
     // Drop down while the viewport has room for a usable list; otherwise flip
     // above the field. Either way the height is capped to the space that is
@@ -490,7 +492,7 @@ function CountrySelect({
       // Anchored from the bottom when flipped, so it grows upwards without
       // having to be measured first.
       bottom: window.innerHeight - r.top + MENU_GAP,
-      left: Math.min(Math.max(MENU_EDGE, r.left), window.innerWidth - width - MENU_EDGE),
+      left: Math.min(Math.max(MENU_EDGE, field.left), window.innerWidth - width - MENU_EDGE),
       width,
       maxHeight: Math.max(MENU_MIN_HEIGHT, up ? spaceAbove : spaceBelow),
       up,

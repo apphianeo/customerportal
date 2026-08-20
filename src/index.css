@@ -133,20 +133,28 @@ textarea:disabled,
 
 /* =========================================
    Page container
-   Standard page padding. Below 768px this is 24px vertical,
-   16px horizontal per the mobile spacing guideline.
+   16px horizontal padding at every width. Vertical is 32px, or
+   24px below 768px per the mobile spacing guideline.
 ==========================================*/
 .screen-container {
   width: 100%;
   max-width: 1044px;
   margin-inline: auto;
-  padding: 32px 24px;
+  padding: 32px 16px;
 }
 
 @media screen and (max-width: 767px) {
   .screen-container { padding: 24px 16px; }
 }
 
-@media screen and (min-width: 1024px) {
-  .screen-container { padding: 32px 32px; }
+/* =========================================
+   iOS zooms the page in when a focused control is set below 16px,
+   and does not zoom back out. Nothing should go under it.
+==========================================*/
+@media screen and (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+  }
 }
