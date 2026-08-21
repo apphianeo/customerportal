@@ -29,11 +29,10 @@ const CATEGORIES: Category[] = [
             The Customer Portal lets you manage all your UOI insurance needs in one place, including:
             <ul className="list-disc pl-[20px] mt-[8px] flex flex-col gap-[4px]">
               <li>View all your active policies (Travel, Home, Motor, Helper, Personal Accident)</li>
-              <li>Submit and track insurance claims</li>
               <li>Download policy documents and renewal notices</li>
               <li>Update your personal and contact information</li>
               <li>Access your rewards and promotions</li>
-              <li>Make premium payments and view payment history</li>
+              <li>View payment history</li>
             </ul>
           </>
         ),
@@ -45,7 +44,7 @@ const CATEGORIES: Category[] = [
     items: [
       {
         q: 'How do I view my active policies?',
-        a: "All your active UOI policies are displayed on your Dashboard under 'Your coverage'. Tap any policy card to view its full details, including coverage period, insured persons, policy number, and benefit limits. You can also access all policies by tapping 'Policies' in the navigation menu.",
+        a: "All your active UOI policies are displayed on your Dashboard under 'Your active coverage'. Tap any policy card to view its full details, including coverage period, insured persons, policy number, and benefit limits. You can also access all policies by tapping 'Policies' in the navigation menu.",
       },
       {
         q: 'How do I renew my policy?',
@@ -55,7 +54,7 @@ const CATEGORIES: Category[] = [
             directly from the portal by viewing your policy details and tapping 'Renew'. Annual policies are typically
             renewable 30 days before expiry. For assisted renewal, please contact us{' '}
             <Link href="https://api.whatsapp.com/send/?phone=6580814843&text&type=phone_number&app_absent=0">here</Link> or call{' '}
-            <Link href="tel:+6562227733">(+65) 6222 7733</Link>.
+            <Link href="tel:+6562227733">(+65) 62227733</Link>.
           </>
         ),
       },
@@ -225,7 +224,7 @@ export default function HelpSupportPage({ onNavigateToDashboard }: Props) {
               </div>
               <div className="flex flex-wrap items-center gap-[8px] text-[14px] leading-[1.5]">
                 <span className="text-[#6e6e6e]">Chat instantly:</span>
-                <Link href="https://api.whatsapp.com/send/?phone=6580814843&text&type=phone_number&app_absent=0">(+65) 8081 4843</Link>
+                <Link href="https://api.whatsapp.com/send/?phone=6580814843&text&type=phone_number&app_absent=0">(+65) 80814843</Link>
               </div>
             </div>
             <div className="flex-1 min-w-0 border border-[rgba(0,0,0,0.09)] rounded-[8px] p-[16px] flex flex-col gap-[8px]">
@@ -236,11 +235,11 @@ export default function HelpSupportPage({ onNavigateToDashboard }: Props) {
               <div className="flex flex-col gap-[4px] text-[14px] leading-[1.5]">
                 <div className="flex flex-wrap items-center gap-[8px]">
                   <span className="text-[#6e6e6e]">General Hotline:</span>
-                  <Link href="tel:+6562227733">(+65) 6222 7733</Link>
+                  <Link href="tel:+6562227733">(+65) 62227733</Link>
                 </div>
                 <div className="flex flex-wrap items-center gap-[8px]">
                   <span className="text-[#6e6e6e]">24 Hours Emergency Assist Hotline:</span>
-                  <Link href="tel:+6562227737">(+65) 6222 7737</Link>
+                  <Link href="tel:+6562227737">(+65) 62227737</Link>
                 </div>
               </div>
             </div>

@@ -1,4 +1,3 @@
-import NotificationBanner from '../components/dashboard/NotificationBanner'
 import QuickActions from '../components/dashboard/QuickActions'
 import YourCoverage from '../components/dashboard/YourCoverage'
 import Rewards from '../components/dashboard/Rewards'
@@ -29,20 +28,6 @@ export default function DashboardPage({
     <div className="bg-bg-page min-h-full">
       {/* Max-width content area — centred, matches Figma's 980px body */}
       <div className="screen-container flex flex-col gap-8">
-
-        {/* ── Notification banner — renewal notices only apply to policyholders ── */}
-        {hasPolicies && (
-        <NotificationBanner
-          title="Your UniCar policy is expiring in 30 days — 12 April 2026"
-          description={
-            <>
-              Contact UOI at{' '}
-              <a href="tel:+6562227733" className="text-text-secondary underline">(+65) 6222 7733</a>{' '}
-              to ensure continuous coverage and avoid any lapse in protection
-            </>
-          }
-        />
-        )}
 
         {/* ── Greeting + Quick Actions ── */}
         <div className="flex flex-col gap-4">

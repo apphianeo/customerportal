@@ -120,14 +120,14 @@ function Card({
 }) {
   return (
     <div className="rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] overflow-hidden bg-white w-full">
-      <div className="border-b border-[rgba(0,0,0,0.09)] px-[24px] py-[16px] flex flex-col gap-[4px]">
+      <div className="border-b border-[rgba(0,0,0,0.09)] p-[16px] flex flex-col gap-[4px]">
         <h2 className="font-h3-title font-semibold text-[#212121] m-0">{title}</h2>
         {subtitle && <p className="text-[14px] text-[#6e6e6e] m-0 leading-[1.5]">{subtitle}</p>}
       </div>
-      <div className="p-[24px] flex flex-col gap-[24px]">{children}</div>
+      <div className="p-[16px] flex flex-col gap-[24px]">{children}</div>
       {/* Action row — rule meets both card edges, 16px above and below */}
       {footer && (
-        <div className="border-t border-[rgba(0,0,0,0.09)] px-[24px] py-[16px] flex justify-end">
+        <div className="border-t border-[rgba(0,0,0,0.09)] p-[16px] flex justify-end">
           {footer}
         </div>
       )}
@@ -230,7 +230,7 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
         </div>
 
         {/* MyInfo banner — retrieving from Singpass is offered to everyone */}
-        <div className="rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] bg-white w-full px-[24px] py-[16px] flex flex-wrap items-center justify-between gap-[16px]">
+        <div className="rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] bg-white w-full p-[16px] flex flex-wrap items-center justify-between gap-[16px]">
             <div className="flex flex-col gap-[4px] min-w-0">
               <h2 className="text-[16px] font-semibold text-[#212121] m-0">Update details with MyInfo</h2>
               {/* Explained whenever the profile is Singpass-owned */}
