@@ -1,9 +1,7 @@
 import { useState } from 'react'
 import NotificationBanner from '../components/dashboard/NotificationBanner'
 import { SUPPORT_URL } from './auth/AuthUI'
-import { CartIcon, ChevronRightIcon, ArrowForwardIcon } from '../components/icons'
-import recHome     from '../assets/rec-home.png'
-import recAccident from '../assets/rec-accident.png'
+import { CartIcon, ChevronRightIcon } from '../components/icons'
 import iconMotor      from '../assets/icon-motor.svg'
 import iconTravel     from '../assets/icon-travel.svg'
 import iconHelperBody from '../assets/icon-helper-body.svg'
@@ -60,27 +58,6 @@ function AccidentIcon() {
         <img src={iconAccident2} alt="" aria-hidden="true" className="absolute inset-0 size-full max-w-none" />
       </div>
     </div>
-  )
-}
-
-/* ─── Recommendation icons — solid filled icons, "Not yet covered" ─ */
-function HomeInsuranceIcon() {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" className="size-[20px]" aria-hidden="true">
-      <path d="M10 2L18 9V18H2V9L10 2Z" fill="#005EB8" />
-      <rect x="8.75" y="9.5" width="2.5" height="7" fill="white" />
-      <rect x="6.5" y="11.75" width="7" height="2.5" fill="white" />
-    </svg>
-  )
-}
-
-function PersonalAccidentIcon() {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" className="size-[20px]" aria-hidden="true">
-      <path d="M10 1.5L17 4V9.5C17 13.5 14 16.8 10 18.5C6 16.8 3 13.5 3 9.5V4L10 1.5Z" fill="#D6DDE8" />
-      <circle cx="10" cy="8.3" r="2.4" fill="#1E4B8F" />
-      <path d="M10 11.3C7.3 11.3 5.2 12.9 5.2 14.8V15.4C6.8 16.6 8.3 17.4 10 17.9C11.7 17.4 13.2 16.6 14.8 15.4V14.8C14.8 12.9 12.7 11.3 10 11.3Z" fill="#1E4B8F" />
-    </svg>
   )
 }
 
@@ -146,65 +123,6 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 }
 
 /* ─── Not Yet Covered — recommendation cards ─────────────── */
-type RecommendationItem = {
-  key: string
-  image: string
-  icon: React.ReactNode
-  title: string
-  price: string
-  description: string
-}
-
-const RECOMMENDATIONS: RecommendationItem[] = [
-  {
-    key: 'home',
-    image: recHome,
-    icon: <HomeInsuranceIcon />,
-    title: 'Home Insurance',
-    price: 'From $X/year',
-    description: 'Protect your home and loved ones from unforeseen events',
-  },
-  {
-    key: 'accident',
-    image: recAccident,
-    icon: <PersonalAccidentIcon />,
-    title: 'Personal Accident',
-    price: 'From $X/year',
-    description: 'Get medical coverage for accidents and have peace of mind',
-  },
-]
-
-function RecommendationCard({ item }: { item: RecommendationItem }) {
-  // Height follows the content — the fixed 143px cropped text on narrow screens
-  return (
-    <div className="flex min-h-[143px] rounded-[8px] overflow-hidden shadow-[0px_1px_2px_rgba(0,0,0,0.05)] hover:shadow-pop transition-shadow">
-      <div className="w-[96px] sm:w-[120px] shrink-0">
-        <img src={item.image} alt="" aria-hidden="true" className="w-full h-full object-cover" />
-      </div>
-      <div className="flex-1 bg-white p-[16px] flex flex-col gap-[12px] justify-center min-w-0">
-        <div className="flex flex-col gap-[4px]">
-          {/* Title and price share a row when there's room, and stack when there isn't */}
-          <div className="flex flex-wrap items-center justify-between gap-x-[12px] gap-y-[4px]">
-            <div className="flex items-center gap-[12px] min-w-0">
-              <div className="flex items-center justify-center size-[32px] rounded-[8px] shrink-0"
-                style={{ background: 'linear-gradient(90deg, rgba(0,94,184,0.1) 0.618%, rgba(92,85,235,0.1) 100%)' }}>
-                {item.icon}
-              </div>
-              <span className="text-[16px] font-medium text-[#212121] leading-[1.5]">{item.title}</span>
-            </div>
-            <span className="text-[12px] text-[#6e6e6e] leading-[1.4] shrink-0 whitespace-nowrap">{item.price}</span>
-          </div>
-          <p className="text-[14px] text-[#6e6e6e] leading-[1.5]">{item.description}</p>
-        </div>
-        <button className="flex items-center gap-1.5 text-[14px] font-medium text-[#005eb8] bg-transparent border-0 cursor-pointer p-0">
-          Get Quote
-          <ArrowForwardIcon size={12} />
-        </button>
-      </div>
-    </div>
-  )
-}
-
 /* ─── Main page ──────────────────────────────────────────── */
 type Props = {
   /** False → no UOI products on file; show the empty state. */
@@ -350,24 +268,6 @@ export default function PoliciesPage({ onSelectPolicy, onNavigateToDashboard, ha
           The policy overview includes only active policies and those inactive for 180 days. If you can't find a policy, please contact us{' '}
           <a href="https://api.whatsapp.com/send/?phone=6580814843&text&type=phone_number&app_absent=0" className="text-text-secondary underline">here</a>.
         </p>
-
-        {/* ── Divider ── */}
-        <div className="h-px bg-border-default opacity-50" />
-
-        {/* ── Not yet covered ── */}
-        <div className="flex flex-col gap-[16px]">
-          <div className="flex flex-col gap-[4px]">
-            <h2 className="font-h3-title font-semibold text-[#212121] m-0 leading-[1.5]">Not yet covered?</h2>
-            <p className="text-[14px] text-[#6e6e6e] leading-[1.5] m-0">
-              Recommended coverage based on your profile
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-[16px]">
-            {RECOMMENDATIONS.map(item => (
-              <RecommendationCard key={item.key} item={item} />
-            ))}
-          </div>
-        </div>
 
       </div>
     </div>

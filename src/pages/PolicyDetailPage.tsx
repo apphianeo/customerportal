@@ -287,7 +287,7 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
   return (
     <div className="bg-bg-page min-h-full">
       {/* ── Breadcrumb + title — scroll away normally ── */}
-      <div className="bg-bg-page pt-[24px] sm:pt-[32px] px-4">
+      <div className="bg-bg-page pt-[24px] md:pt-[32px] px-4">
         <div className="w-full max-w-[980px] mx-auto flex flex-col gap-[32px]">
 
         {/* ── Breadcrumbs ── */}
@@ -336,7 +336,7 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
       </div>
 
       {/* ── Tabs — anchored to the top while the content scrolls ── */}
-      <div className="sticky top-0 z-10 bg-bg-page pt-[24px] sm:pt-[32px] pb-[24px] px-4">
+      <div className="sticky top-0 z-10 bg-bg-page pt-[24px] md:pt-[32px] pb-[24px] px-4">
         <div className="w-full max-w-[980px] mx-auto">
         <div
           className="flex gap-[4px] overflow-x-auto scrollbar-hide select-none border-b border-[rgba(0,0,0,0.09)]"

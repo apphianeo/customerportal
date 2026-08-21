@@ -56,19 +56,19 @@ const POLICYHOLDER: Field[] = [
   { label: 'NRIC/FIN', value: 'S1234567A' },
   { label: 'Date of birth', value: '12/02/1966' },
   { label: 'Email', value: 'chriswong@gmail.com' },
-  { label: 'Mobile number', value: '+65 9123 4567' },
-  { label: 'Address', value: '123 SILAT AVENUE, SINGAPORE 164123' },
+  { label: 'Mobile number', value: '+65 91234567' },
+  { label: 'Address', value: '1 ORCHARD RD, #02-01, SINGAPORE 238824' },
 ]
 
 const CONTACT: Field[] = [
-  { label: 'Contact number', value: '+65 9123 4567' },
+  { label: 'Contact number', value: '+65 91234567' },
   { label: 'Email address', value: 'chriswong@gmail.com' },
-  { label: 'Mailing address', value: '123 SILAT AVENUE, SINGAPORE 164123' },
+  { label: 'Mailing address', value: '1 ORCHARD RD, #02-01, SINGAPORE 238824' },
 ]
 
 const AGENT: Field[] = [
   { label: 'Agent-in-charge (Agent ID)', value: 'Albert Tan (102434123)' },
-  { label: 'Mobile number', value: { kind: 'link', text: '9812 3345', href: 'tel:+6598123345' } },
+  { label: 'Mobile number', value: { kind: 'link', text: '98123345', href: 'tel:+6598123345' } },
   { label: 'Email address', value: 'albertan@aia.com' },
 ]
 
@@ -261,7 +261,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
       { label: 'Policy no.', value: 'PNF320104124A25' },
       { label: 'Plan', value: 'Premier' },
       { label: 'Property type', value: 'HDB — 4 Room' },
-      { label: 'Property address', value: { kind: 'expandable', text: '123 SILAT AVENUE, SINGAPORE 164123' } },
+      { label: 'Property address', value: { kind: 'expandable', text: '1 ORCHARD RD, #02-01, SINGAPORE 238824' } },
       { label: 'Sum insured (renovation)', value: '$100,000.00' },
       { label: 'Sum insured (contents)', value: '$50,000.00' },
       { label: 'Policy effective date', value: '01/03/2026' },
@@ -277,7 +277,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
       {
         title: 'Insured property',
         fields: [
-          { label: 'Property address', value: '123 SILAT AVENUE, SINGAPORE 164123' },
+          { label: 'Property address', value: '1 ORCHARD RD, #02-01, SINGAPORE 238824' },
           { label: 'Property type', value: 'HDB — 4 Room' },
           { label: 'Occupancy', value: 'Owner-occupied' },
         ],
