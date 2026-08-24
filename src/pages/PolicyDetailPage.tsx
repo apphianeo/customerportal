@@ -335,17 +335,19 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
             <PolicyStatusTag status={policy.status} label={policy.statusLabel} />
           </div>
           <div className="flex flex-col sm:flex-row gap-[16px] sm:items-center shrink-0">
+            {/* Desktop: Submit Claim (left) then Download Policy (right).
+                Mobile (stacked): Download Policy first, then Submit Claim. */}
             <a
               href="https://www.uoi.com.sg/claims-assistance.page"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center bg-white border border-[#005eb8] text-[#005eb8] px-[24px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-medium text-[16px] no-underline whitespace-nowrap cursor-pointer"
+              className="order-2 sm:order-1 flex items-center justify-center bg-white border border-[#005eb8] text-[#005eb8] px-[24px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-medium text-[16px] no-underline whitespace-nowrap cursor-pointer"
             >
               Submit Claim
             </a>
             <button
               onClick={() => console.log('Download policy', policy.slug)}
-              className="flex items-center justify-center gap-2 bg-[#005eb8] text-white px-[24px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-medium text-[16px] border-0 whitespace-nowrap cursor-pointer"
+              className="order-1 sm:order-2 flex items-center justify-center gap-2 bg-[#005eb8] text-white px-[24px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-medium text-[16px] border-0 whitespace-nowrap cursor-pointer"
             >
               Download Policy
               <DownloadOutlined style={{ fontSize: 20 }} />

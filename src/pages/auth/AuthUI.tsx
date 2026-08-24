@@ -134,16 +134,19 @@ export function ConsentCheckbox({
   checked,
   onChange,
   label,
+  disabled,
 }: {
   checked: boolean
   onChange: (v: boolean) => void
   label: string
+  disabled?: boolean
 }) {
   return (
     <button
       type="button"
       onClick={() => onChange(!checked)}
-      className="flex items-center gap-2 w-full bg-transparent border-0 p-0 cursor-pointer text-left"
+      disabled={disabled}
+      className="flex items-center gap-2 w-full bg-transparent border-0 p-0 cursor-pointer text-left disabled:cursor-not-allowed disabled:opacity-60"
     >
       <span
         aria-hidden="true"
@@ -338,6 +341,7 @@ export function Field({
   onBlur,
   labelTooltip,
   autoCapitalize,
+  disabled,
 }: {
   label?: string
   value: string
@@ -354,6 +358,8 @@ export function Field({
   labelTooltip?: string
   /** Mobile keyboard hint — shifts to caps automatically as the user types. */
   autoCapitalize?: 'none' | 'words' | 'characters'
+  /** Read-only (e.g. a value retrieved from Myinfo that can't be edited). */
+  disabled?: boolean
 }) {
   return (
     <label className="flex flex-col gap-2 w-full">
@@ -372,9 +378,10 @@ export function Field({
             inputMode={inputMode}
             autoCapitalize={autoCapitalize}
             maxLength={maxLength}
+            disabled={disabled}
             onChange={(e) => onChange(e.target.value)}
             onBlur={onBlur}
-            className={`${inputBase} ${borderClasses(error)}`}
+            className={`${inputBase} ${borderClasses(error)} disabled:bg-[#f5f5f5] disabled:text-[#949494] disabled:cursor-not-allowed`}
             style={suffix ? { paddingRight: 44 } : undefined}
           />
           {suffix && (
@@ -435,13 +442,15 @@ export function DateField({
   value,
   onChange,
   error,
+  disabled,
 }: {
   label: string
   value: string
   onChange: (v: string) => void
   error?: string
+  disabled?: boolean
 }) {
-  return <DatePicker label={label} value={value} onChange={onChange} error={error} />
+  return <DatePicker label={label} value={value} onChange={onChange} error={error} disabled={disabled} />
 }
 
 /* ── Country code dropdown — searchable, keyboard accessible ── */

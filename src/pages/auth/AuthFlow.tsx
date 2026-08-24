@@ -791,6 +791,7 @@ function RegisterDetails({
             onChange={(v) => { setFirst(v.toUpperCase()); firstRequired.reset() }}
             placeholder="Enter first name"
             autoCapitalize="characters"
+            disabled={singpass}
             error={firstRequired.error}
           />
           <Field
@@ -799,6 +800,7 @@ function RegisterDetails({
             onChange={(v) => { setLast(v.toUpperCase()); lastRequired.reset() }}
             placeholder="Enter last name"
             autoCapitalize="characters"
+            disabled={singpass}
             error={lastRequired.error}
           />
           {/* No onBlur — opening the calendar blurs the input, which would
@@ -808,6 +810,7 @@ function RegisterDetails({
             value={dob}
             onChange={(v) => { setDob(v); dobRequired.reset() }}
             error={dobRequired.error}
+            disabled={singpass}
           />
           <Field
             label="NRIC/FIN"
@@ -816,6 +819,7 @@ function RegisterDetails({
             onBlur={nricInline.onBlur}
             placeholder="Enter NRIC/FIN"
             autoCapitalize="characters"
+            disabled={singpass}
             error={nricTaken ? (
               <span>
                 NRIC/FIN already registered, please{' '}
@@ -856,6 +860,7 @@ function RegisterDetails({
             inputMode="numeric"
             autoCapitalize="characters"
             maxLength={6}
+            disabled={singpass}
             error={postalRequired.error}
           />
           <Field
@@ -864,6 +869,7 @@ function RegisterDetails({
             onChange={(v) => { setLine(v.toUpperCase()); lineRequired.reset() }}
             placeholder="Enter address"
             autoCapitalize="characters"
+            disabled={singpass}
             error={lineRequired.error}
           />
           {/* Optional — a landed address has no unit */}
@@ -874,11 +880,13 @@ function RegisterDetails({
             placeholder="Enter unit number"
             inputMode="numeric"
             autoCapitalize="characters"
+            disabled={singpass}
           />
           <ConsentCheckbox
             checked={mailingSame}
             onChange={setMailingSame}
             label="Mailing address same as residential"
+            disabled={singpass}
           />
         </div>
 

@@ -205,10 +205,17 @@ export function registerAccount(account: Account) {
   return account
 }
 
-/** Mark an account's identity as verified (e.g. after a later Singpass check). */
+/**
+ * Mark an account verified after a Singpass identity check. Singpass returns
+ * the person's real, verified NRIC/FIN, so we adopt it — that is what matches
+ * the account to any policies they hold, unlocking the active dashboard.
+ */
 export function verifyAccount(email: string) {
   const account = findAccount(email)
-  if (account) account.verified = true
+  if (account) {
+    account.verified = true
+    account.nric = SINGPASS_IDENTITY.nric
+  }
   return account
 }
 

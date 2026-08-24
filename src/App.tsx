@@ -140,8 +140,10 @@ function AppRoutes() {
     return (
       <VerifyIdentity
         onVerified={() => {
-          verifyAccount(account.email)
-          setAccount({ ...account, verified: true })
+          // Adopt the Singpass-verified identity (and verified flag) so the
+          // dashboard re-checks the policy match and unlocks active policies.
+          const verified = verifyAccount(account.email)
+          setAccount(verified ? { ...verified } : { ...account, verified: true })
           setVerifying(false)
         }}
       />
