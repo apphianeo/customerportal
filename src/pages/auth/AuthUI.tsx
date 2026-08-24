@@ -314,28 +314,6 @@ export function FieldError({ message }: { message: ReactNode }) {
   )
 }
 
-/* ── Dismissible error banner ──
-   Anchored to the control that raised it (e.g. above the Singpass button),
-   not the transient top toast. Same red + icon as FieldError. */
-export function ErrorBanner({ children, onDismiss }: { children: ReactNode; onDismiss?: () => void }) {
-  return (
-    <div className="flex items-center gap-2 w-full bg-[#fef2f2] border border-[#f4c9c9] rounded-[8px] px-[12px] py-[10px] text-[13px] leading-[1.4] text-[#212121]">
-      <img src={errorNotice} alt="" className="w-4 h-4 shrink-0" />
-      <span className="flex-1">{children}</span>
-      {onDismiss && (
-        <button
-          type="button"
-          onClick={onDismiss}
-          aria-label="Dismiss"
-          className="text-[#949494] bg-transparent border-0 p-0 cursor-pointer text-[18px] leading-none shrink-0"
-        >
-          ×
-        </button>
-      )}
-    </div>
-  )
-}
-
 const inputBase =
   'bg-white border rounded-[8px] px-[16px] py-[12px] w-full text-[16px] text-[#212121] leading-[1.5] outline-none placeholder:text-[#949494]'
 

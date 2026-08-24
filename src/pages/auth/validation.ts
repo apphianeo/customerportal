@@ -15,8 +15,6 @@ export const MESSAGES = {
   passwordMismatch: 'Passwords do not match',
   emailMismatch: 'Email addresses do not match',
   accountMissing: 'Account does not exist',
-  emailNotFound: 'Account with this email address does not exist',
-  singpassNoAccount: 'No account linked to Singpass.',
   accountExists: 'Account already exists, please login instead',
   loginIdTaken: 'Login ID taken, try again',
   passwordIncorrect: 'Password is incorrect, try again',
