@@ -305,7 +305,7 @@ export function InfoTooltip({ text }: { text: string }) {
 }
 
 /* ── Inline red error message ── */
-export function FieldError({ message }: { message: string }) {
+export function FieldError({ message }: { message: ReactNode }) {
   return (
     <span className="flex items-center gap-2 text-[12px] leading-[1.4] text-[#dc2626]">
       <img src={errorNotice} alt="" className="w-4 h-4 shrink-0" />
@@ -317,7 +317,7 @@ export function FieldError({ message }: { message: string }) {
 const inputBase =
   'bg-white border rounded-[8px] px-[16px] py-[12px] w-full text-[16px] text-[#212121] leading-[1.5] outline-none placeholder:text-[#949494]'
 
-function borderClasses(error?: string) {
+function borderClasses(error?: ReactNode) {
   return error
     ? 'border-[#dc2626]'
     : 'border-[rgba(0,0,0,0.09)] focus:border-[#005eb8] focus:shadow-[0px_0px_0px_3px_rgba(0,94,184,0.2)]'
@@ -346,7 +346,7 @@ export function Field({
   type?: string
   suffix?: ReactNode
   onSuffixClick?: () => void
-  error?: string
+  error?: ReactNode
   inputMode?: 'text' | 'numeric' | 'tel' | 'email'
   maxLength?: number
   onBlur?: () => void

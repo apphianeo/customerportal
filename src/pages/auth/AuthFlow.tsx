@@ -711,6 +711,8 @@ function RegisterDetails({
 }) {
   const [country, setCountry] = useState<CountryCode>('SG')
   const [showSingpass, setShowSingpass] = useState(false)
+  /** Set on submit when the NRIC/FIN already belongs to an account. */
+  const [nricTaken, setNricTaken] = useState(false)
 
   // A six-digit postal code identifies a building, so the street fills itself
   usePostalAutofill({ postal, address: line, setAddress: setLine })
@@ -750,6 +752,11 @@ function RegisterDetails({
     ]
     checks.forEach(c => c.show())
     if (checks.some(c => !c.isValid)) return
+    // The NRIC/FIN is valid but may already belong to an account.
+    if (findAccountByNric(nric)) {
+      setNricTaken(true)
+      return
+    }
     setShowSingpass(true)
   }
 
@@ -786,11 +793,23 @@ function RegisterDetails({
           <Field
             label="NRIC/FIN"
             value={nric}
-            onChange={(v) => { setNric(v.toUpperCase()); nricInline.reset() }}
+            onChange={(v) => { setNric(v.toUpperCase()); nricInline.reset(); setNricTaken(false) }}
             onBlur={nricInline.onBlur}
             placeholder="Enter NRIC/FIN"
             autoCapitalize="characters"
-            error={nricInline.error}
+            error={nricTaken ? (
+              <span>
+                NRIC/FIN already registered, please{' '}
+                <button
+                  type="button"
+                  onMouseDown={e => e.preventDefault()}
+                  onClick={onLogin}
+                  className="underline text-[#dc2626] bg-transparent border-0 p-0 cursor-pointer"
+                >
+                  login
+                </button>
+              </span>
+            ) : nricInline.error}
             labelTooltip={NRIC_TOOLTIP}
           />
           <PhoneField
@@ -985,9 +1004,9 @@ function RegisterCredentials({
     confirmInline.show()
     setAttempted(true)
     if (!emailInline.isValid) return
-    // Signing up with an email that already has an account
+    // Signing up with an email that already has an account — the Login ID is taken
     if (accountExists(email)) {
-      setEmailSubmitError(MESSAGES.accountExists)
+      setEmailSubmitError(MESSAGES.loginIdTaken)
       return
     }
     if (!passwordRequired.isValid || !allRulesMet || confirm !== password) return

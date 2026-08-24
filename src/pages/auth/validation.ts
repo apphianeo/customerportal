@@ -16,6 +16,7 @@ export const MESSAGES = {
   emailMismatch: 'Email addresses do not match',
   accountMissing: 'Account does not exist',
   accountExists: 'Account already exists, please login instead',
+  loginIdTaken: 'Login ID taken, try again',
   passwordIncorrect: 'Password is incorrect, try again',
   passwordReused: 'Cannot reuse your last 5 passwords',
   passwordUnsafe: 'Cannot contain NRIC/FIN or words like "pass" or "pwd"',
