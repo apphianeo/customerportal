@@ -406,12 +406,12 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
 
         <SectionCard id="section-payments" title="Payment">
           <DataTable
-            columns={['Transaction Date', 'Type', 'Premium', 'Payment Method', 'Status', 'Action']}
+            columns={['Transaction Date', 'Type', 'Payment Method', 'Premium', 'Status', 'Action']}
             rows={policy.payments.map(p => [
               p.date,
               p.type,
-              p.premium,
               <PaymentMethodValue key="pm" last4={p.last4} />,
+              p.premium,
               <StatusBadge key="st" status={p.status} />,
               p.status === 'success' ? downloadIcon : downloadIconMuted,
             ])}
