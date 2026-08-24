@@ -41,6 +41,7 @@ import {
   OtpBoxes,
   FieldError,
   PrimaryButton,
+  OutlineButton,
   LinkButton,
   LegalLine,
   SupportLine,
@@ -73,7 +74,9 @@ function useRequired(value: string) {
 type Screen =
   | 'landing'
   | 'login-otp'
-  /** Manual sign-up starts with the details the user types. */
+  /** Create Account: choose Retrieve-with-Singpass or Sign-up-manually. */
+  | 'register-choose'
+  /** The details form — pre-filled from Myinfo, or typed manually. */
   | 'register-details'
   | 'singpass-login-qr'
   | 'singpass-register-qr'
@@ -158,8 +161,9 @@ export default function AuthFlow({
     else setScreen('landing')
   }
 
-  /** Singpass registration — Myinfo auto-populates the verified profile, then
-      the user sets their own login ID + password and verifies it by email OTP. */
+  /** Singpass registration — Myinfo auto-populates the profile onto the Create
+      Account form; the user reviews it, then sets their own login ID + password
+      and verifies by email OTP. This registration is Singpass-verified. */
   function onSingpassRegistered() {
     setNric(SINGPASS_IDENTITY.nric)
     setDob(SINGPASS_IDENTITY.dob)
@@ -169,9 +173,9 @@ export default function AuthFlow({
     setPostal(SINGPASS_IDENTITY.residentialPostal)
     setLine(SINGPASS_IDENTITY.residentialAddress)
     setUnit(SINGPASS_IDENTITY.residentialUnit)
-    setEmail('') // the user picks their own login ID
+    setEmail('') // the user picks their own login ID later
     setSingpassReg(true)
-    setScreen('register-credentials')
+    setScreen('register-details')
   }
 
   /** Login scans and signs straight in (no consent screen); registration goes
@@ -193,9 +197,19 @@ export default function AuthFlow({
           onVerify={() => onAuthenticated(currentAccount())}
         />
       )
+    case 'register-choose':
+      return (
+        <RegisterChoose
+          onRetrieve={startSingpassRegister}
+          onManual={() => { setSingpassReg(false); setScreen('register-details') }}
+          onBack={() => setScreen('landing')}
+          onLogin={() => setScreen('landing')}
+        />
+      )
     case 'register-details':
       return (
         <RegisterDetails
+          singpass={singpassReg}
           first={first}
           setFirst={setFirst}
           last={last}
@@ -220,8 +234,8 @@ export default function AuthFlow({
           setMailLine={setMailLine}
           mailUnit={mailUnit}
           setMailUnit={setMailUnit}
-          onBack={() => setScreen('landing')}
-          onNext={() => { setSingpassReg(false); setScreen('register-credentials') }}
+          onBack={() => setScreen('register-choose')}
+          onNext={() => setScreen('register-credentials')}
           onLogin={() => setScreen('landing')}
         />
       )
@@ -244,7 +258,7 @@ export default function AuthFlow({
           setEmail={setEmail}
           password={password}
           setPassword={setPassword}
-          onBack={() => setScreen(singpassReg ? 'landing' : 'register-details')}
+          onBack={() => setScreen('register-details')}
           onNext={() => setScreen('register-otp')}
           onLogin={() => setScreen('landing')}
         />
@@ -296,10 +310,9 @@ export default function AuthFlow({
           setEmail={setEmail}
           toast={loginToast}
           onSingpass={startSingpassLogin}
-          onSingpassRegister={startSingpassRegister}
           onLogin={() => setScreen('login-otp')}
           onForgot={() => setScreen('forgot')}
-          onRegister={() => setScreen('register-details')}
+          onRegister={() => setScreen('register-choose')}
         />
       )
   }
@@ -313,7 +326,6 @@ function LoginLanding({
   setEmail,
   toast,
   onSingpass,
-  onSingpassRegister,
   onLogin,
   onForgot,
   onRegister,
@@ -322,7 +334,6 @@ function LoginLanding({
   setEmail: (v: string) => void
   toast: string | null
   onSingpass: () => void
-  onSingpassRegister: () => void
   onLogin: () => void
   onForgot: () => void
   onRegister: () => void
@@ -408,7 +419,7 @@ function LoginLanding({
       <div className="flex flex-col gap-3 w-full">
         <LegalLine />
         <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full m-0">
-          New user? <LinkButton onClick={onSingpassRegister}>Get started with Singpass</LinkButton> or <LinkButton onClick={onRegister}>register manually</LinkButton>
+          New user? <LinkButton onClick={onRegister}>Register manually</LinkButton>
         </p>
       </div>
     </AuthShell>
@@ -610,10 +621,55 @@ export function SingpassApprove({ onCancel, onAgree }: { onCancel: () => void; o
   )
 }
 
+/* ────────────── Create Account — choose a registration method ─────
+   Retrieve the profile from Myinfo via Singpass (verified), or sign up by
+   filling the form manually (unverified until they later verify). */
+function RegisterChoose({
+  onRetrieve,
+  onManual,
+  onBack,
+  onLogin,
+}: {
+  onRetrieve: () => void
+  onManual: () => void
+  onBack: () => void
+  onLogin: () => void
+}) {
+  return (
+    <AuthShell onBack={onBack}>
+      <AuthHeader
+        title="Create Account"
+        subtitle="Speed up your sign up process by retrieving data from Myinfo using Singpass"
+      />
+      <div className="flex flex-col gap-6 w-full">
+        <button
+          onClick={onRetrieve}
+          className="w-full h-[52px] bg-[#f4333d] rounded-[8px] border-0 px-[16px] cursor-pointer flex items-center justify-center text-white text-[15px] font-semibold"
+        >
+          Retrieve with&nbsp;<span className="font-bold lowercase tracking-tight">singpass</span>
+        </button>
+        <div className="flex items-center gap-4 w-full">
+          <span className="flex-1 h-px bg-[rgba(0,0,0,0.09)]" />
+          <span className="text-[14px] text-[#949494]">OR</span>
+          <span className="flex-1 h-px bg-[rgba(0,0,0,0.09)]" />
+        </div>
+        <OutlineButton onClick={onManual}>Sign up manually</OutlineButton>
+      </div>
+      <div className="flex flex-col gap-3 w-full">
+        <LegalLine />
+        <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full m-0">
+          Already have an account? <LinkButton onClick={onLogin}>Log in</LinkButton>
+        </p>
+      </div>
+    </AuthShell>
+  )
+}
+
 /* ────────────── Create Account — identifiers, then Singpass ──────
    NRIC/FIN and date of birth are captured first, then Singpass verifies
    the person behind them and supplies the rest of the profile. */
 function RegisterDetails({
+  singpass,
   first,
   setFirst,
   last,
@@ -642,6 +698,8 @@ function RegisterDetails({
   onNext,
   onLogin,
 }: {
+  /** True when the form was auto-filled from Myinfo (a verified Singpass sign-up). */
+  singpass: boolean
   first: string
   setFirst: (v: string) => void
   last: string
@@ -712,8 +770,9 @@ function RegisterDetails({
     ]
     checks.forEach(c => c.show())
     if (checks.some(c => !c.isValid)) return
-    // The NRIC/FIN is valid but may already belong to an account.
-    if (findAccountByNric(nric)) {
+    // Manual sign-up: the NRIC/FIN is valid but may already belong to an account.
+    // Skipped for a Singpass retrieval — the identity is verified and expected.
+    if (!singpass && findAccountByNric(nric)) {
       setNricTaken(true)
       return
     }

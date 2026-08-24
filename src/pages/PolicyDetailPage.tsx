@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useLayoutEffect } from 'react'
 import { DownloadOutlined } from '@ant-design/icons'
 import { ChevronRightIcon, ChevronDownIcon, ChevronUpIcon } from '../components/icons'
 import { getPolicyDetail, type Field, type FieldValue, type PolicyDetailData } from '../data/policyDetails'
@@ -28,26 +28,46 @@ function PaymentMethodValue({ last4 }: { last4: string }) {
   )
 }
 
-/* ─── Long value — clamped to two lines, chevron expands it ─── */
+/* ─── Long value — shown in full up to two lines; only clamps (with a
+   chevron to expand) when the text actually overflows those two lines. ─── */
 function ExpandableValue({ text }: { text: string }) {
   const [open, setOpen] = useState(false)
+  const [overflowing, setOverflowing] = useState(false)
+  const ref = useRef<HTMLSpanElement>(null)
+
+  // Measure against the two-line clamp (only while collapsed). If the content
+  // is taller than the clamp, it overflows and earns a chevron.
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el || open) return
+    const check = () => setOverflowing(el.scrollHeight > el.clientHeight + 1)
+    check()
+    const ro = new ResizeObserver(check)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [text, open])
+
+  const clamp = !open
   return (
     <span className="flex items-end gap-[8px] w-full">
       <span
+        ref={ref}
         className="text-[16px] text-[#212121] leading-[1.5] flex-1 min-w-0"
-        style={open ? undefined : { display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+        style={clamp ? { display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' } : undefined}
       >
         {text}
       </span>
-      <button
-        onClick={() => setOpen(o => !o)}
-        aria-label={open ? 'Show less' : 'Show more'}
-        className="shrink-0 bg-transparent border-0 p-0 cursor-pointer flex items-center pb-[4px]"
-      >
-        {open
-          ? <ChevronUpIcon size={14} style={{ color: '#6E6E6E' }} />
-          : <ChevronDownIcon size={14} style={{ color: '#6E6E6E' }} />}
-      </button>
+      {overflowing && (
+        <button
+          onClick={() => setOpen(o => !o)}
+          aria-label={open ? 'Show less' : 'Show more'}
+          className="shrink-0 bg-transparent border-0 p-0 cursor-pointer flex items-center pb-[4px]"
+        >
+          {open
+            ? <ChevronUpIcon size={14} style={{ color: '#6E6E6E' }} />
+            : <ChevronDownIcon size={14} style={{ color: '#6E6E6E' }} />}
+        </button>
+      )}
     </span>
   )
 }
@@ -111,14 +131,15 @@ function SectionCard({
 
 /* ─── Documents / Payments table ─────────────────────────── */
 /**
- * The last column is the row action. It stays pinned to the right edge while
- * the rest of the table scrolls under it, so the action is reachable on a
- * phone without scrolling to the end first. A left border and a soft shadow
- * mark where the scrolling content passes beneath.
+ * The last column is the row action. On a phone, where the table scrolls
+ * horizontally, it stays pinned to the right edge (a soft shadow marks where
+ * the content passes beneath) so the action is reachable without scrolling to
+ * the end. On desktop the table fits, so it is just an ordinary last column —
+ * no pinning, no shadow, and no divider line before it.
  */
 function DataTable({ columns, rows }: { columns: string[]; rows: React.ReactNode[][] }) {
   const lastCol = columns.length - 1
-  const pinned = 'sticky right-0 z-[1] w-[72px] shadow-[-6px_0_6px_-6px_rgba(0,0,0,0.12)] before:absolute before:inset-y-0 before:left-0 before:w-px before:bg-[rgba(0,0,0,0.09)]'
+  const pinned = 'sticky right-0 z-[1] w-[72px] shadow-[-6px_0_6px_-6px_rgba(0,0,0,0.12)] md:static md:w-auto md:shadow-none'
 
   return (
     <div className="bg-white border border-[rgba(0,0,0,0.09)] rounded-[8px] overflow-x-auto">
@@ -314,13 +335,6 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
             <PolicyStatusTag status={policy.status} label={policy.statusLabel} />
           </div>
           <div className="flex flex-col sm:flex-row gap-[16px] sm:items-center shrink-0">
-            <button
-              onClick={() => console.log('Download policy', policy.slug)}
-              className="flex items-center justify-center gap-2 bg-[#005eb8] text-white px-[24px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-medium text-[16px] border-0 whitespace-nowrap cursor-pointer"
-            >
-              Download Policy
-              <DownloadOutlined style={{ fontSize: 20 }} />
-            </button>
             <a
               href="https://www.uoi.com.sg/claims-assistance.page"
               target="_blank"
@@ -329,6 +343,13 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
             >
               Submit Claim
             </a>
+            <button
+              onClick={() => console.log('Download policy', policy.slug)}
+              className="flex items-center justify-center gap-2 bg-[#005eb8] text-white px-[24px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-medium text-[16px] border-0 whitespace-nowrap cursor-pointer"
+            >
+              Download Policy
+              <DownloadOutlined style={{ fontSize: 20 }} />
+            </button>
           </div>
         </div>
 
@@ -339,23 +360,27 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
       <div className="sticky top-0 z-10 bg-bg-page pt-[24px] md:pt-[32px] pb-[24px] px-4">
         <div className="w-full max-w-[980px] mx-auto">
         <div
-          className="flex gap-[4px] overflow-x-auto scrollbar-hide select-none border-b border-[rgba(0,0,0,0.09)]"
+          className="flex overflow-x-auto scrollbar-hide select-none border-b border-[rgba(0,0,0,0.09)]"
           /* pan-x hands the gesture to the scroller, so a drag scrolls the
              strip instead of picking up and sliding the label under the finger */
           style={{ touchAction: 'pan-x', overscrollBehaviorX: 'contain' }}
         >
-          {TABS.map(tab => (
-            <button
-              key={tab.key}
-              onClick={() => goToTab(tab.key)}
-              className={[
-                'px-[12px] pb-[12px] text-[14px] whitespace-nowrap bg-transparent border-0 border-b-2 -mb-px cursor-pointer',
-                activeTab === tab.key ? 'text-[#005eb8] font-medium border-b-[#005eb8]' : 'text-[#212121] border-b-transparent',
-              ].join(' ')}
-            >
-              {tab.label}
-            </button>
-          ))}
+          {TABS.map(tab => {
+            const active = activeTab === tab.key
+            return (
+              <button
+                key={tab.key}
+                onClick={() => goToTab(tab.key)}
+                className="shrink-0 flex flex-col items-center gap-[12px] px-[12px] pt-[12px] -mb-px bg-transparent border-0 cursor-pointer"
+              >
+                <span className={`text-[14px] leading-[1.5] whitespace-nowrap ${active ? 'text-[#005eb8] font-medium' : 'text-[#212121] font-normal'}`}>
+                  {tab.label}
+                </span>
+                {/* Underline sits under the label (with a slight overhang), not the full tab */}
+                <span className={`h-[2px] w-[calc(100%+8px)] ${active ? 'bg-[#005eb8]' : 'bg-transparent'}`} />
+              </button>
+            )
+          })}
         </div>
 
         </div>

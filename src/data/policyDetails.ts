@@ -57,13 +57,13 @@ const POLICYHOLDER: Field[] = [
   { label: 'Date of birth', value: '12/02/1966' },
   { label: 'Email', value: 'chriswong@gmail.com' },
   { label: 'Mobile number', value: '+65 91234567' },
-  { label: 'Address', value: '1 ORCHARD RD, #02-01, SINGAPORE 238824' },
+  { label: 'Address', value: { kind: 'expandable', text: '1 ORCHARD RD, #02-01, SINGAPORE 238824' } },
 ]
 
 const CONTACT: Field[] = [
   { label: 'Contact number', value: '+65 91234567' },
   { label: 'Email address', value: 'chriswong@gmail.com' },
-  { label: 'Mailing address', value: '1 ORCHARD RD, #02-01, SINGAPORE 238824' },
+  { label: 'Mailing address', value: { kind: 'expandable', text: '1 ORCHARD RD, #02-01, SINGAPORE 238824' } },
 ]
 
 const AGENT: Field[] = [
@@ -277,7 +277,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
       {
         title: 'Insured property',
         fields: [
-          { label: 'Property address', value: '1 ORCHARD RD, #02-01, SINGAPORE 238824' },
+          { label: 'Property address', value: { kind: 'expandable', text: '1 ORCHARD RD, #02-01, SINGAPORE 238824' } },
           { label: 'Property type', value: 'HDB — 4 Room' },
           { label: 'Occupancy', value: 'Owner-occupied' },
         ],
