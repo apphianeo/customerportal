@@ -84,9 +84,6 @@ type Screen =
   | 'forgot'
   | 'reset'
 
-/** Why we sent the user to Singpass — decides where they land afterwards. */
-type SingpassIntent = 'login' | 'register'
-
 const SUBTITLE = 'Access your insurance policies in one place'
 
 export default function AuthFlow({
@@ -112,7 +109,6 @@ export default function AuthFlow({
   const [mailPostal, setMailPostal] = useState('')
   const [mailLine, setMailLine] = useState('')
   const [mailUnit, setMailUnit] = useState('')
-  const [singpassIntent, setSingpassIntent] = useState<SingpassIntent>('login')
   const [loginToast, setLoginToast] = useState<string | null>(null)
 
   function goLogin(toast?: string) {
@@ -152,31 +148,24 @@ export default function AuthFlow({
     onAuthenticated(registerAccount({ ...currentAccount(), ...overrides }))
   }
 
-  /** Singpass hands back the verified identity and pre-fills the email. */
+  /** Singpass hands back the verified identity. An already-linked identity
+      signs straight in; a new one becomes a Singpass registration (Myinfo). */
   function onSingpassVerified() {
-    if (singpassIntent === 'login') {
-      const existing = findAccountByNric(SINGPASS_IDENTITY.nric)
-      if (existing) {
-        onAuthenticated(existing)
-        return
-      }
-      setEmail(SINGPASS_IDENTITY.email)
-      setNric(SINGPASS_IDENTITY.nric)
-      setDob(SINGPASS_IDENTITY.dob)
-      setFirst(SINGPASS_IDENTITY.firstName)
-      setLast(SINGPASS_IDENTITY.lastName)
-      setScreen('singpass-password')
+    const existing = findAccountByNric(SINGPASS_IDENTITY.nric)
+    if (existing) {
+      onAuthenticated(existing)
       return
     }
-    // Registering — Singpass confirms identity only. There is no synced email
-    // to borrow, so the user sets their login address themselves. Clear anything
-    // typed on an earlier screen so Complete Profile never pre-fills the login ID.
-    setEmail('')
-    setScreen('register-credentials')
+    // Pull the verified profile; the user only has to set a password.
+    setEmail(SINGPASS_IDENTITY.email)
+    setNric(SINGPASS_IDENTITY.nric)
+    setDob(SINGPASS_IDENTITY.dob)
+    setFirst(SINGPASS_IDENTITY.firstName)
+    setLast(SINGPASS_IDENTITY.lastName)
+    setScreen('singpass-password')
   }
 
-  function startSingpass(intent: SingpassIntent) {
-    setSingpassIntent(intent)
+  function startSingpass() {
     setScreen('singpass-qr')
   }
 
@@ -217,24 +206,16 @@ export default function AuthFlow({
           mailUnit={mailUnit}
           setMailUnit={setMailUnit}
           onBack={() => setScreen('landing')}
-          onAuthenticate={() => startSingpass('register')}
+          onNext={() => setScreen('register-credentials')}
           onLogin={() => setScreen('landing')}
         />
       )
     case 'singpass-qr':
-      return (
-        <SingpassLogin
-          onScan={() =>
-            // Manual sign-up pulls no data from Singpass, so the consent screen
-            // listing the fields it would share does not apply.
-            singpassIntent === 'register' ? onSingpassVerified() : setScreen('singpass-approve')
-          }
-        />
-      )
+      return <SingpassLogin onScan={() => setScreen('singpass-approve')} />
     case 'singpass-approve':
       return (
         <SingpassApprove
-          onCancel={() => setScreen(singpassIntent === 'login' ? 'landing' : 'register-details')}
+          onCancel={() => setScreen('landing')}
           onAgree={onSingpassVerified}
         />
       )
@@ -272,6 +253,8 @@ export default function AuthFlow({
               password: pw,
               passwordHistory: [pw],
               authMethod: 'singpass',
+              // Registered through Singpass — identity is verified.
+              verified: true,
               salutation: SINGPASS_IDENTITY.salutation,
               phone: SINGPASS_IDENTITY.phone,
               residentialPostal: SINGPASS_IDENTITY.residentialPostal,
@@ -308,7 +291,7 @@ export default function AuthFlow({
           email={email}
           setEmail={setEmail}
           toast={loginToast}
-          onSingpass={() => startSingpass('login')}
+          onSingpass={() => startSingpass()}
           onLogin={() => setScreen('login-otp')}
           onForgot={() => setScreen('forgot')}
           onRegister={() => setScreen('register-details')}
@@ -418,7 +401,7 @@ function LoginLanding({
       <div className="flex flex-col gap-3 w-full">
         <LegalLine />
         <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full m-0">
-          New user? Get started with Singpass or <LinkButton onClick={onRegister}>register manually</LinkButton>
+          New user? <LinkButton onClick={onSingpass}>Get started with Singpass</LinkButton> or <LinkButton onClick={onRegister}>register manually</LinkButton>
         </p>
       </div>
     </AuthShell>
@@ -473,7 +456,7 @@ function QrCode() {
 /* ── Singpass log-in page ──
    Singpass's own page, rebuilt in markup rather than shown as a screenshot so
    it renders crisply at every window size. Their styling, not ours. */
-function SingpassLogin({ onScan }: { onScan: () => void }) {
+export function SingpassLogin({ onScan }: { onScan: () => void }) {
   const footerLinks = ['Contact us', 'FAQs', 'Terms of use', 'Privacy statement', 'Report vulnerability']
 
   return (
@@ -570,7 +553,7 @@ const SINGPASS_FIELDS = [
   'Registered Address',
 ]
 
-function SingpassApprove({ onCancel, onAgree }: { onCancel: () => void; onAgree: () => void }) {
+export function SingpassApprove({ onCancel, onAgree }: { onCancel: () => void; onAgree: () => void }) {
   return (
     <div className="min-h-screen w-full bg-[#f7f7f7] flex items-center justify-center p-6">
       <div className="w-[636px] max-w-full flex flex-col gap-[26px] items-center">
@@ -649,7 +632,7 @@ function RegisterDetails({
   mailUnit,
   setMailUnit,
   onBack,
-  onAuthenticate,
+  onNext,
   onLogin,
 }: {
   first: string
@@ -677,11 +660,10 @@ function RegisterDetails({
   mailUnit: string
   setMailUnit: (v: string) => void
   onBack: () => void
-  onAuthenticate: () => void
+  onNext: () => void
   onLogin: () => void
 }) {
   const [country, setCountry] = useState<CountryCode>('SG')
-  const [showSingpass, setShowSingpass] = useState(false)
   /** Set on submit when the NRIC/FIN already belongs to an account. */
   const [nricTaken, setNricTaken] = useState(false)
 
@@ -728,7 +710,7 @@ function RegisterDetails({
       setNricTaken(true)
       return
     }
-    setShowSingpass(true)
+    onNext()
   }
 
   return (
@@ -877,20 +859,22 @@ function RegisterDetails({
           Already have an account? <LinkButton onClick={onLogin}>Log in</LinkButton>
         </p>
       </div>
-      {showSingpass && (
-        <SingpassPrompt onClose={() => setShowSingpass(false)} onAuthenticate={onAuthenticate} />
-      )}
     </AuthShell>
   )
 }
 
-/** Hand-off dialog before the Singpass redirect. */
-function SingpassPrompt({
+/** Hand-off dialog before a Singpass redirect — reused by the dashboard's
+    "verify your identity" prompt. */
+export function SingpassPrompt({
   onClose,
   onAuthenticate,
+  title = 'Authenticate with Singpass',
+  subtitle = 'Complete the registration process by authenticating your identity',
 }: {
   onClose: () => void
   onAuthenticate: () => void
+  title?: string
+  subtitle?: string
 }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
@@ -902,14 +886,16 @@ function SingpassPrompt({
           <img src={closeIcon} alt="" className="w-[20px] h-[20px]" />
         </button>
         <div className="flex flex-col gap-[12px] w-full pr-[32px]">
-          <h2 className="font-h2-title font-semibold text-[#212121] m-0">Authenticate with Singpass</h2>
-          <p className="text-[14px] leading-[1.5] text-[#6e6e6e] m-0">
-            Complete the registration process by authenticating your identity
-          </p>
+          <h2 className="font-h2-title font-semibold text-[#212121] m-0">{title}</h2>
+          <p className="text-[14px] leading-[1.5] text-[#6e6e6e] m-0">{subtitle}</p>
         </div>
         <div className="flex flex-col items-center w-full">
-          <button onClick={onAuthenticate} className="w-[228px] bg-transparent border-0 p-0 cursor-pointer">
-            <img src={singpassBtn} alt="Log in with Singpass" className="w-full h-auto rounded-[8px]" />
+          <button
+            onClick={onAuthenticate}
+            aria-label="Log in with Singpass"
+            className="w-full h-[52px] bg-[#f4333d] rounded-[8px] border-0 p-0 cursor-pointer flex items-center justify-center overflow-hidden"
+          >
+            <img src={singpassBtn} alt="" className="h-[52px] w-auto" />
           </button>
         </div>
       </div>

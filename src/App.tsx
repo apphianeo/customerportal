@@ -9,27 +9,43 @@ import {
 } from 'react-router-dom'
 import './index.css'
 import DashboardLayout from './components/layout/DashboardLayout'
-import AuthFlow from './pages/auth/AuthFlow'
+import AuthFlow, { SingpassLogin, SingpassApprove, SingpassPrompt } from './pages/auth/AuthFlow'
 import DashboardPage from './pages/DashboardPage'
 import PoliciesPage from './pages/PoliciesPage'
 import PolicyDetailPage from './pages/PolicyDetailPage'
 import ManageAccountPage from './pages/ManageAccountPage'
 import HelpSupportPage from './pages/HelpSupportPage'
-import { isPolicyholder, type Account } from './data/accounts'
+import { isPolicyholder, verifyAccount, type Account } from './data/accounts'
 
 export type AuthMethod = 'singpass' | 'account'
 
+/** Policies show only once the identity is verified AND matches a policyholder. */
+const canSeePolicies = (account: Account) => account.verified && isPolicyholder(account.nric)
+
 /* ─── Route-aware page wrappers ───────────────────────────── */
-function DashboardRoute({ account }: { account: Account }) {
+function DashboardRoute({ account, onStartVerify }: { account: Account; onStartVerify: () => void }) {
   const navigate = useNavigate()
+  const [modalDismissed, setModalDismissed] = useState(false)
   return (
-    <DashboardPage
-      firstName={account.firstName}
-      hasPolicies={isPolicyholder(account.nric)}
-      onNavigateToPolicies={() => navigate('/policies')}
-      onSelectPolicy={slug => navigate(`/policies/${slug}`)}
-      onNavigateToHelp={() => navigate('/help')}
-    />
+    <>
+      <DashboardPage
+        firstName={account.firstName}
+        hasPolicies={canSeePolicies(account)}
+        onNavigateToPolicies={() => navigate('/policies')}
+        onSelectPolicy={slug => navigate(`/policies/${slug}`)}
+        onNavigateToHelp={() => navigate('/help')}
+      />
+      {/* Prospect prompt: an unverified account has to verify with Singpass
+          before any policies can be matched and shown. */}
+      {!account.verified && !modalDismissed && (
+        <SingpassPrompt
+          title="Verify your identity"
+          subtitle="Verify your identity with Singpass to view your policies"
+          onClose={() => setModalDismissed(true)}
+          onAuthenticate={onStartVerify}
+        />
+      )}
+    </>
   )
 }
 
@@ -37,11 +53,18 @@ function PoliciesRoute({ account }: { account: Account }) {
   const navigate = useNavigate()
   return (
     <PoliciesPage
-      hasPolicies={isPolicyholder(account.nric)}
+      hasPolicies={canSeePolicies(account)}
       onSelectPolicy={slug => navigate(`/policies/${slug}`)}
       onNavigateToDashboard={() => navigate('/dashboard')}
     />
   )
+}
+
+/** Post-login Singpass check: QR → consent → identity verified. */
+function VerifyIdentity({ onVerified, onCancel }: { onVerified: () => void; onCancel: () => void }) {
+  const [step, setStep] = useState<'qr' | 'approve'>('qr')
+  if (step === 'approve') return <SingpassApprove onCancel={onCancel} onAgree={onVerified} />
+  return <SingpassLogin onScan={() => setStep('approve')} />
 }
 
 function PolicyDetailRoute() {
@@ -90,6 +113,8 @@ function LoginRoute({ onAuthenticated }: { onAuthenticated: (account: Account) =
 function AppRoutes() {
   /** The signed-in account, or null when signed out. */
   const [account, setAccount] = useState<Account | null>(null)
+  /** True while an unverified account is completing the Singpass check. */
+  const [verifying, setVerifying] = useState(false)
 
   function authenticate(signedIn: Account) {
     setAccount(signedIn)
@@ -97,6 +122,7 @@ function AppRoutes() {
 
   function logout() {
     setAccount(null)
+    setVerifying(false)
   }
 
   if (!account) {
@@ -109,10 +135,24 @@ function AppRoutes() {
     )
   }
 
+  // Full-screen Singpass verification, launched from the prospect dashboard.
+  if (verifying) {
+    return (
+      <VerifyIdentity
+        onCancel={() => setVerifying(false)}
+        onVerified={() => {
+          verifyAccount(account.email)
+          setAccount({ ...account, verified: true })
+          setVerifying(false)
+        }}
+      />
+    )
+  }
+
   return (
     <Routes>
       <Route element={<DashboardLayout account={account} onLogout={logout} />}>
-        <Route path="/dashboard" element={<DashboardRoute account={account} />} />
+        <Route path="/dashboard" element={<DashboardRoute account={account} onStartVerify={() => setVerifying(true)} />} />
         <Route path="/policies" element={<PoliciesRoute account={account} />} />
         <Route path="/policies/:slug" element={<PolicyDetailRoute />} />
         <Route path="/account" element={<AccountRoute account={account} onLogout={logout} />} />

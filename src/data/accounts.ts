@@ -13,6 +13,12 @@ export type Account = {
   /** Most recent first — the last 5 are rejected on change. */
   passwordHistory: string[]
   authMethod: 'account' | 'singpass'
+  /**
+   * Whether the identity behind the account has been verified with Singpass.
+   * Singpass registration sets this true; a manual sign-up starts false and
+   * stays a prospect until they verify. Policies only show once verified.
+   */
+  verified: boolean
   salutation: string
   firstName: string
   lastName: string
@@ -53,6 +59,7 @@ export const ACCOUNTS: Account[] = [
     password: 'Chris2026',
     passwordHistory: ['Chris2026', 'Summer2025', 'Winter2024', 'Orchard88', 'Marina2023'],
     authMethod: 'account',
+    verified: true,
     salutation: 'MR',
     firstName: 'CHRIS',
     lastName: 'WONG',
@@ -73,6 +80,7 @@ export const ACCOUNTS: Account[] = [
     password: 'Portal2026',
     passwordHistory: ['Portal2026', 'Portal2025', 'Portal2024', 'Portal2023', 'Portal2022'],
     authMethod: 'singpass',
+    verified: true,
     salutation: 'MS',
     firstName: 'MEI LING',
     lastName: 'TAN',
@@ -93,6 +101,7 @@ export const ACCOUNTS: Account[] = [
     password: 'Bedok2026',
     passwordHistory: ['Bedok2026'],
     authMethod: 'account',
+    verified: true,
     salutation: 'MR',
     firstName: 'RAVI',
     lastName: 'KUMAR',
@@ -113,6 +122,7 @@ export const ACCOUNTS: Account[] = [
     password: 'Sentosa2026',
     passwordHistory: ['Sentosa2026', 'Sentosa2025'],
     authMethod: 'account',
+    verified: true,
     salutation: 'MRS',
     firstName: 'AISYAH',
     lastName: 'RAHMAN',
@@ -133,6 +143,7 @@ export const ACCOUNTS: Account[] = [
     password: 'Marina2026',
     passwordHistory: ['Marina2026'],
     authMethod: 'singpass',
+    verified: true,
     salutation: 'MS',
     firstName: 'NADIA',
     lastName: 'LIM',
@@ -172,12 +183,21 @@ export function registerAccount(account: Account) {
   return account
 }
 
+/** Mark an account's identity as verified (e.g. after a later Singpass check). */
+export function verifyAccount(email: string) {
+  const account = findAccount(email)
+  if (account) account.verified = true
+  return account
+}
+
 /** A profile for someone mid-registration — not in ACCOUNTS yet. */
 export function draftAccount(input: Partial<Account> & { email: string }): Account {
   return {
     password: '',
     passwordHistory: [],
     authMethod: 'account',
+    // A fresh sign-up is a prospect until they verify with Singpass.
+    verified: false,
     salutation: 'MR',
     firstName: 'there',
     lastName: '',
