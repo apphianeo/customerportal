@@ -138,6 +138,28 @@ export const ACCOUNTS: Account[] = [
     mailingUnit: '',
   },
   {
+    // Registered through Singpass — verified, holds policies. Used to demo the
+    // Singpass *login* path (scan → straight to the active dashboard).
+    email: 'grace.sim@gmail.com',
+    password: 'Bukit2026',
+    passwordHistory: ['Bukit2026'],
+    authMethod: 'singpass',
+    verified: true,
+    salutation: 'MDM',
+    firstName: 'GRACE',
+    lastName: 'SIM',
+    dob: '17/12/1971',
+    nric: 'S2244668E',
+    phone: '93304488',
+    residentialPostal: '229832',
+    residentialAddress: '77 BUKIT TIMAH RD',
+    residentialUnit: '#14-02',
+    mailingSameAsResidential: true,
+    mailingPostal: '',
+    mailingAddress: '',
+    mailingUnit: '',
+  },
+  {
     // Registered but holds no UOI product — lands on the prospect dashboard.
     email: 'nadia.lim@gmail.com',
     password: 'Marina2026',

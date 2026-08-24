@@ -9,7 +9,7 @@ import {
 } from 'react-router-dom'
 import './index.css'
 import DashboardLayout from './components/layout/DashboardLayout'
-import AuthFlow, { SingpassLogin, SingpassApprove, SingpassPrompt } from './pages/auth/AuthFlow'
+import AuthFlow, { SingpassLogin, SingpassPrompt } from './pages/auth/AuthFlow'
 import DashboardPage from './pages/DashboardPage'
 import PoliciesPage from './pages/PoliciesPage'
 import PolicyDetailPage from './pages/PolicyDetailPage'
@@ -60,11 +60,11 @@ function PoliciesRoute({ account }: { account: Account }) {
   )
 }
 
-/** Post-login Singpass check: QR → consent → identity verified. */
-function VerifyIdentity({ onVerified, onCancel }: { onVerified: () => void; onCancel: () => void }) {
-  const [step, setStep] = useState<'qr' | 'approve'>('qr')
-  if (step === 'approve') return <SingpassApprove onCancel={onCancel} onAgree={onVerified} />
-  return <SingpassLogin onScan={() => setStep('approve')} />
+/** Post-login identity check for a manual (unverified) account: just the
+    Singpass QR scan — no Myinfo consent screen, since we are only confirming
+    who they are, not pulling their profile. */
+function VerifyIdentity({ onVerified }: { onVerified: () => void }) {
+  return <SingpassLogin onScan={onVerified} />
 }
 
 function PolicyDetailRoute() {
@@ -139,7 +139,6 @@ function AppRoutes() {
   if (verifying) {
     return (
       <VerifyIdentity
-        onCancel={() => setVerifying(false)}
         onVerified={() => {
           verifyAccount(account.email)
           setAccount({ ...account, verified: true })

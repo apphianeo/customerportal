@@ -73,14 +73,14 @@ function useRequired(value: string) {
 type Screen =
   | 'landing'
   | 'login-otp'
-  /** Sign-up starts with the identifiers Singpass will verify. */
+  /** Manual sign-up starts with the details the user types. */
   | 'register-details'
-  | 'singpass-qr'
+  | 'singpass-login-qr'
+  | 'singpass-register-qr'
   | 'singpass-approve'
-  /** Post-Singpass: set the login email and password. */
+  /** Both paths end here: set the login email + password, then verify by OTP. */
   | 'register-credentials'
   | 'register-otp'
-  | 'singpass-password'
   | 'forgot'
   | 'reset'
 
@@ -110,6 +110,8 @@ export default function AuthFlow({
   const [mailLine, setMailLine] = useState('')
   const [mailUnit, setMailUnit] = useState('')
   const [loginToast, setLoginToast] = useState<string | null>(null)
+  /** True when the current registration came in through Singpass (→ verified). */
+  const [singpassReg, setSingpassReg] = useState(false)
 
   function goLogin(toast?: string) {
     setLoginToast(toast ?? null)
@@ -148,25 +150,38 @@ export default function AuthFlow({
     onAuthenticated(registerAccount({ ...currentAccount(), ...overrides }))
   }
 
-  /** Singpass hands back the verified identity. An already-linked identity
-      signs straight in; a new one becomes a Singpass registration (Myinfo). */
-  function onSingpassVerified() {
+  /** Singpass login — authenticate an existing account only. Never creates
+      credentials: an identity with no account is bounced back to the landing. */
+  function onSingpassLogin() {
     const existing = findAccountByNric(SINGPASS_IDENTITY.nric)
-    if (existing) {
-      onAuthenticated(existing)
-      return
-    }
-    // Pull the verified profile; the user only has to set a password.
-    setEmail(SINGPASS_IDENTITY.email)
+    if (existing) onAuthenticated(existing)
+    else setScreen('landing')
+  }
+
+  /** Singpass registration — Myinfo auto-populates the verified profile, then
+      the user sets their own login ID + password and verifies it by email OTP. */
+  function onSingpassRegistered() {
     setNric(SINGPASS_IDENTITY.nric)
     setDob(SINGPASS_IDENTITY.dob)
     setFirst(SINGPASS_IDENTITY.firstName)
     setLast(SINGPASS_IDENTITY.lastName)
-    setScreen('singpass-password')
+    setPhone(SINGPASS_IDENTITY.phone)
+    setPostal(SINGPASS_IDENTITY.residentialPostal)
+    setLine(SINGPASS_IDENTITY.residentialAddress)
+    setUnit(SINGPASS_IDENTITY.residentialUnit)
+    setEmail('') // the user picks their own login ID
+    setSingpassReg(true)
+    setScreen('register-credentials')
   }
 
-  function startSingpass() {
-    setScreen('singpass-qr')
+  /** Login scans and signs straight in (no consent screen); registration goes
+      through the Myinfo data-consent screen first. */
+  function startSingpassLogin() {
+    setSingpassReg(false)
+    setScreen('singpass-login-qr')
+  }
+  function startSingpassRegister() {
+    setScreen('singpass-register-qr')
   }
 
   switch (screen) {
@@ -206,17 +221,20 @@ export default function AuthFlow({
           mailUnit={mailUnit}
           setMailUnit={setMailUnit}
           onBack={() => setScreen('landing')}
-          onNext={() => setScreen('register-credentials')}
+          onNext={() => { setSingpassReg(false); setScreen('register-credentials') }}
           onLogin={() => setScreen('landing')}
         />
       )
-    case 'singpass-qr':
+    case 'singpass-login-qr':
+      // Login authenticates straight away — no Myinfo consent screen.
+      return <SingpassLogin onScan={onSingpassLogin} />
+    case 'singpass-register-qr':
       return <SingpassLogin onScan={() => setScreen('singpass-approve')} />
     case 'singpass-approve':
       return (
         <SingpassApprove
           onCancel={() => setScreen('landing')}
-          onAgree={onSingpassVerified}
+          onAgree={onSingpassRegistered}
         />
       )
     case 'register-credentials':
@@ -226,7 +244,7 @@ export default function AuthFlow({
           setEmail={setEmail}
           password={password}
           setPassword={setPassword}
-          onBack={() => setScreen('register-details')}
+          onBack={() => setScreen(singpassReg ? 'landing' : 'register-details')}
           onNext={() => setScreen('register-otp')}
           onLogin={() => setScreen('landing')}
         />
@@ -236,31 +254,17 @@ export default function AuthFlow({
         <OtpVerification
           email={email}
           onBack={() => setScreen('register-credentials')}
-          onVerify={() => finishRegistration()}
-        />
-      )
-    case 'singpass-password':
-      return (
-        <PasswordSetup
-          title="Set Password"
-          subtitle="Set a password to finish setup and enable future login with your Singpass-linked email address"
-          buttonLabel="Create Account"
-          email={email}
-          showConsent
-          onBack={() => setScreen('landing')}
-          onSubmit={pw =>
-            finishRegistration({
-              password: pw,
-              passwordHistory: [pw],
-              authMethod: 'singpass',
-              // Registered through Singpass — identity is verified.
-              verified: true,
-              salutation: SINGPASS_IDENTITY.salutation,
-              phone: SINGPASS_IDENTITY.phone,
-              residentialPostal: SINGPASS_IDENTITY.residentialPostal,
-              residentialAddress: SINGPASS_IDENTITY.residentialAddress,
-              residentialUnit: SINGPASS_IDENTITY.residentialUnit,
-            })
+          onVerify={() =>
+            finishRegistration(
+              singpassReg
+                ? {
+                    // Registered through Singpass — identity is verified.
+                    authMethod: 'singpass',
+                    verified: true,
+                    salutation: SINGPASS_IDENTITY.salutation,
+                  }
+                : {},
+            )
           }
         />
       )
@@ -291,7 +295,8 @@ export default function AuthFlow({
           email={email}
           setEmail={setEmail}
           toast={loginToast}
-          onSingpass={() => startSingpass()}
+          onSingpass={startSingpassLogin}
+          onSingpassRegister={startSingpassRegister}
           onLogin={() => setScreen('login-otp')}
           onForgot={() => setScreen('forgot')}
           onRegister={() => setScreen('register-details')}
@@ -308,6 +313,7 @@ function LoginLanding({
   setEmail,
   toast,
   onSingpass,
+  onSingpassRegister,
   onLogin,
   onForgot,
   onRegister,
@@ -316,6 +322,7 @@ function LoginLanding({
   setEmail: (v: string) => void
   toast: string | null
   onSingpass: () => void
+  onSingpassRegister: () => void
   onLogin: () => void
   onForgot: () => void
   onRegister: () => void
@@ -401,7 +408,7 @@ function LoginLanding({
       <div className="flex flex-col gap-3 w-full">
         <LegalLine />
         <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full m-0">
-          New user? <LinkButton onClick={onSingpass}>Get started with Singpass</LinkButton> or <LinkButton onClick={onRegister}>register manually</LinkButton>
+          New user? <LinkButton onClick={onSingpassRegister}>Get started with Singpass</LinkButton> or <LinkButton onClick={onRegister}>register manually</LinkButton>
         </p>
       </div>
     </AuthShell>
