@@ -46,6 +46,7 @@ import {
   LegalLine,
   SupportLine,
   ConsentCheckbox,
+  ErrorBanner,
   MockNumericKeypad,
 } from './AuthUI'
 
@@ -86,8 +87,11 @@ type Screen =
   | 'forgot'
   | 'reset'
 
-/** Why we sent the user to Singpass — decides where they land afterwards. */
-type SingpassIntent = 'login' | 'register'
+/** Why we sent the user to Singpass — decides where they land afterwards.
+    'login'   — sign in; no matching account raises the "no account" error.
+    'register'— manual sign-up; Singpass verifies identity only.
+    'myinfo'  — Singpass registration: pull the verified profile, then set a password. */
+type SingpassIntent = 'login' | 'register' | 'myinfo'
 
 const SUBTITLE = 'Access your insurance policies in one place'
 
@@ -116,6 +120,8 @@ export default function AuthFlow({
   const [mailUnit, setMailUnit] = useState('')
   const [singpassIntent, setSingpassIntent] = useState<SingpassIntent>('login')
   const [loginToast, setLoginToast] = useState<string | null>(null)
+  /** Set when a Singpass login finds no matching account — shown on the landing. */
+  const [singpassNoAccount, setSingpassNoAccount] = useState(false)
 
   function goLogin(toast?: string) {
     setLoginToast(toast ?? null)
@@ -156,12 +162,24 @@ export default function AuthFlow({
 
   /** Singpass hands back the verified identity and pre-fills the email. */
   function onSingpassVerified() {
+    const existing = findAccountByNric(SINGPASS_IDENTITY.nric)
     if (singpassIntent === 'login') {
-      const existing = findAccountByNric(SINGPASS_IDENTITY.nric)
+      // Signing in with Singpass only works once an account is linked.
       if (existing) {
         onAuthenticated(existing)
         return
       }
+      setSingpassNoAccount(true)
+      setScreen('landing')
+      return
+    }
+    if (singpassIntent === 'myinfo') {
+      // Singpass registration via Myinfo — an already-linked identity just signs in.
+      if (existing) {
+        onAuthenticated(existing)
+        return
+      }
+      // Pull the verified profile; the user only has to set a password.
       setEmail(SINGPASS_IDENTITY.email)
       setNric(SINGPASS_IDENTITY.nric)
       setDob(SINGPASS_IDENTITY.dob)
@@ -170,14 +188,15 @@ export default function AuthFlow({
       setScreen('singpass-password')
       return
     }
-    // Registering — Singpass confirms identity only. There is no synced email
-    // to borrow, so the user sets their login address themselves. Clear anything
-    // typed on an earlier screen so Complete Profile never pre-fills the login ID.
+    // Manual registration — Singpass confirms identity only. There is no synced
+    // email to borrow, so the user sets their login address themselves. Clear
+    // anything typed earlier so Complete Profile never pre-fills the login ID.
     setEmail('')
     setScreen('register-credentials')
   }
 
   function startSingpass(intent: SingpassIntent) {
+    setSingpassNoAccount(false)
     setSingpassIntent(intent)
     setScreen('singpass-qr')
   }
@@ -248,7 +267,7 @@ export default function AuthFlow({
     case 'singpass-approve':
       return (
         <SingpassApprove
-          onCancel={() => setScreen(singpassIntent === 'login' ? 'landing' : 'register-details')}
+          onCancel={() => setScreen(singpassIntent === 'register' ? 'register-details' : 'landing')}
           onAgree={onSingpassVerified}
         />
       )
@@ -320,8 +339,11 @@ export default function AuthFlow({
       return (
         <Landing
           onSingpass={() => startSingpass('login')}
+          onSingpassRegister={() => startSingpass('myinfo')}
           onLogin={() => setScreen('login')}
           onRegister={() => setScreen('register-details')}
+          singpassNoAccount={singpassNoAccount}
+          onDismissSingpassError={() => setSingpassNoAccount(false)}
         />
       )
   }
@@ -330,17 +352,29 @@ export default function AuthFlow({
 /* ─────────────────────────── Landing ─────────────────────────── */
 function Landing({
   onSingpass,
+  onSingpassRegister,
   onLogin,
   onRegister,
+  singpassNoAccount,
+  onDismissSingpassError,
 }: {
   onSingpass: () => void
+  onSingpassRegister: () => void
   onLogin: () => void
   onRegister: () => void
+  singpassNoAccount?: boolean
+  onDismissSingpassError?: () => void
 }) {
   return (
     <AuthShell>
       <AuthHeader title="Customer Portal" subtitle={SUBTITLE} />
       <div className="flex flex-col items-center gap-6 w-full">
+        {/* No account for the scanned Singpass identity — anchored above the button. */}
+        {singpassNoAccount && (
+          <ErrorBanner onDismiss={onDismissSingpassError}>
+            {MESSAGES.singpassNoAccount} <LinkButton onClick={onSingpassRegister}>Register now</LinkButton>
+          </ErrorBanner>
+        )}
         <button onClick={onSingpass} className="w-[228px] bg-transparent border-0 p-0 cursor-pointer">
           <img src={singpassBtn} alt="Log in with Singpass" className="w-full h-auto rounded-[8px]" />
         </button>
@@ -357,7 +391,7 @@ function Landing({
       <div className="flex flex-col gap-3 w-full">
         <LegalLine />
         <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full m-0">
-          New user? Get started with Singpass or <LinkButton onClick={onRegister}>register manually</LinkButton>
+          New user? <LinkButton onClick={onSingpassRegister}>Get started with Singpass</LinkButton> or <LinkButton onClick={onRegister}>register manually</LinkButton>
         </p>
       </div>
     </AuthShell>
@@ -1347,6 +1381,11 @@ function ForgotPassword({
     if (sent) return
     emailInline.show()
     if (!emailInline.isValid) return
+    // A reset link only means something if the email maps to an account.
+    if (!accountExists(email)) {
+      setError(MESSAGES.emailNotFound)
+      return
+    }
     setError('')
     setSent(true)
   }
