@@ -41,7 +41,6 @@ import {
   OtpBoxes,
   FieldError,
   PrimaryButton,
-  OutlineButton,
   LinkButton,
   LegalLine,
   SupportLine,
@@ -73,7 +72,6 @@ function useRequired(value: string) {
 
 type Screen =
   | 'landing'
-  | 'login'
   | 'login-otp'
   /** Sign-up starts with the identifiers Singpass will verify. */
   | 'register-details'
@@ -119,7 +117,7 @@ export default function AuthFlow({
 
   function goLogin(toast?: string) {
     setLoginToast(toast ?? null)
-    setScreen('login')
+    setScreen('landing')
   }
 
   /** Existing account, or the profile Singpass just handed us. */
@@ -183,23 +181,11 @@ export default function AuthFlow({
   }
 
   switch (screen) {
-    case 'login':
-      return (
-        <EmailLogin
-          email={email}
-          setEmail={setEmail}
-          toast={loginToast}
-          onBack={() => { setLoginToast(null); setScreen('landing') }}
-          onLogin={() => setScreen('login-otp')}
-          onForgot={() => setScreen('forgot')}
-          onRegister={() => setScreen('register-details')}
-        />
-      )
     case 'login-otp':
       return (
         <OtpVerification
           email={email}
-          onBack={() => setScreen('login')}
+          onBack={() => setScreen('landing')}
           onVerify={() => onAuthenticated(currentAccount())}
         />
       )
@@ -232,7 +218,7 @@ export default function AuthFlow({
           setMailUnit={setMailUnit}
           onBack={() => setScreen('landing')}
           onAuthenticate={() => startSingpass('register')}
-          onLogin={() => setScreen('login')}
+          onLogin={() => setScreen('landing')}
         />
       )
     case 'singpass-qr':
@@ -261,7 +247,7 @@ export default function AuthFlow({
           setPassword={setPassword}
           onBack={() => setScreen('register-details')}
           onNext={() => setScreen('register-otp')}
-          onLogin={() => setScreen('login')}
+          onLogin={() => setScreen('landing')}
         />
       )
     case 'register-otp':
@@ -301,7 +287,7 @@ export default function AuthFlow({
         <ForgotPassword
           email={email}
           setEmail={setEmail}
-          onBack={() => setScreen('login')}
+          onBack={() => setScreen('landing')}
           onSent={() => setScreen('reset')}
         />
       )
@@ -312,15 +298,19 @@ export default function AuthFlow({
           subtitle="Enter your new password"
           buttonLabel="Reset Password"
           email={email}
-          onBack={() => setScreen('login')}
+          onBack={() => setScreen('landing')}
           onSubmit={() => goLogin('Password updated, login again')}
         />
       )
     default:
       return (
-        <Landing
+        <LoginLanding
+          email={email}
+          setEmail={setEmail}
+          toast={loginToast}
           onSingpass={() => startSingpass('login')}
-          onLogin={() => setScreen('login')}
+          onLogin={() => setScreen('login-otp')}
+          onForgot={() => setScreen('forgot')}
           onRegister={() => setScreen('register-details')}
         />
       )
@@ -328,29 +318,94 @@ export default function AuthFlow({
 }
 
 /* ─────────────────────────── Landing ─────────────────────────── */
-function Landing({
+/* One screen: Singpass, or the email + password login form inline — matching
+   the design's login landing (no intermediate "choose a method" step). */
+function LoginLanding({
+  email,
+  setEmail,
+  toast,
   onSingpass,
   onLogin,
+  onForgot,
   onRegister,
 }: {
+  email: string
+  setEmail: (v: string) => void
+  toast: string | null
   onSingpass: () => void
   onLogin: () => void
+  onForgot: () => void
   onRegister: () => void
 }) {
+  const [password, setPassword] = useState('')
+  const [show, setShow] = useState(false)
+  /** Errors raised by submitting — cleared as soon as the field is edited. */
+  const [emailSubmitError, setEmailSubmitError] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+
+  const emailInline = useInlineValidation({
+    value: email,
+    validate: validateEmail,
+    requiredMessage: MESSAGES.required,
+  })
+  const emailError = emailSubmitError || emailInline.error
+
+  const passwordRequired = useRequired(password)
+  const passwordFieldError = passwordError || passwordRequired.error
+
+  function submit() {
+    emailInline.show()
+    passwordRequired.show()
+    if (!emailInline.isValid || !passwordRequired.isValid) return
+    const result = attemptLogin(email, password)
+    if (!result.ok) {
+      if (result.field === 'email') setEmailSubmitError(result.message)
+      else setPasswordError(result.message)
+      return
+    }
+    setEmailSubmitError('')
+    setPasswordError('')
+    onLogin()
+  }
+
   return (
-    <AuthShell>
+    <AuthShell toast={toast ?? undefined}>
       <AuthHeader title="Customer Portal" subtitle={SUBTITLE} />
-      <div className="flex flex-col items-center gap-6 w-full">
-        <button onClick={onSingpass} className="w-[228px] bg-transparent border-0 p-0 cursor-pointer">
-          <img src={singpassBtn} alt="Log in with Singpass" className="w-full h-auto rounded-[8px]" />
+      <div className="flex flex-col gap-6 w-full">
+        <button onClick={onSingpass} className="w-full bg-transparent border-0 p-0 cursor-pointer">
+          <img src={singpassBtn} alt="Log in with Singpass" className="w-full h-[52px] object-cover rounded-[8px]" />
         </button>
         <div className="flex items-center gap-4 w-full">
           <span className="flex-1 h-px bg-[rgba(0,0,0,0.09)]" />
           <span className="text-[14px] text-[#949494]">OR</span>
           <span className="flex-1 h-px bg-[rgba(0,0,0,0.09)]" />
         </div>
-        <div className="w-[228px]">
-          <OutlineButton onClick={onLogin}>Log in with email</OutlineButton>
+        <div className="flex flex-col gap-4 w-full">
+          <Field
+            label="Login ID (email address)"
+            value={email}
+            onChange={(v) => { setEmail(v); setEmailSubmitError(''); emailInline.reset() }}
+            onBlur={emailInline.onBlur}
+            placeholder="Enter login ID"
+            type="email"
+            inputMode="email"
+            error={emailError}
+          />
+          <PasswordField
+            label="Password"
+            value={password}
+            onChange={(v) => { setPassword(v); setPasswordError(''); passwordRequired.reset() }}
+            show={show}
+            onToggle={() => setShow((s) => !s)}
+            placeholder="Enter password"
+            error={passwordFieldError}
+          />
+          <div className="self-start text-[14px]">
+            <LinkButton onClick={onForgot}>Forgot password?</LinkButton>
+          </div>
+          <PrimaryButton onClick={submit}>
+            Login
+          </PrimaryButton>
         </div>
       </div>
       {/* Legal line always leads; the secondary action follows */}
@@ -556,96 +611,6 @@ function SingpassApprove({ onCancel, onAgree }: { onCancel: () => void; onAgree:
         </div>
       </div>
     </div>
-  )
-}
-
-/* ───────────────────────── Email login ───────────────────────── */
-function EmailLogin({
-  toast,
-  email,
-  setEmail,
-  onBack,
-  onLogin,
-  onForgot,
-  onRegister,
-}: {
-  email: string
-  setEmail: (v: string) => void
-  toast: string | null
-  onBack: () => void
-  onLogin: () => void
-  onForgot: () => void
-  onRegister: () => void
-}) {
-  const [password, setPassword] = useState('')
-  const [show, setShow] = useState(false)
-  /** Errors raised by submitting — cleared as soon as the field is edited. */
-  const [emailSubmitError, setEmailSubmitError] = useState('')
-  const [passwordError, setPasswordError] = useState('')
-
-  const emailInline = useInlineValidation({
-    value: email,
-    validate: validateEmail,
-    requiredMessage: MESSAGES.required,
-  })
-  const emailError = emailSubmitError || emailInline.error
-
-  const passwordRequired = useRequired(password)
-  const passwordFieldError = passwordError || passwordRequired.error
-
-  function submit() {
-    emailInline.show()
-    passwordRequired.show()
-    if (!emailInline.isValid || !passwordRequired.isValid) return
-    const result = attemptLogin(email, password)
-    if (!result.ok) {
-      if (result.field === 'email') setEmailSubmitError(result.message)
-      else setPasswordError(result.message)
-      return
-    }
-    setEmailSubmitError('')
-    setPasswordError('')
-    onLogin()
-  }
-
-  return (
-    <AuthShell onBack={onBack} toast={toast ?? undefined}>
-      <AuthHeader title="Customer Portal" subtitle={SUBTITLE} />
-      <div className="flex flex-col gap-4 w-full">
-        <Field
-          label="Login ID (email address)"
-          value={email}
-          onChange={(v) => { setEmail(v); setEmailSubmitError(''); emailInline.reset() }}
-          onBlur={emailInline.onBlur}
-          placeholder="Enter email address"
-          type="email"
-          inputMode="email"
-          error={emailError}
-        />
-        <PasswordField
-          label="Password"
-          value={password}
-          onChange={(v) => { setPassword(v); setPasswordError(''); passwordRequired.reset() }}
-          show={show}
-          onToggle={() => setShow((s) => !s)}
-          placeholder="Enter password"
-          error={passwordFieldError}
-        />
-        <div className="self-start text-[14px]">
-          <LinkButton onClick={onForgot}>Forgot password?</LinkButton>
-        </div>
-        <PrimaryButton onClick={submit}>
-          Login
-        </PrimaryButton>
-      </div>
-      {/* Legal line always leads; the secondary action follows */}
-      <div className="flex flex-col gap-3 w-full">
-        <LegalLine />
-        <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full m-0">
-          New user? Get started with Singpass or <LinkButton onClick={onRegister}>register manually</LinkButton>
-        </p>
-      </div>
-    </AuthShell>
   )
 }
 
