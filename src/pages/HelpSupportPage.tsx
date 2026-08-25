@@ -144,7 +144,7 @@ function FaqItem({ item, isLast }: { item: Faq; isLast: boolean }) {
     <div>
       <button
         onClick={() => setOpen(o => !o)}
-        className="flex items-center gap-[16px] w-full px-[24px] py-[16px] bg-transparent border-0 cursor-pointer text-left"
+        className="flex items-center gap-[16px] w-full px-[16px] py-[16px] bg-transparent border-0 cursor-pointer text-left"
       >
         <span className="flex-1 min-w-0 text-[16px] text-[#212121] leading-[1.5]">{item.q}</span>
         {open
@@ -152,12 +152,12 @@ function FaqItem({ item, isLast }: { item: Faq; isLast: boolean }) {
           : <ChevronDownIcon size={20} className="shrink-0" style={{ color: '#6E6E6E' }} />}
       </button>
       {open && (
-        <div className="px-[24px] pb-[16px] text-[16px] text-[#6e6e6e] leading-[1.5]">
+        <div className="px-[16px] pb-[16px] text-[16px] text-[#6e6e6e] leading-[1.5]">
           {item.a}
         </div>
       )}
       {/* Divider is inset to the text column, not full-bleed */}
-      {!isLast && <div className="h-px bg-[rgba(0,0,0,0.09)] mx-[24px]" />}
+      {!isLast && <div className="h-px bg-[rgba(0,0,0,0.09)] mx-[16px]" />}
     </div>
   )
 }
@@ -166,7 +166,7 @@ function FaqItem({ item, isLast }: { item: Faq; isLast: boolean }) {
 function CategoryCard({ category }: { category: Category }) {
   return (
     <div className="rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] overflow-hidden bg-white w-full">
-      <div className="px-[24px] pt-[16px] pb-[8px]">
+      <div className="px-[16px] pt-[16px] pb-[8px]">
         <h2 className="text-[16px] font-semibold text-[#212121] m-0">{category.title}</h2>
       </div>
       {category.items.map((item, i) => (
