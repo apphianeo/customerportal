@@ -1386,7 +1386,7 @@ function ForgotPassword({
     <AuthShell onBack={onBack} toast={sent ? 'Password reset link sent' : undefined}>
       <AuthHeader
         title="Forgot Password"
-        subtitle="Enter your account email and we will send you a password reset link"
+        subtitle="Enter your login ID (email address) and we will send you a password reset link"
       />
       <div className="flex flex-col gap-4 w-full">
         <Field
