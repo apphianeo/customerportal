@@ -146,7 +146,7 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
   const singpass = authMethod === 'singpass'
   const seed = account ?? ACCOUNTS[0]
 
-  // Personal (editable only for account-created users)
+  // Personal — editable only until the identity is Singpass-verified.
   // Name and address fields are upper case throughout, seeded values included
   const [first, setFirst] = useState(seed.firstName.toUpperCase())
   const [last, setLast] = useState(seed.lastName.toUpperCase())
@@ -177,7 +177,14 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
    * editable — even on an account that was created manually.
    */
   const [retrieved, setRetrieved] = useState(false)
-  const locked = singpass || retrieved
+  /**
+   * Personal details are read-only once the identity is Singpass-owned. That is
+   * true for any verified account — whether it registered through Singpass or
+   * signed up manually and later verified at the dashboard gate — as well as
+   * right after a MyInfo retrieve. Only phone, email and mailing address (our
+   * marketing-contact fields) stay editable.
+   */
+  const locked = singpass || seed.verified || retrieved
 
   // Postal code identifies the building, so the address fills itself — the
   // same OneMap lookup the registration form uses.
