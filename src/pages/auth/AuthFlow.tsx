@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Check, ChevronDown } from 'lucide-react'
-import singpassBtn from '../../assets/singpass-btn.png'
+import singpassLoginBtn from '../../assets/singpass-login-btn.svg'
+import singpassRetrieveBtn from '../../assets/singpass-retrieve-btn.svg'
 import singpassLogo from '../../assets/singpass-logo.png'
 import uoiLogo from '../../assets/uoi-logo.svg'
 import closeIcon from '../../assets/icons/close.svg'
@@ -373,14 +374,15 @@ function LoginLanding({
     <AuthShell toast={toast ?? undefined}>
       <AuthHeader title="Customer Portal" subtitle={SUBTITLE} />
       <div className="flex flex-col gap-6 w-full">
-        {/* Full-width button in the Singpass red; the wordmark stays its natural
-            size and is centred, so the red just extends evenly on both sides. */}
+        {/* Full-width button in the official Singpass red (#D93841); the official
+            "Log in with singpass" lockup stays its natural size and is centred,
+            so the red just extends evenly on both sides. */}
         <button
           onClick={onSingpass}
           aria-label="Log in with Singpass"
-          className="w-full h-[52px] bg-[#f4333d] rounded-[8px] border-0 p-0 cursor-pointer flex items-center justify-center overflow-hidden"
+          className="w-full h-[52px] bg-[#d93841] rounded-[8px] border-0 p-0 cursor-pointer flex items-center justify-center overflow-hidden"
         >
-          <img src={singpassBtn} alt="" className="h-[52px] w-auto" />
+          <img src={singpassLoginBtn} alt="" className="h-[40px] w-auto" />
         </button>
         <div className="flex items-center gap-4 w-full">
           <span className="flex-1 h-px bg-[rgba(0,0,0,0.09)]" />
@@ -644,9 +646,10 @@ function RegisterChoose({
       <div className="flex flex-col gap-6 w-full">
         <button
           onClick={onRetrieve}
-          className="w-full h-[52px] bg-[#f4333d] rounded-[8px] border-0 px-[16px] cursor-pointer flex items-center justify-center text-white text-[15px] font-semibold"
+          aria-label="Retrieve with Singpass"
+          className="w-full h-[52px] bg-[#d93841] rounded-[8px] border-0 p-0 cursor-pointer flex items-center justify-center overflow-hidden"
         >
-          Retrieve with&nbsp;<span className="font-bold lowercase tracking-tight">singpass</span>
+          <img src={singpassRetrieveBtn} alt="" className="h-[40px] w-auto" />
         </button>
         <div className="flex items-center gap-4 w-full">
           <span className="flex-1 h-px bg-[rgba(0,0,0,0.09)]" />
@@ -967,9 +970,9 @@ export function SingpassPrompt({
           <button
             onClick={onAuthenticate}
             aria-label="Log in with Singpass"
-            className="w-full h-[52px] bg-[#f4333d] rounded-[8px] border-0 p-0 cursor-pointer flex items-center justify-center overflow-hidden"
+            className="w-full h-[52px] bg-[#d93841] rounded-[8px] border-0 p-0 cursor-pointer flex items-center justify-center overflow-hidden"
           >
-            <img src={singpassBtn} alt="" className="h-[52px] w-auto" />
+            <img src={singpassLoginBtn} alt="" className="h-[40px] w-auto" />
           </button>
         </div>
       </div>
