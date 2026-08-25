@@ -4,7 +4,6 @@ import singpassLoginBtn from '../../assets/singpass-login-btn.svg'
 import singpassRetrieveBtn from '../../assets/singpass-retrieve-btn.svg'
 import singpassLogo from '../../assets/singpass-logo.png'
 import uoiLogo from '../../assets/uoi-logo.svg'
-import closeIcon from '../../assets/icons/close.svg'
 import { useDebouncedValue } from '../../hooks/useDebouncedValue'
 import { useInlineValidation } from '../../hooks/useInlineValidation'
 import { useIsTouch } from '../../hooks/useIsTouch'
@@ -940,41 +939,37 @@ function RegisterDetails({
   )
 }
 
-/** Hand-off dialog before a Singpass redirect — reused by the dashboard's
-    "verify your identity" prompt. */
+/** Identity-verification dialog shown to an unverified account on the
+    dashboard. Blocking by design — there is no dismiss: the user either
+    verifies with Singpass or logs out. */
 export function SingpassPrompt({
-  onClose,
   onAuthenticate,
-  title = 'Authenticate with Singpass',
-  subtitle = 'Complete the registration process by authenticating your identity',
+  title = 'Verify identity',
+  subtitle = 'Verify your identity with Singpass to view your policies (if any). This is a one-time step to keep your account secure.',
 }: {
-  onClose: () => void
   onAuthenticate: () => void
   title?: string
   subtitle?: string
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
-      <div
-        onClick={e => e.stopPropagation()}
-        className="relative bg-white rounded-[12px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] p-[24px] w-[600px] max-w-full flex flex-col gap-[32px]"
-      >
-        <button onClick={onClose} aria-label="Close" className="absolute right-[24px] top-[26px] bg-transparent border-0 p-0 cursor-pointer">
-          <img src={closeIcon} alt="" className="w-[20px] h-[20px]" />
-        </button>
-        <div className="flex flex-col gap-[12px] w-full pr-[32px]">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
+    >
+      <div className="bg-white rounded-[12px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] p-[24px] w-[500px] max-w-full flex flex-col gap-[24px]">
+        <div className="flex flex-col gap-[12px] w-full">
           <h2 className="font-h2-title font-semibold text-[#212121] m-0">{title}</h2>
-          <p className="text-[14px] leading-[1.5] text-[#6e6e6e] m-0">{subtitle}</p>
+          <p className="text-[16px] leading-[1.5] text-[#212121] m-0">{subtitle}</p>
         </div>
-        <div className="flex flex-col items-center w-full">
-          <button
-            onClick={onAuthenticate}
-            aria-label="Log in with Singpass"
-            className="w-full h-[52px] bg-[#d93841] rounded-[8px] border-0 p-0 cursor-pointer flex items-center justify-center overflow-hidden"
-          >
-            <img src={singpassLoginBtn} alt="" className="h-[40px] w-auto" />
-          </button>
-        </div>
+        <button
+          onClick={onAuthenticate}
+          aria-label="Verify with Singpass"
+          className="w-full h-[48px] bg-[#d93841] rounded-[8px] border-0 p-0 cursor-pointer flex items-center justify-center overflow-hidden"
+        >
+          <img src={singpassLoginBtn} alt="" className="h-[40px] w-auto" />
+        </button>
       </div>
     </div>
   )
