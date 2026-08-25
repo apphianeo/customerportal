@@ -340,7 +340,6 @@ export default function AuthFlow({
           onSingpass={startSingpassLogin}
           onLogin={() => setScreen('login-otp')}
           onForgot={() => setScreen('forgot')}
-          onRegister={() => setScreen('register-choose')}
           onNoAccount={() => setNoAccount('loginId')}
         />
       )
@@ -358,7 +357,6 @@ function LoginLanding({
   onSingpass,
   onLogin,
   onForgot,
-  onRegister,
   onNoAccount,
 }: {
   email: string
@@ -367,7 +365,6 @@ function LoginLanding({
   onSingpass: () => void
   onLogin: () => void
   onForgot: () => void
-  onRegister: () => void
   /** No account matched the login ID — hand off to the "no account" dialog. */
   onNoAccount: () => void
 }) {
@@ -456,13 +453,7 @@ function LoginLanding({
           </PrimaryButton>
         </div>
       </div>
-      {/* Legal line always leads; the secondary action follows */}
-      <div className="flex flex-col gap-3 w-full">
-        <LegalLine />
-        <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full m-0">
-          New user? <LinkButton onClick={onRegister}>Register manually</LinkButton>
-        </p>
-      </div>
+      <LegalLine />
     </AuthShell>
   )
 }
