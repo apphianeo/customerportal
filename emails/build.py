@@ -205,7 +205,8 @@ HELP_LINE = (f'Need help? Reach out to our support team {link("here", SUPPORT_UR
 # Shell. Masthead, one card, no footer.
 # ─────────────────────────────────────────────────────────────────────────────
 
-def shell(title, preheader, blocks):
+def shell(title, preheader, blocks, after_card=""):
+    """after_card puts content on the canvas between the card and the legal block."""
     body = "\n".join(blocks)
     return f"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
@@ -279,7 +280,7 @@ def shell(title, preheader, blocks):
 
             </td>
           </tr>
-
+{after_card}
           <!-- Legal. Outside the card: chrome, not message. 11px is the smallest
                type in the email, per the brief. -->
           <tr>
