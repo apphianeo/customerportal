@@ -25,7 +25,6 @@ const canSeePolicies = (account: Account) => account.verified && isPolicyholder(
 /* ─── Route-aware page wrappers ───────────────────────────── */
 function DashboardRoute({ account, onStartVerify }: { account: Account; onStartVerify: () => void }) {
   const navigate = useNavigate()
-  const [modalDismissed, setModalDismissed] = useState(false)
   return (
     <>
       <DashboardPage
@@ -35,15 +34,10 @@ function DashboardRoute({ account, onStartVerify }: { account: Account; onStartV
         onSelectPolicy={slug => navigate(`/policies/${slug}`)}
         onNavigateToHelp={() => navigate('/help')}
       />
-      {/* Prospect prompt: an unverified account has to verify with Singpass
-          before any policies can be matched and shown. */}
-      {!account.verified && !modalDismissed && (
-        <SingpassPrompt
-          title="Verify your identity"
-          subtitle="Verify your identity with Singpass to view your policies"
-          onClose={() => setModalDismissed(true)}
-          onAuthenticate={onStartVerify}
-        />
+      {/* Prospect prompt: an unverified account must verify with Singpass before
+          any policies can be matched and shown. Blocking by design — no dismiss. */}
+      {!account.verified && (
+        <SingpassPrompt onAuthenticate={onStartVerify} />
       )}
     </>
   )

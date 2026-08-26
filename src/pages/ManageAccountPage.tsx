@@ -146,7 +146,8 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
   const singpass = authMethod === 'singpass'
   const seed = account ?? ACCOUNTS[0]
 
-  // Personal (editable only for account-created users)
+  // Personal — editable unless the profile was sourced from Singpass/MyInfo.
+  // The NRIC additionally locks once verified (see nricLocked below).
   // Name and address fields are upper case throughout, seeded values included
   const [first, setFirst] = useState(seed.firstName.toUpperCase())
   const [last, setLast] = useState(seed.lastName.toUpperCase())
@@ -177,7 +178,20 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
    * editable — even on an account that was created manually.
    */
   const [retrieved, setRetrieved] = useState(false)
+  /**
+   * Personal details are read-only only when the profile itself came from
+   * Singpass — a Singpass registration or a MyInfo retrieve. A manually entered
+   * profile stays the user's to edit: Singpass verification only confirms the
+   * NRIC for policy matching, it does not hand us a MyInfo profile.
+   */
   const locked = singpass || retrieved
+  /**
+   * The NRIC is the key that matches an account to its policies, so once it has
+   * been Singpass-verified it stays read-only even on an otherwise editable
+   * manual profile — otherwise it could be changed to view another holder's
+   * policies.
+   */
+  const nricLocked = locked || seed.verified
 
   // Postal code identifies the building, so the address fills itself — the
   // same OneMap lookup the registration form uses.
@@ -233,8 +247,9 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
         <div className="rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] bg-white w-full p-[16px] flex flex-wrap items-center justify-between gap-[16px]">
             <div className="flex flex-col gap-[4px] min-w-0">
               <h2 className="text-[16px] font-semibold text-[#212121] m-0">Update details with MyInfo</h2>
-              {/* Explained whenever the profile is Singpass-owned */}
-              {locked && (
+              {/* Shown whenever anything is Singpass-owned — a retrieved profile,
+                  or just the verified NRIC on an otherwise editable profile */}
+              {nricLocked && (
                 <p className="text-[14px] text-[#6e6e6e] leading-[1.5] m-0">
                   Some details are read-only because they are linked to your Singpass profile
                 </p>
@@ -277,7 +292,7 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
               <DatePicker label="Date of birth" value={dob} onChange={setDob} disabled={locked} />
-              <Field label="NRIC/FIN" value={nric} onChange={setNric} disabled={locked} />
+              <Field label="NRIC/FIN" value={nric} onChange={setNric} disabled={nricLocked} />
             </div>
           </div>
 

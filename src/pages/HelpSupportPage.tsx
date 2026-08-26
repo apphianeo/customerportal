@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { Fragment, useState, type ReactNode } from 'react'
 import { ChevronRightIcon, ChevronDownIcon, ChevronUpIcon } from '../components/icons'
 import whatsappIcon from '../assets/icons/whatsapp.svg'
 import phoneIcon from '../assets/icons/phone.svg'
@@ -138,13 +138,14 @@ const CATEGORIES: Category[] = [
 ]
 
 /* ─── Accordion item ─── */
-function FaqItem({ item, isLast }: { item: Faq; isLast: boolean }) {
+/* Question → answer gap is 12px; spacing between items is handled by the card. */
+function FaqItem({ item }: { item: Faq }) {
   const [open, setOpen] = useState(false)
   return (
-    <div>
+    <div className="flex flex-col gap-[12px] w-full">
       <button
         onClick={() => setOpen(o => !o)}
-        className="flex items-center gap-[16px] w-full px-[24px] py-[16px] bg-transparent border-0 cursor-pointer text-left"
+        className="flex items-center gap-[12px] w-full p-0 bg-transparent border-0 cursor-pointer text-left"
       >
         <span className="flex-1 min-w-0 text-[16px] text-[#212121] leading-[1.5]">{item.q}</span>
         {open
@@ -152,26 +153,28 @@ function FaqItem({ item, isLast }: { item: Faq; isLast: boolean }) {
           : <ChevronDownIcon size={20} className="shrink-0" style={{ color: '#6E6E6E' }} />}
       </button>
       {open && (
-        <div className="px-[24px] pb-[16px] text-[16px] text-[#6e6e6e] leading-[1.5]">
+        <div className="text-[16px] text-[#6e6e6e] leading-[1.5]">
           {item.a}
         </div>
       )}
-      {/* Divider is inset to the text column, not full-bleed */}
-      {!isLast && <div className="h-px bg-[rgba(0,0,0,0.09)] mx-[24px]" />}
     </div>
   )
 }
 
 /* ─── Category card ─── */
+/* 16px padding on all sides; 24px between the title, each FAQ and each divider. */
 function CategoryCard({ category }: { category: Category }) {
   return (
-    <div className="rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] overflow-hidden bg-white w-full">
-      <div className="px-[24px] pt-[16px] pb-[8px]">
-        <h2 className="text-[16px] font-semibold text-[#212121] m-0">{category.title}</h2>
+    <div className="rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] bg-white w-full p-[16px] flex flex-col gap-[24px]">
+      <h2 className="text-[16px] font-semibold text-[#212121] m-0 leading-[1.5]">{category.title}</h2>
+      <div className="flex flex-col gap-[24px]">
+        {category.items.map((item, i) => (
+          <Fragment key={item.q}>
+            <FaqItem item={item} />
+            {i < category.items.length - 1 && <div className="h-px bg-[rgba(0,0,0,0.09)] w-full" />}
+          </Fragment>
+        ))}
       </div>
-      {category.items.map((item, i) => (
-        <FaqItem key={item.q} item={item} isLast={i === category.items.length - 1} />
-      ))}
     </div>
   )
 }

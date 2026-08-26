@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Calendar as CalIcon, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react'
+import errorNotice from '../assets/icons/error-notice.svg'
 
 const CAL_WIDTH = 320
 /** Only used for the very first frame, before the popup can be measured. */
@@ -263,7 +264,10 @@ export default function DatePicker({ label, value, onChange, error, disabled, pl
         )}
       </div>
       {error && (
-        <span className="flex items-center gap-[8px] text-[12px] leading-[1.4] text-[#dc2626]">{error}</span>
+        <span className="flex items-center gap-2 text-[12px] leading-[1.4] text-[#dc2626]">
+          <img src={errorNotice} alt="" className="w-4 h-4 shrink-0" />
+          {error}
+        </span>
       )}
     </label>
   )
