@@ -284,11 +284,10 @@ def shell(title, preheader, blocks, after_card=""):
           <!-- Legal. Outside the card: chrome, not message. 11px is the smallest
                type in the email, per the brief. -->
           <tr>
-            <td class="pad" style="padding:24px 4px 0 4px;">
+            <td class="pad" style="padding:32px 4px 0 4px;">
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="border-top:1px solid {T['border']}; padding-top:16px;
-                             font-family:{T['font']}; font-size:11px; line-height:1.55;
+                  <td style="font-family:{T['font']}; font-size:11px; line-height:1.55;
                              color:{T['text_secondary']};">
                     <p style="margin:0;">This is an automatically generated email, please do not reply.</p>
                     <p style="margin:8px 0 0 0;">Visit

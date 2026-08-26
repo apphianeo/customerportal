@@ -15,7 +15,8 @@ Copy comes from *Customer Portal Figma & Templates*, the uploaded PDF.
 
 Open `preview.html` in a browser to see all six rendered at 600px with sample data.
 
-Logo, one card, then the legal block at 11px on the canvas below it.
+Logo, one card, then the legal block at 11px on the canvas below it, with no
+rule between them.
 
 ---
 
@@ -91,7 +92,7 @@ Nothing here is a new visual language. Every value is lifted from
 | Caution notice | same geometry | `--color-bg-caution` `#FFF8EC` |
 | Type | `--font-sans` + scale | Noto Sans; 26/1.25 heading, 16/1.5 body, 14/1.4 small, 13/1.5 fine |
 | Text colours | `--color-text-*` | `#212121` / `#6E6E6E` / `#8D8D8D`; links `#0D6EFD` |
-| Legal block | below the card | 11px/1.55, `#6E6E6E`, hairline above |
+| Legal block | below the card | 11px/1.55, `#6E6E6E`, separated by space |
 
 Two deliberate deviations, both forced by the medium:
 

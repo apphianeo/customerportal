@@ -220,10 +220,15 @@ def build_index():
   .diag li::before{{content:"";position:absolute;left:0;top:.62em;width:6px;height:6px;
                    border-radius:50%;background:var(--accent)}}
   .diag strong{{color:var(--ink);font-weight:600}}
-  .grid{{padding:56px 0 40px;display:grid;gap:28px;
-        grid-template-columns:repeat(auto-fit,minmax(430px,1fr))}}
+  .grid{{padding:56px 0 40px;display:grid;gap:28px}}
+  .v{{display:grid;grid-template-columns:minmax(280px,360px) 1fr}}
+  .v header{{border-right:1px solid var(--hairline);border-bottom:0}}
+  @media (max-width:900px){{
+    .v{{grid-template-columns:1fr}}
+    .v header{{border-right:0;border-bottom:1px solid var(--hairline)}}
+  }}
   .v{{background:var(--surface);border:1px solid var(--hairline);border-radius:12px;
-     overflow:hidden;display:flex;flex-direction:column}}
+     overflow:hidden}}
   .v header{{padding:22px 24px;border-bottom:1px solid var(--hairline)}}
   .key{{display:inline-block;font-family:var(--mono);font-size:12px;font-weight:500;
        color:var(--accent);border:1px solid var(--accent);border-radius:999px;
@@ -234,15 +239,9 @@ def build_index():
            border-left:3px solid var(--accent);padding-left:12px}}
   /* The iframe renders at a true 640px and is scaled to fit the column, so all
      three show the desktop layout rather than reflowing to mobile widths. */
-  .frame{{background:var(--viewport);height:698px;overflow:hidden;
-         display:flex;justify-content:center}}
-  .clip{{width:461px;height:698px;overflow:hidden}}
-  iframe{{width:640px;height:970px;border:0;display:block;
-         transform:scale(.72);transform-origin:top left}}
-  @media (max-width:900px){{
-    .frame,.clip{{height:auto;width:100%;overflow:visible}}
-    iframe{{width:100%;height:1010px;transform:none}}
-  }}
+  .frame{{background:var(--viewport)}}
+  .clip{{width:100%}}
+  iframe{{width:100%;height:920px;border:0;display:block}}
   footer.end{{padding:40px 0 80px;color:var(--faint);font-size:13px;
              border-top:1px solid var(--hairline)}}
   a{{color:var(--accent)}}
