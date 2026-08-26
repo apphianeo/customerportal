@@ -362,7 +362,9 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
       <div className="sticky top-0 z-10 bg-bg-page pt-[24px] md:pt-[32px] pb-[24px] px-4">
         <div className="w-full max-w-[980px] mx-auto">
         <div
-          className="flex overflow-x-auto scrollbar-hide select-none border-b border-[rgba(0,0,0,0.09)]"
+          /* 0.5px hairline bottom line, matching the design's inner-shadow rule
+             (a 1px border reads too thick). */
+          className="flex overflow-x-auto scrollbar-hide select-none shadow-[inset_0_-0.5px_0_0_rgba(0,0,0,0.09)]"
           /* pan-x hands the gesture to the scroller, so a drag scrolls the
              strip instead of picking up and sliding the label under the finger */
           style={{ touchAction: 'pan-x', overscrollBehaviorX: 'contain' }}
@@ -373,7 +375,7 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
               <button
                 key={tab.key}
                 onClick={() => goToTab(tab.key)}
-                className="shrink-0 flex flex-col items-center gap-[12px] px-[12px] pt-[12px] -mb-px bg-transparent border-0 cursor-pointer"
+                className="shrink-0 flex flex-col items-center gap-[12px] px-[12px] pt-[12px] bg-transparent border-0 cursor-pointer"
               >
                 <span className={`text-[14px] leading-[1.5] whitespace-nowrap ${active ? 'text-[#005eb8] font-medium' : 'text-[#212121] font-normal'}`}>
                   {tab.label}

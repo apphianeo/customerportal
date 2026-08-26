@@ -419,7 +419,7 @@ function LoginLanding({
       <div className="flex flex-col gap-3 w-full">
         <LegalLine />
         <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full m-0">
-          New user? <LinkButton onClick={onRegister}>Register manually</LinkButton>
+          New user? <LinkButton onClick={onRegister}>Register here</LinkButton>
         </p>
       </div>
     </AuthShell>

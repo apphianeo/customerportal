@@ -47,7 +47,7 @@ export const AREA_1_COUNTRIES =
   'Area 1 (Brunei, Cambodia, Indonesia, Laos, Malaysia, Myanmar, Philippines, Thailand and Vietnam)'
 
 const TRAVEL_ADD_ONS =
-  'Cancel For Any Reason, Pre-Existing Condition, Adventure and Sports, Golfer Cover, Pet Care'
+  'Cancel For Any Reason, Pre-Existing Condition, Adventure and Sports, Golf Play'
 
 /* ─── Shared blocks (same policyholder across this demo account) ───────── */
 const POLICYHOLDER: Field[] = [
@@ -61,14 +61,14 @@ const POLICYHOLDER: Field[] = [
 ]
 
 const CONTACT: Field[] = [
-  { label: 'Contact number', value: '+65 91234567' },
+  { label: 'Mobile number', value: '+65 91234567' },
   { label: 'Email address', value: 'chriswong@gmail.com' },
   { label: 'Mailing address', value: { kind: 'expandable', text: '1 ORCHARD RD, #02-01, SINGAPORE 238824' } },
 ]
 
 const AGENT: Field[] = [
   { label: 'Agent-in-charge (Agent ID)', value: 'Albert Tan (102434123)' },
-  { label: 'Mobile number', value: { kind: 'link', text: '98123345', href: 'tel:+6598123345' } },
+  { label: 'Mobile number', value: { kind: 'link', text: '+65 98123345', href: 'tel:+6598123345' } },
   { label: 'Email address', value: 'albertan@aia.com' },
 ]
 
@@ -99,7 +99,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
   /* ── UniTravel ── */
   {
     slug: 'unitravel',
-    name: 'UniTravel (Single Trip)',
+    name: 'UniTravel',
     status: 'in-force',
     statusLabel: 'In force',
     policyNumber: 'DHOPF50050002500',
@@ -110,12 +110,12 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
       { label: 'Group type', value: 'Individual' },
       { label: 'Trip type', value: 'Single Trip' },
       { label: 'Destination', value: { kind: 'expandable', text: AREA_1_COUNTRIES } },
-      { label: 'Policy effective date', value: '08/10/2026' },
+      { label: 'Policy start date', value: '08/10/2026' },
       { label: 'Policy expiry date', value: '13/10/2026' },
       { label: 'Payment method', value: { kind: 'payment', last4: '9111' } },
       { label: 'Payment terms', value: 'Single Payment' },
       { label: 'Premium amount', value: '$265.20' },
-      { label: 'Promo code', value: 'None' },
+      { label: 'Promo code', value: '-' },
       { label: 'Add-on', value: { kind: 'expandable', text: TRAVEL_ADD_ONS } },
     ],
     policyholderFields: POLICYHOLDER,
@@ -133,30 +133,42 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
     name: 'UniCar',
     status: 'renewal-due',
     statusLabel: 'Renewal due in 30 days',
-    policyNumber: 'PNF320104124A23',
+    policyNumber: 'DHOPF160012132600',
     policyFields: [
       { label: 'Product', value: 'UniCar' },
-      { label: 'Policy no.', value: 'PNF320104124A23' },
-      { label: 'Plan', value: 'Comprehensive Essential' },
-      { label: 'Vehicle no.', value: 'SLM 8821 X' },
-      { label: 'Vehicle make & model', value: 'Toyota Corolla Altis 1.6' },
-      { label: 'Year of manufacture', value: '2021' },
-      { label: 'Policy effective date', value: '13/02/2025' },
-      { label: 'Policy expiry date', value: '13/02/2026' },
+      { label: 'Policy no.', value: 'DHOPF160012132600' },
+      { label: 'Plan', value: 'Comprehensive (Value)' },
+      { label: 'Policy start date', value: '18/04/2029' },
+      { label: 'Policy end date', value: '19/04/2026' },
+      { label: 'Premium amount', value: 'S$1350.21' },
       { label: 'Payment method', value: { kind: 'payment', last4: '9111' } },
-      { label: 'Payment terms', value: 'Annual' },
-      { label: 'Premium amount', value: '$1,250.00' },
-      { label: 'No-claim discount', value: '30%' },
-      { label: 'Excess', value: '$600.00' },
+      { label: 'Payment terms', value: 'Single Payment' },
+      { label: 'Promo code', value: '-' },
+      { label: 'Add-on', value: '-' },
     ],
     policyholderFields: POLICYHOLDER,
     insuredGroups: [
       {
-        title: 'Named driver 1',
+        title: 'Insured driver 1',
         fields: [
-          { label: 'Name', value: 'CHRIS WONG' },
+          { label: 'Name', value: 'Chris Wong' },
           { label: 'NRIC/FIN', value: 'S1234567A' },
           { label: 'Date of birth', value: '12/02/1966' },
+          { label: 'Gender', value: 'Male' },
+          { label: 'Years of driving experience', value: '4 to 8 years' },
+          { label: 'Job requires driving', value: 'No' },
+        ],
+      },
+      {
+        title: 'Vehicle information',
+        fields: [
+          { label: 'Vehicle make & model', value: 'Honda Odyssey 2.4' },
+          { label: 'Year of registration', value: '2019' },
+          { label: 'Vehicle registration number', value: 'AA012345456' },
+          { label: 'Off-peak vehicle', value: 'No' },
+          { label: 'Chassis number', value: '12345667' },
+          { label: 'Finance company', value: 'PT Bank UOB' },
+          { label: 'Vehicle under financing', value: 'Yes' },
         ],
       },
     ],
@@ -173,31 +185,31 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
     name: 'UniHelper',
     status: 'in-force',
     statusLabel: 'In force',
-    policyNumber: 'PNF320104124A24',
+    policyNumber: 'DHOPF160012132600',
     policyFields: [
       { label: 'Product', value: 'UniHelper' },
-      { label: 'Policy no.', value: 'PNF320104124A24' },
+      { label: 'Policy no.', value: 'DHOPF160012132600' },
       { label: 'Plan', value: 'Value' },
-      { label: 'Helper name', value: 'MARIA SANTOS' },
-      { label: 'Work permit no.', value: 'W1234567N' },
-      { label: 'Security bond', value: '$5,000.00' },
-      { label: 'Policy effective date', value: '02/01/2026' },
-      { label: 'Policy expiry date', value: '01/01/2027' },
+      { label: 'Helper type', value: 'New' },
+      { label: 'Policy duration', value: '26 months' },
+      { label: 'Premium amount', value: 'S$1350.21' },
       { label: 'Payment method', value: { kind: 'payment', last4: '9111' } },
-      { label: 'Payment terms', value: 'Annual' },
-      { label: 'Premium amount', value: '$35.20' },
-      { label: 'Promo code', value: 'None' },
-      { label: 'Add-on', value: 'None' },
+      { label: 'Payment terms', value: 'Single Payment' },
+      { label: 'Promo code', value: '-' },
+      { label: 'Add-on', value: '-' },
+      { label: 'Policy start date', value: '18/04/2029' },
+      { label: 'Policy end date', value: '19/04/2026' },
     ],
     policyholderFields: POLICYHOLDER,
     insuredGroups: [
       {
-        title: 'Insured helper',
+        title: 'Details of helper',
         fields: [
-          { label: 'Name', value: 'MARIA SANTOS' },
-          { label: 'Work permit no.', value: 'W1234567N' },
-          { label: 'Date of birth', value: '04/07/1992' },
-          { label: 'Nationality', value: 'Filipino' },
+          { label: 'Name', value: 'JOHN DOE' },
+          { label: 'FIN', value: 'S1234567A' },
+          { label: "Helper's age", value: '23 - 50 years old' },
+          { label: 'Date of birth', value: '12/02/1966' },
+          { label: 'Nationality', value: 'Indonesia' },
         ],
       },
     ],
@@ -222,7 +234,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
       { label: 'Helper name', value: 'RINA DEWI' },
       { label: 'Work permit no.', value: 'W7654321N' },
       { label: 'Security bond', value: '$5,000.00' },
-      { label: 'Policy effective date', value: '12/11/2025' },
+      { label: 'Policy start date', value: '12/11/2025' },
       { label: 'Policy expiry date', value: '15/11/2025' },
       { label: 'Payment method', value: { kind: 'payment', last4: '9111' } },
       { label: 'Payment terms', value: 'Annual' },
@@ -264,7 +276,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
       { label: 'Property address', value: { kind: 'expandable', text: '1 ORCHARD RD, #02-01, SINGAPORE 238824' } },
       { label: 'Sum insured (renovation)', value: '$100,000.00' },
       { label: 'Sum insured (contents)', value: '$50,000.00' },
-      { label: 'Policy effective date', value: '01/03/2026' },
+      { label: 'Policy start date', value: '01/03/2026' },
       { label: 'Policy expiry date', value: '28/02/2027' },
       { label: 'Payment method', value: { kind: 'payment', last4: '9111' } },
       { label: 'Payment terms', value: 'Annual' },
@@ -304,7 +316,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
       { label: 'Coverage type', value: 'Individual' },
       { label: 'Accidental death benefit', value: '$200,000.00' },
       { label: 'Medical expenses limit', value: '$10,000.00' },
-      { label: 'Policy effective date', value: '01/04/2026' },
+      { label: 'Policy start date', value: '01/04/2026' },
       { label: 'Policy expiry date', value: '31/03/2027' },
       { label: 'Payment method', value: { kind: 'payment', last4: '9111' } },
       { label: 'Payment terms', value: 'Annual' },

@@ -37,7 +37,7 @@ export const POLICIES: PolicyData[] = [
   },
   {
     id: '2',
-    name: 'UniTravel (Single Trip)',
+    name: 'UniTravel',
     policyNo: 'PNF320104124A23',
     status: 'in-force',
     statusLabel: 'In force',
