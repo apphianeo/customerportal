@@ -85,7 +85,7 @@ LOGO_URL, LOGO_IS_INLINE = _logo_src()
 #   Tier 3  fine()   13px tertiary     security note and support, behind a rule
 # ─────────────────────────────────────────────────────────────────────────────
 
-def code_plate(code, expiry):
+def code_plate(code, label="Your OTP"):
     """OTP display: a filled block, no border.
 
     Uses the portal's page tint as a fill rather than the OTP input's white
@@ -98,12 +98,12 @@ def code_plate(code, expiry):
                 <tr>
                   <td align="center"
                       style="background-color:{T['bg_page']}; border-radius:{T['radius']};
-                             padding:28px 16px 22px 16px;">
+                             padding:24px 16px 26px 16px;">
+                    <div style="font-family:{T['font']}; font-size:13px; line-height:1.4;
+                                color:{T['text_secondary']}; padding-bottom:10px;">{label}</div>
                     <div class="code" style="font-family:{T['font']}; font-size:38px; line-height:1.1;
                                 font-weight:700; color:{T['text_primary']};
                                 letter-spacing:9px; text-indent:9px; white-space:nowrap;">{code}</div>
-                    <div style="font-family:{T['font']}; font-size:12px; line-height:1.4;
-                                color:{T['text_tertiary']}; padding-top:12px;">{expiry}</div>
                   </td>
                 </tr>
               </table>"""
@@ -143,11 +143,18 @@ def notice(body, tone="info"):
               </table>"""
 
 
-def lead(text):
-    """Tier 1. The bold line that introduces the next action."""
+def salutation(text):
+    """Letter opening, one step down from the heading."""
     return (f"""
               <p style="margin:0; font-family:{T['font']}; font-size:16px; line-height:1.5;
-                        font-weight:600; color:{T['text_primary']};">{text}</p>""")
+                        color:{T['text_primary']};">{text}</p>""")
+
+
+def signoff():
+    return (f"""
+              <p style="margin:0; font-family:{T['font']}; font-size:16px; line-height:1.5;
+                        color:{T['text_secondary']};">Regards,<br />United Overseas
+                        Insurance Limited</p>""")
 
 
 def fine(lines):
@@ -163,30 +170,6 @@ def fine(lines):
                   <td style="border-top:1px solid {T['border_split']}; padding-top:20px;">{body}
                   </td>
                 </tr>
-              </table>"""
-
-
-def benefits(items):
-    """What the portal does, as titled rows separated by hairlines.
-
-    No icons: images are blocked by default in most corporate clients, so an
-    icon column would arrive as a row of empty boxes and take the titles with it.
-    """
-    last = len(items) - 1
-    rows = "".join(
-        f"""
-                <tr>
-                  <td style="{'' if i == 0 else f'border-top:1px solid {T["border_split"]};'}
-                             padding:{'0' if i == 0 else '16px'} 0 {'0' if i == last else '16px'} 0;">
-                    <p style="margin:0; font-family:{T['font']}; font-size:16px; line-height:1.5;
-                              font-weight:600; color:{T['text_primary']};">{title}</p>
-                    <p style="margin:4px 0 0 0; font-family:{T['font']}; font-size:14px;
-                              line-height:1.5; color:{T['text_secondary']};">{body}</p>
-                  </td>
-                </tr>"""
-        for i, (title, body) in enumerate(items))
-    return f"""
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">{rows}
               </table>"""
 
 
@@ -286,14 +269,6 @@ def shell(title, preheader, blocks):
             <td style="background-color:{T['bg_white']}; border:1px solid {T['border']};
                        border-radius:{T['radius']};">
 
-              <!-- Brand rule: the portal's primary blue, doing the job the stock photo used to -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td style="background-color:{T['primary']}; height:4px; line-height:4px;
-                             font-size:0; border-radius:{T['radius']} {T['radius']} 0 0;">&nbsp;</td>
-                </tr>
-              </table>
-
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td class="pad" style="padding:36px 32px 32px 32px;">
@@ -316,8 +291,9 @@ def shell(title, preheader, blocks):
                              color:{T['text_secondary']};">
                     <p style="margin:0;">This is an automatically generated email, please do not reply.</p>
                     <p style="margin:8px 0 0 0;">Visit
-                      <a href="{UOI_URL}" style="color:{T['text_secondary']};">www.uoi.com.sg</a>
-                      to learn more about our privacy and security notice.</p>
+                      <a href="{UOI_URL}" style="color:{T['text_secondary']};">United Overseas
+                      Insurance Limited (UOI)</a> to learn more about our privacy and
+                      security notice.</p>
                     <p style="margin:8px 0 0 0;">{COPYRIGHT} {RIGHTS}</p>
                     <p style="margin:16px 0 0 0; font-weight:600; letter-spacing:0.04em;
                               color:{T['text_secondary']};">UOI EMAIL DISCLAIMER</p>
@@ -352,6 +328,12 @@ def shell(title, preheader, blocks):
 CHANGE_PW_URL = "{{change_password_url}}"
 RESET_URL = "{{reset_url}}"
 
+# Shared closing lines, identical across all six.
+HELP_LINE = ("If you need any help, feel free to reach out to our support team "
+             + link("here", SUPPORT_URL) + ".")
+OTP_VALIDITY = ("Code is valid for the next 3 minutes, after which you will need to "
+                "request a new OTP.")
+
 TEMPLATES = []
 
 
@@ -362,146 +344,126 @@ def add(filename, subject, preheader, title, blocks, notes):
     })
 
 
+def letter(heading_text, paragraphs, middle=None, tail=None):
+    """The shape every template shares: heading, salutation, body, an optional
+    block in the middle, optional trailing paragraphs, help line, sign-off."""
+    out = [heading(heading_text), spacer(16), salutation("Dear {{first_name}},")]
+    for para_text in paragraphs:
+        out += [spacer(14), para(para_text, 16, T["text_secondary"])]
+    if middle:
+        out += [spacer(24)] + middle
+    for para_text in (tail or []):
+        out += [spacer(20), para(para_text, 16, T["text_secondary"])]
+    out += [spacer(20), para(HELP_LINE, 16, T["text_secondary"]),
+            spacer(24), signoff()]
+    return out
+
+
 # 1. Login OTP
 add(
     "01-login-otp.html",
-    "{{otp}} is your UOI Customer Portal OTP",
-    "Expires in 3 minutes. UOI will never ask you for this OTP.",
+    "{{otp}} is your UOI Customer Portal login code",
+    "Code is valid for the next 3 minutes.",
     "Your UOI Customer Portal login OTP",
-    [
-        heading("Your login OTP"),
-        para("Hi {{first_name}}, enter this OTP in the window where you started signing "
-             "in to UOI Customer Portal.", 16, T["text_secondary"], 14),
-        spacer(26),
-        code_plate("{{otp}}", "Expires in 3 minutes"),
-        spacer(26),
-        lead("Didn't try to sign in?"),
-        para("Someone else may know your password. "
-             f'{link("Change it now", CHANGE_PW_URL)}.', 16, T["text_secondary"], 8),
-        spacer(24),
-        fine([HELP_LINE]),
-    ],
+    letter(
+        "Your login OTP",
+        ["We received your request to login to UOI Customer Portal account. Please "
+         "enter this One-Time Password (OTP) on the portal login page to proceed."],
+        middle=[code_plate("{{otp}}")],
+        tail=[OTP_VALIDITY],
+    ),
     "OTP in the subject line so it is readable from the notification without opening the email.",
 )
 
-# 2. Forgot password, reset link
+# 2. Forget password, reset link
 add(
     "02-forgot-password-reset.html",
     "Reset your UOI Customer Portal password",
-    "Your reset link expires in 30 minutes.",
+    "Link is valid for the next 30 minutes.",
     "Reset your UOI Customer Portal password",
-    [
-        heading("Reset your password"),
-        para("Hi {{first_name}}, we received a request to reset the password for "
-             "<strong style=\"color:%s;\">{{login_id}}</strong>." % T["text_primary"],
-             16, T["text_secondary"], 14),
-        spacer(26),
-        lead("Choose a new password:"),
-        spacer(14),
-        f'<div class="btn">{primary_button("Reset password", RESET_URL)}</div>',
-        spacer(14),
-        para("This link expires in 30 minutes and works once.", 14, T["text_tertiary"]),
-        spacer(26),
-        notice("<strong>Didn't request this?</strong> Ignore this email. Your password "
-               "stays as it is, and no one can reset it without this link.", "info"),
-        spacer(24),
-        fine([
-            'Button not working? Paste this into your browser:<br />'
-            f'<span style="color:{T["text_link"]}; word-break:break-all;">{RESET_URL}</span>',
-            HELP_LINE,
-        ]),
-    ],
+    letter(
+        "Reset your password",
+        ["We received your request to reset your UOI Customer Portal account password. "
+         "Click on the button below to choose a new password."],
+        middle=[f'<div class="btn">{primary_button("Reset password", RESET_URL)}</div>'],
+        tail=["Link is valid for the next 30 minutes, after which you will need to "
+              "request again."],
+    ),
     "Link, not a code. A reset is a click-through, so don't make the user retype anything.",
 )
 
-# 3. Manual account registration OTP
+# 3. Verify account OTP
 add(
     "03-registration-otp.html",
-    "{{otp}} is your UOI Customer Portal sign-up OTP",
-    "Verify your email to finish creating your account.",
+    "{{otp}} is your UOI Customer Portal verification code",
+    "Code is valid for the next 3 minutes.",
     "Verify your email address",
-    [
-        heading("Verify your email address"),
-        para("Welcome to UOI Customer Portal. Enter this OTP to verify "
-             "<strong style=\"color:%s;\">{{login_id}}</strong> and finish setting up "
-             "your account." % T["text_primary"], 16, T["text_secondary"], 14),
-        spacer(26),
-        code_plate("{{otp}}", "Expires in 3 minutes"),
-        spacer(26),
-        fine([
-            "If you didn't sign up for UOI Customer Portal, ignore this email. "
-            "No account will be created.",
-            HELP_LINE,
-        ]),
-    ],
-    "Reassures rather than warns. A stranger receiving this has nothing at risk yet.",
+    letter(
+        "Verify your email address",
+        ["Welcome to UOI Customer Portal. Please enter this One-Time Password (OTP) "
+         "to verify and finish setting up your account."],
+        middle=[code_plate("{{otp}}")],
+        tail=[OTP_VALIDITY],
+    ),
+    "Verifies an address and nothing else. The welcome email does the selling.",
 )
 
-# 4. Change Login ID OTP
+# 4. Verify new login ID OTP
 add(
     "04-change-login-id-otp.html",
-    "{{otp}} is your OTP to confirm your new UOI login ID",
-    "Confirm your new UOI Customer Portal login ID. Expires in 3 minutes.",
     "Confirm your new login ID",
-    [
-        heading("Confirm your new login ID"),
-        para("Hi {{first_name}}, you asked to change your login ID from "
-             "<strong style=\"color:%s;\">{{old_login_id}}</strong> to "
-             "<strong style=\"color:%s;\">{{new_login_id}}</strong>. Enter this OTP "
-             "to confirm." % (T["text_primary"], T["text_primary"]),
-             16, T["text_secondary"], 14),
-        spacer(26),
-        code_plate("{{otp}}", "Expires in 3 minutes"),
-        spacer(26),
-        notice("<strong>Didn't request this change?</strong> Your account may be at risk. "
-               f'Call us now at {link(SUPPORT_TEL_DISPLAY, "tel:" + SUPPORT_TEL)} and '
-               "don't enter the OTP above.", "caution"),
-        spacer(24),
-        fine([
-            "Until you confirm, keep signing in with your current login ID.",
-            HELP_LINE,
-        ]),
-    ],
-    "The highest-risk email of the four. It states both addresses, so a hijack is obvious on sight.",
+    "Code is valid for the next 3 minutes.",
+    "Confirm your new login ID",
+    letter(
+        "Confirm your new login ID",
+        ["You asked to change your login ID (email address) from "
+         "<strong style=\"color:%s;\">{{old_login_id}}</strong> to "
+         "<strong style=\"color:%s;\">{{new_login_id}}</strong>. Please enter this "
+         "One-Time Password (OTP) to verify." % (T["text_primary"], T["text_primary"])],
+        middle=[code_plate("{{otp}}")],
+        tail=[OTP_VALIDITY],
+    ),
+    "States both addresses, so a hijack is obvious on sight.",
 )
 
-
-# 5. Welcome
+# 5. Welcome, successful sign up
 add(
     "05-welcome.html",
     "Welcome to UOI Customer Portal",
-    "Your account is ready. Here is what you can do with it.",
+    "Your UOI Customer Portal account is ready.",
     "Welcome to UOI Customer Portal",
-    [
-        heading("Welcome to UOI Customer Portal"),
-        para("Hi {{first_name}}, your account is ready. Everything to do with your "
-             "UOI policies now lives in one place.", 16, T["text_secondary"], 14),
-        spacer(26),
-        lead("Sign in to get started:"),
-        spacer(14),
-        f'<div class="btn">{primary_button("Go to my dashboard", PORTAL_URL)}</div>',
-        spacer(30),
-        benefits([
-            ("All your policies in one place",
-             "Motor, travel, home, helper and personal accident, each with its policy "
-             "number, coverage dates and renewal status."),
-            ("Documents on demand",
-             "Download policy documents, schedules and receipts yourself, at any hour."),
-            ("Update your own details",
-             "Change your contact details, your password or your login ID, "
-             "without paperwork."),
-            ("Rewards for UOI customers",
-             "Member offers and perks, refreshed regularly."),
-        ]),
-        spacer(28),
-        fine([
-            "You are receiving this because an account was created for "
-            "<strong>{{login_id}}</strong> on UOI Customer Portal.",
-            HELP_LINE,
-        ]),
-    ],
-    "The only email of the five that sells rather than authenticates, so it earns "
-    "a longer body. Benefits are drawn from what the portal actually ships.",
+    letter(
+        "Successful registration",
+        ["Your UOI Customer Portal account is ready. Everything to do with your UOI "
+         "policies now lives in one place.",
+         "You can view your policies and coverage dates, download policy documents "
+         "and receipts, update your contact details, and see the rewards available "
+         "to UOI customers, at any time."],
+        middle=[f'<div class="btn">{primary_button("Go to dashboard", PORTAL_URL)}</div>'],
+    ),
+    "The only one of the six that sells rather than authenticates.",
+)
+
+# 6. Sign-in after six months of inactivity
+add(
+    "06-inactivity-signin.html",
+    "You signed in to UOI Customer Portal",
+    "First sign-in in six months. Let us know if this was not you.",
+    "You signed in to UOI Customer Portal",
+    letter(
+        "Welcome back",
+        ["You signed in to your UOI Customer Portal account on "
+         "<strong style=\"color:%s;\">{{login_datetime}}</strong>. It has been more "
+         "than six months since your last visit, so we are letting you know."
+         % T["text_primary"],
+         "While you are here, it is worth checking that your contact details are "
+         "current, so policy documents and renewal reminders reach you."],
+        middle=[notice("<strong>Wasn't you?</strong> Your account may be at risk. "
+                       + link("Change your password", CHANGE_PW_URL) + " now.",
+                       "caution")],
+    ),
+    "The trigger is a login, so the message that earns its place is the one that "
+    "lets a customer catch a sign-in that was not theirs.",
 )
 
 
@@ -554,10 +516,10 @@ def build_preview():
 CHANGES = [
     ("The hero photo is gone",
      "In the current email the stock photo is the largest element and carries no "
-     "information. On a phone it pushes the code below the fold. A 4px rule in the "
-     "portal blue does the branding instead. Most corporate clients block images by "
-     "default, so the photo-led version currently arrives as a grey box; this one "
-     "doesn\u2019t depend on images at all."),
+     "information. On a phone it pushes the code below the fold. The logo alone now "
+     "carries the branding. Most corporate clients block images by default, so the "
+     "photo-led version currently arrives as a grey box; this one degrades to the "
+     "brand name and stays fully readable."),
     ("The code is an object, not a sentence",
      "<code>Your OTP: 946683</code> inside a paragraph doesn\u2019t scan. The code now sits "
      "in a plate that reuses the portal\u2019s OTP input treatment, at 34px with wide "
@@ -579,11 +541,6 @@ CHANGES = [
      "legal block, which sits below the card at 11px, the smallest type in the email, "
      "so it reads as document chrome rather than message content. The support route "
      "moved inside the card as closing fine print at 13px."),
-    ("Three fixed tiers after the code",
-     "Everything below the code or button now reads in the same three steps, so no one "
-     "has to work out what matters: a <strong>bold lead-in</strong> for the next action, "
-     "a tinted box for what to do if it was not you, and muted 13px fine print behind a "
-     "hairline rule for the security note and support."),
     ("Every email says what to do if it wasn\u2019t you",
      "Login: change your password. Reset: ignore it, nothing happens. Change login "
      "ID: call us now, don\u2019t enter the code. The highest-value copy in a security "
@@ -593,7 +550,6 @@ CHANGES = [
 TOKEN_MAP = [
     ("Page canvas", "<code>--color-bg-page</code>", "#F6F8FC"),
     ("Card surface", "menu surface, <code>AuthUI.tsx:425</code>", "white, 1px hairline, 8px radius"),
-    ("Brand rule", "<code>--color-primary</code>", "#005EB8, 4px"),
     ("Code block", "<code>--color-bg-page</code> fill", "#F6F8FC, 8px radius, no border"),
     ("CTA button", "<code>PrimaryButton</code>, <code>AuthUI.tsx:585</code>",
      "#005EB8, 8px radius, 12/24px, 16px/1.5, w500"),
@@ -802,11 +758,12 @@ PREVIEW_SHELL = """<title>UOI Customer Portal Auth Emails</title>
   <header class="mast">
     <p class="eyebrow">Design proposal &middot; Customer Portal</p>
     <h1>Auth emails, rebuilt on the portal&rsquo;s own system</h1>
-    <p class="lede">Five templates for UOI Customer Portal: the four authentication
-      emails, plus the welcome. Same tokens, same button, same card as the screens they
-      lead to, so the email and the product stop looking like two different companies.</p>
+    <p class="lede">Six templates for UOI Customer Portal: the four authentication
+      emails, the welcome, and the dormant-account sign-in notice. Same tokens, same
+      button, same card as the screens they lead to, so the email and the product stop
+      looking like two different companies.</p>
     <dl class="facts">
-      <div><dt>Templates</dt><dd>5</dd></div>
+      <div><dt>Templates</dt><dd>6</dd></div>
       <div><dt>Width</dt><dd>600&#8202;px</dd></div>
       <div><dt>Typeface</dt><dd>Noto Sans</dd></div>
       <div><dt>Images required</dt><dd>Logo only</dd></div>
@@ -816,7 +773,7 @@ PREVIEW_SHELL = """<title>UOI Customer Portal Auth Emails</title>
   <section>
     <div class="prose">
       <h2>What changes, and why</h2>
-      <p class="sub">Eight moves, each one aimed at the same thing: get the reader to the
+      <p class="sub">Seven moves, each one aimed at the same thing: get the reader to the
         code or the button faster, and make a forged copy of this email harder to pass off.</p>
     </div>
     <div class="changes">__CHANGES__
@@ -826,8 +783,8 @@ PREVIEW_SHELL = """<title>UOI Customer Portal Auth Emails</title>
   <section>
     <div class="prose">
       <h2>The templates</h2>
-      <p class="sub">Rendered live below at 600&#8202;px with sample data. One to four follow
-        the rows in your spec table; five is the welcome email.</p>
+      <p class="sub">Rendered live below at 600&#8202;px with sample data. Numbering follows
+        the rows in the templates document.</p>
     </div>__CARDS__
   </section>
 

@@ -34,7 +34,7 @@
 <body style="margin:0; padding:0; background-color:#F6F8FC;">
   <!-- Preheader: the grey line the inbox shows next to the subject -->
   <div style="display:none; max-height:0; overflow:hidden; mso-hide:all;
-              font-size:1px; line-height:1px; color:#F6F8FC; opacity:0;">Expires in 3 minutes. UOI will never ask you for this OTP.
+              font-size:1px; line-height:1px; color:#F6F8FC; opacity:0;">Code is valid for the next 3 minutes.
     &#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;
   </div>
 
@@ -60,14 +60,6 @@
             <td style="background-color:#FFFFFF; border:1px solid #EBEBEB;
                        border-radius:8px;">
 
-              <!-- Brand rule: the portal's primary blue, doing the job the stock photo used to -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td style="background-color:#005EB8; height:4px; line-height:4px;
-                             font-size:0; border-radius:8px 8px 0 0;">&nbsp;</td>
-                </tr>
-              </table>
-
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td class="pad" style="padding:36px 32px 32px 32px;">
@@ -76,43 +68,47 @@
                         line-height:1.25; font-weight:700; letter-spacing:-0.01em;
                         color:#212121;">Your login OTP</h1>
 
-              <p style="margin:14px 0 0 0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:16px;
-                        line-height:1.5; color:#6E6E6E;">Hi {{first_name}}, enter this OTP in the window where you started signing in to UOI Customer Portal.</p>
-
-              <div style="height:26px; line-height:26px; font-size:0;">&nbsp;</div>
-
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td align="center"
-                      style="background-color:#F6F8FC; border-radius:8px;
-                             padding:28px 16px 22px 16px;">
-                    <div class="code" style="font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:38px; line-height:1.1;
-                                font-weight:700; color:#212121;
-                                letter-spacing:9px; text-indent:9px; white-space:nowrap;">{{otp}}</div>
-                    <div style="font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:12px; line-height:1.4;
-                                color:#8D8D8D; padding-top:12px;">Expires in 3 minutes</div>
-                  </td>
-                </tr>
-              </table>
-
-              <div style="height:26px; line-height:26px; font-size:0;">&nbsp;</div>
+              <div style="height:16px; line-height:16px; font-size:0;">&nbsp;</div>
 
               <p style="margin:0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:16px; line-height:1.5;
-                        font-weight:600; color:#212121;">Didn't try to sign in?</p>
+                        color:#212121;">Dear {{first_name}},</p>
 
-              <p style="margin:8px 0 0 0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:16px;
-                        line-height:1.5; color:#6E6E6E;">Someone else may know your password. <a href="{{change_password_url}}" style="color:#0D6EFD; text-decoration:underline;">Change it now</a>.</p>
+              <div style="height:14px; line-height:14px; font-size:0;">&nbsp;</div>
+
+              <p style="margin:0px 0 0 0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:16px;
+                        line-height:1.5; color:#6E6E6E;">We received your request to login to UOI Customer Portal account. Please enter this One-Time Password (OTP) on the portal login page to proceed.</p>
 
               <div style="height:24px; line-height:24px; font-size:0;">&nbsp;</div>
 
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="border-top:1px solid #F0F0F0; padding-top:20px;">
-                <p style="margin:0px 0 0 0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
-                          font-size:13px; line-height:1.5; color:#8D8D8D;">Need help? Reach out to our support team <a href="https://api.whatsapp.com/send/?phone=6580814843&amp;text&amp;type=phone_number&amp;app_absent=0" style="color:#8D8D8D; text-decoration:underline;">here</a> or email <a href="mailto:contactus@uoi.com.sg" style="color:#8D8D8D; text-decoration:underline;">contactus@uoi.com.sg</a>.</p>
+                  <td align="center"
+                      style="background-color:#F6F8FC; border-radius:8px;
+                             padding:24px 16px 26px 16px;">
+                    <div style="font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:13px; line-height:1.4;
+                                color:#6E6E6E; padding-bottom:10px;">Your OTP</div>
+                    <div class="code" style="font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:38px; line-height:1.1;
+                                font-weight:700; color:#212121;
+                                letter-spacing:9px; text-indent:9px; white-space:nowrap;">{{otp}}</div>
                   </td>
                 </tr>
               </table>
+
+              <div style="height:20px; line-height:20px; font-size:0;">&nbsp;</div>
+
+              <p style="margin:0px 0 0 0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:16px;
+                        line-height:1.5; color:#6E6E6E;">Code is valid for the next 3 minutes, after which you will need to request a new OTP.</p>
+
+              <div style="height:20px; line-height:20px; font-size:0;">&nbsp;</div>
+
+              <p style="margin:0px 0 0 0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:16px;
+                        line-height:1.5; color:#6E6E6E;">If you need any help, feel free to reach out to our support team <a href="https://api.whatsapp.com/send/?phone=6580814843&amp;text&amp;type=phone_number&amp;app_absent=0" style="color:#0D6EFD; text-decoration:underline;">here</a>.</p>
+
+              <div style="height:24px; line-height:24px; font-size:0;">&nbsp;</div>
+
+              <p style="margin:0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:16px; line-height:1.5;
+                        color:#6E6E6E;">Regards,<br />United Overseas
+                        Insurance Limited</p>
                   </td>
                 </tr>
               </table>
@@ -131,8 +127,9 @@
                              color:#6E6E6E;">
                     <p style="margin:0;">This is an automatically generated email, please do not reply.</p>
                     <p style="margin:8px 0 0 0;">Visit
-                      <a href="https://www.uoi.com.sg" style="color:#6E6E6E;">www.uoi.com.sg</a>
-                      to learn more about our privacy and security notice.</p>
+                      <a href="https://www.uoi.com.sg" style="color:#6E6E6E;">United Overseas
+                      Insurance Limited (UOI)</a> to learn more about our privacy and
+                      security notice.</p>
                     <p style="margin:8px 0 0 0;">Copyright © 2026 United Overseas Insurance Limited Co Reg. No. 197100152R. All Rights Reserved.</p>
                     <p style="margin:16px 0 0 0; font-weight:600; letter-spacing:0.04em;
                               color:#6E6E6E;">UOI EMAIL DISCLAIMER</p>

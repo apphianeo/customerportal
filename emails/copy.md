@@ -1,140 +1,149 @@
 # Email copy
 
-Every word in the five templates, in the order it appears. Edit here, hand it
-back, and it gets applied to `build.py`.
+Every word in the six templates, in the order it appears. Taken from
+*Customer Portal Figma & Templates*, the uploaded PDF, which is the source of
+truth for wording.
 
-`{{fields}}` are merge fields, replaced at send time. Leave the braces alone
-unless you want the field itself changed.
+`{{fields}}` are merge fields, replaced at send time.
 
-**One line is shared across all five emails** (marked SHARED below). Editing it
-changes all five.
+Every email shares the same shape: heading, salutation, body, an OTP block or
+button, the help line, the sign-off, then the legal block below the card.
 
 ---
 
 ## 1. Login OTP · `01-login-otp.html`
 
-- **Subject:** {{otp}} is your UOI Customer Portal OTP
-- **Preheader:** Expires in 3 minutes. UOI will never ask you for this OTP.
+- **Subject:** {{otp}} is your UOI Customer Portal login code
+- **Preheader:** Code is valid for the next 3 minutes.
 
 | Slot | Copy |
 |---|---|
 | Heading | Your login OTP |
-| Intro | Hi {{first_name}}, enter this OTP in the window where you started signing in to UOI Customer Portal. |
-| Code | {{otp}} |
-| Code caption | Expires in 3 minutes |
-| Tier 1, bold | Didn't try to sign in? |
-| Tier 1, body | Someone else may know your password. [Change it now]. |
-| Tier 3, SHARED | Need help? Reach out to our support team [here] or email [contactus@uoi.com.sg]. |
+| Salutation | Dear {{first_name}}, |
+| Body | We received your request to login to UOI Customer Portal account. Please enter this One-Time Password (OTP) on the portal login page to proceed. |
+| OTP block | Your OTP<br>**{{otp}}** |
+| Validity | Code is valid for the next 3 minutes, after which you will need to request a new OTP. |
+| Help | If you need any help, feel free to reach out to our support team [here]. |
+| Sign-off | Regards,<br>United Overseas Insurance Limited |
 
 ---
 
-## 2. Forgot password, reset link · `02-forgot-password-reset.html`
+## 2. Forget password, reset link · `02-forgot-password-reset.html`
 
 - **Subject:** Reset your UOI Customer Portal password
-- **Preheader:** Your reset link expires in 30 minutes.
+- **Preheader:** Link is valid for the next 30 minutes.
 
 | Slot | Copy |
 |---|---|
 | Heading | Reset your password |
-| Intro | Hi {{first_name}}, we received a request to reset the password for **{{login_id}}**. |
-| Tier 1, bold | Choose a new password: |
-| Button | Reset password |
-| Under button | This link expires in 30 minutes and works once. |
-| Tier 2, box | **Didn't request this?** Ignore this email. Your password stays as it is, and no one can reset it without this link. |
-| Tier 3 | Button not working? Paste this into your browser: {{reset_url}} |
-| Tier 3, SHARED | Need help? Reach out to our support team [here] or email [contactus@uoi.com.sg]. |
+| Salutation | Dear {{first_name}}, |
+| Body | We received your request to reset your UOI Customer Portal account password. Click on the button below to choose a new password. |
+| Button | Reset password, href `{{reset_url}}` |
+| Validity | Link is valid for the next 30 minutes, after which you will need to request again. |
+| Help | If you need any help, feel free to reach out to our support team [here]. |
+| Sign-off | Regards,<br>United Overseas Insurance Limited |
 
 ---
 
-## 3. Registration OTP · `03-registration-otp.html`
+## 3. Verify account OTP · `03-registration-otp.html`
 
-- **Subject:** {{otp}} is your UOI Customer Portal sign-up OTP
-- **Preheader:** Verify your email to finish creating your account.
+- **Subject:** {{otp}} is your UOI Customer Portal verification code
+- **Preheader:** Code is valid for the next 3 minutes.
 
 | Slot | Copy |
 |---|---|
 | Heading | Verify your email address |
-| Intro | Welcome to UOI Customer Portal. Enter this OTP to verify **{{login_id}}** and finish setting up your account. |
-| Code | {{otp}} |
-| Code caption | Expires in 3 minutes |
-| Tier 3 | If you didn't sign up for UOI Customer Portal, ignore this email. No account will be created. |
-| Tier 3, SHARED | Need help? Reach out to our support team [here] or email [contactus@uoi.com.sg]. |
+| Salutation | Dear {{first_name}}, |
+| Body | Welcome to UOI Customer Portal. Please enter this One-Time Password (OTP) to verify and finish setting up your account. |
+| OTP block | Your OTP<br>**{{otp}}** |
+| Validity | Code is valid for the next 3 minutes, after which you will need to request a new OTP. |
+| Help | If you need any help, feel free to reach out to our support team [here]. |
+| Sign-off | Regards,<br>United Overseas Insurance Limited |
 
 ---
 
-## 4. Change Login ID OTP · `04-change-login-id-otp.html`
+## 4. Verify new login ID OTP · `04-change-login-id-otp.html`
 
-- **Subject:** {{otp}} is your OTP to confirm your new UOI login ID
-- **Preheader:** Confirm your new UOI Customer Portal login ID. Expires in 3 minutes.
+- **Subject:** Confirm your new login ID
+- **Preheader:** Code is valid for the next 3 minutes.
 
 | Slot | Copy |
 |---|---|
 | Heading | Confirm your new login ID |
-| Intro | Hi {{first_name}}, you asked to change your login ID from **{{old_login_id}}** to **{{new_login_id}}**. Enter this OTP to confirm. |
-| Code | {{otp}} |
-| Code caption | Expires in 3 minutes |
-| Tier 2, box | **Didn't request this change?** Your account may be at risk. Call us now at [(+65) 6222 7733] and don't enter the OTP above. |
-| Tier 3 | Until you confirm, keep signing in with your current login ID. |
-| Tier 3, SHARED | Need help? Reach out to our support team [here] or email [contactus@uoi.com.sg]. |
+| Salutation | Dear {{first_name}}, |
+| Body | You asked to change your login ID (email address) from **{{old_login_id}}** to **{{new_login_id}}**. Please enter this One-Time Password (OTP) to verify. |
+| OTP block | Your OTP<br>**{{otp}}** |
+| Validity | Code is valid for the next 3 minutes, after which you will need to request a new OTP. |
+| Help | If you need any help, feel free to reach out to our support team [here]. |
+| Sign-off | Regards,<br>United Overseas Insurance Limited |
 
 ---
 
-## 5. Welcome · `05-welcome.html`
+## 5. Welcome, successful sign up · `05-welcome.html`
 
 - **Subject:** Welcome to UOI Customer Portal
-- **Preheader:** Your account is ready. Here is what you can do with it.
+- **Preheader:** Your UOI Customer Portal account is ready.
 
 | Slot | Copy |
 |---|---|
-| Heading | Welcome to UOI Customer Portal |
-| Intro | Hi {{first_name}}, your account is ready. Everything to do with your UOI policies now lives in one place. |
-| Tier 1, bold | Sign in to get started: |
-| Button | Go to my dashboard |
-
-Benefit rows, each a bold title and a body line:
-
-| # | Title | Body |
-|---|---|---|
-| 1 | All your policies in one place | Motor, travel, home, helper and personal accident, each with its policy number, coverage dates and renewal status. |
-| 2 | Documents on demand | Download policy documents, schedules and receipts yourself, at any hour. |
-| 3 | Update your own details | Change your contact details, your password or your login ID, without paperwork. |
-| 4 | Rewards for UOI customers | Member offers and perks, refreshed regularly. |
-
-Closing:
-
-| Slot | Copy |
-|---|---|
-| Tier 3 | You are receiving this because an account was created for **{{login_id}}** on UOI Customer Portal. |
-| Tier 3, SHARED | Need help? Reach out to our support team [here] or email [contactus@uoi.com.sg]. |
+| Heading | Successful registration |
+| Salutation | Dear {{first_name}}, |
+| Body 1 | Your UOI Customer Portal account is ready. Everything to do with your UOI policies now lives in one place. |
+| Body 2 | You can view your policies and coverage dates, download policy documents and receipts, update your contact details, and see the rewards available to UOI customers, at any time. |
+| Button | Go to dashboard, href `PORTAL_URL` |
+| Help | If you need any help, feel free to reach out to our support team [here]. |
+| Sign-off | Regards,<br>United Overseas Insurance Limited |
 
 ---
 
-## Legal block (all five emails)
+## 6. Sign-in after six months of inactivity · `06-inactivity-signin.html`
 
-Sits below the card on the page canvas, not inside it, so it reads as document
-chrome rather than message content. At 11px it is the smallest type in the
-email; the fine print above it is 13px.
+- **Subject:** You signed in to UOI Customer Portal
+- **Preheader:** First sign-in in six months. Let us know if this was not you.
+
+| Slot | Copy |
+|---|---|
+| Heading | Welcome back |
+| Salutation | Dear {{first_name}}, |
+| Body 1 | You signed in to your UOI Customer Portal account on **{{login_datetime}}**. It has been more than six months since your last visit, so we are letting you know. |
+| Body 2 | While you are here, it is worth checking that your contact details are current, so policy documents and renewal reminders reach you. |
+| Caution box | **Wasn't you?** Your account may be at risk. [Change your password] now. |
+| Help | If you need any help, feel free to reach out to our support team [here]. |
+| Sign-off | Regards,<br>United Overseas Insurance Limited |
+
+---
+
+## Legal block, all six
+
+Below the card on the page canvas, at 11px, the smallest type in the email.
 
 | Slot | Copy |
 |---|---|
 | Line 1 | This is an automatically generated email, please do not reply. |
-| Line 2 | Visit [www.uoi.com.sg] to learn more about our privacy and security notice. |
+| Line 2 | Visit [United Overseas Insurance Limited (UOI)] to learn more about our privacy and security notice. |
 | Line 3 | Copyright © 2026 United Overseas Insurance Limited Co Reg. No. 197100152R. All Rights Reserved. |
 | Label | UOI EMAIL DISCLAIMER |
 | Disclaimer | Any person receiving this email and any attachment(s) contained, shall treat the information as confidential and not misuse, copy, disclose, distribute or retain the information in any way that amounts to a breach of confidentiality. If you are not the intended recipient, please delete all copies of this email from your computer system. As the integrity of this message cannot be guaranteed, neither UOI nor any entity in the UOB Group shall be responsible for the contents. Any opinion in this email may not necessarily represent the opinion of UOI or any entity in the UOB Group. |
 
-Edited once in `shell()` in `build.py`, so a change lands on all five at once.
+Edited once in `shell()` in `build.py`, so a change lands on all six at once.
+
+---
+
+## Merge fields
+
+| Field | Used in |
+|---|---|
+| `{{first_name}}` | all six |
+| `{{otp}}` | 1, 3, 4 (subject and body) |
+| `{{old_login_id}}` / `{{new_login_id}}` | 4 |
+| `{{reset_url}}` | 2 |
+| `{{login_datetime}}` | 6 |
+
+Constants, not merge fields: `SUPPORT_URL` (WhatsApp), `PORTAL_URL`, `CHANGE_PW_URL`.
 
 ---
 
 ## Notes on editing
 
-- `[square brackets]` mark link text. The destination is set in `build.py`, not here.
-  `[here]` opens the portal's WhatsApp support line.
-- **Bold** in the tables is bold in the email.
-- Tier 1 is the bold line introducing the next action. Tier 2 is the tinted box.
-  Tier 3 is the muted fine print behind a hairline rule. Moving a line between
-  tiers changes its weight and colour, so say so if you want that rather than
-  just a wording change.
-- Keep the code caption short. It sits directly under the code inside the same
-  block, and a long caption competes with the digits.
+- `[square brackets]` mark link text. Destinations live in `build.py`.
+- Edit `build.py`, not the HTML files. They are overwritten on every build.

@@ -1,7 +1,8 @@
 # UOI Customer Portal, email templates
 
-Five HTML email templates for the customer portal, built from the portal's own
+Six HTML email templates for the customer portal, built from the portal's own
 design system so the email and the screen it leads to look like the same product.
+Copy comes from *Customer Portal Figma & Templates*, the uploaded PDF.
 
 | # | Scenario | File |
 |---|----------|------|
@@ -9,9 +10,10 @@ design system so the email and the screen it leads to look like the same product
 | 2 | Login, forgot password reset link | `02-forgot-password-reset.html` |
 | 3 | Manual account registration OTP | `03-registration-otp.html` |
 | 4 | Change Login ID (email address) OTP | `04-change-login-id-otp.html` |
-| 5 | Welcome | `05-welcome.html` |
+| 5 | Welcome, successful sign up | `05-welcome.html` |
+| 6 | Sign-in after six months of inactivity | `06-inactivity-signin.html` |
 
-Open `preview.html` in a browser to see all five rendered at 600px with sample data.
+Open `preview.html` in a browser to see all six rendered at 600px with sample data.
 
 Logo, one card, then the legal block at 11px on the canvas below it.
 
@@ -83,7 +85,6 @@ Nothing here is a new visual language. Every value is lifted from
 |---|---|---|
 | Page canvas | `--color-bg-page` | `#F6F8FC` |
 | Card surface | menu/card surface, `AuthUI.tsx:425` | white, 1px hairline, `--radius-sm` 8px |
-| Brand rule | `--color-primary` | `#005EB8`, 4px |
 | Code block | `--color-bg-page` fill | `#F6F8FC`, 8px radius, no border, centred |
 | CTA button | `PrimaryButton`, `AuthUI.tsx:585` | `#005EB8`, white, 8px radius, 12px/24px, 16px/1.5, weight 500 |
 | Info notice | `SuccessToast` geometry, `AuthUI.tsx:625` | `--color-bg-info` `#EFF6FF`, 8px radius, 12px/16px |
@@ -133,12 +134,12 @@ per-template copy is in the `TEMPLATES` section near the bottom.
 
 | Field | Used in |
 |---|---|
-| `{{first_name}}` | 1, 2, 4, 5 |
+| `{{first_name}}` | all six |
 | `{{otp}}` | 1, 3, 4 (subject + body) |
-| `{{login_id}}` | 2, 3, 5 |
+| `{{login_datetime}}` | 6 |
 | `{{old_login_id}}` / `{{new_login_id}}` | 4 |
 | `{{reset_url}}` | 2 |
-| `{{change_password_url}}` | 1 |
+| `{{change_password_url}}` | 6 |
 
 Template 5's button links to `PORTAL_URL`; the `here` support link in all five
 points at `SUPPORT_URL`, the same WhatsApp line the portal uses
