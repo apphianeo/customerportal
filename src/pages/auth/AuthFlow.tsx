@@ -134,9 +134,6 @@ export default function AuthFlow({
 
   /** Existing account, or the profile Singpass just handed us. */
   function currentAccount(): Account {
-    // The form collects one "Full name" — split on the first space so the stored
-    // account keeps its first/last shape (greetings, initials, admin all read it).
-    const [firstName, ...restName] = fullName.trim().split(/\s+/)
     return (
       findAccount(email) ??
       draftAccount({
@@ -146,8 +143,7 @@ export default function AuthFlow({
         // Registering manually: only what the user typed. Singpass verifies who
         // they are, but the profile is theirs to fill in and edit later.
         authMethod: 'account',
-        firstName: firstName || 'there',
-        lastName: restName.join(' '),
+        fullName: fullName.trim() || 'there',
         nric,
         dob,
         phone,
@@ -186,7 +182,7 @@ export default function AuthFlow({
   function onSingpassRegistered() {
     setNric(SINGPASS_IDENTITY.nric)
     setDob(SINGPASS_IDENTITY.dob)
-    setFullName(`${SINGPASS_IDENTITY.firstName} ${SINGPASS_IDENTITY.lastName}`)
+    setFullName(SINGPASS_IDENTITY.fullName)
     setPhone(SINGPASS_IDENTITY.phone)
     setPostal(SINGPASS_IDENTITY.residentialPostal)
     setLine(SINGPASS_IDENTITY.residentialAddress)

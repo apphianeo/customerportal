@@ -149,7 +149,7 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
   // Personal — editable unless the profile was sourced from Singpass/MyInfo.
   // The NRIC additionally locks once verified (see nricLocked below).
   // Name and address fields are upper case throughout, seeded values included
-  const [fullName, setFullName] = useState(`${seed.firstName} ${seed.lastName}`.trim().toUpperCase())
+  const [fullName, setFullName] = useState(seed.fullName.toUpperCase())
   const [dob, setDob] = useState(seed.dob)
   const [nric, setNric] = useState(seed.nric)
 
@@ -198,7 +198,7 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
   usePostalAutofill({ postal: mailPostal, address: mailAddr, setAddress: setMailAddr })
 
   function retrieveFromMyInfo() {
-    setFullName(`${SINGPASS_IDENTITY.firstName} ${SINGPASS_IDENTITY.lastName}`.trim().toUpperCase())
+    setFullName(SINGPASS_IDENTITY.fullName.toUpperCase())
     setDob(SINGPASS_IDENTITY.dob)
     setNric(SINGPASS_IDENTITY.nric)
     setResPostal(SINGPASS_IDENTITY.residentialPostal)

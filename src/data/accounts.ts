@@ -20,8 +20,8 @@ export type Account = {
    */
   verified: boolean
   salutation: string
-  firstName: string
-  lastName: string
+  /** The customer's full name, stored as a single field. */
+  fullName: string
   dob: string
   /** Collected at the profile step; matches the holder to their policies. */
   nric: string
@@ -61,8 +61,7 @@ export const ACCOUNTS: Account[] = [
     authMethod: 'account',
     verified: true,
     salutation: 'MR',
-    firstName: 'CHRIS',
-    lastName: 'WONG JUN JIE',
+    fullName: 'CHRIS WONG JUN JIE',
     dob: '01/01/1989',
     nric: 'S1234567D',
     phone: '91234567',
@@ -82,8 +81,7 @@ export const ACCOUNTS: Account[] = [
     authMethod: 'singpass',
     verified: true,
     salutation: 'MS',
-    firstName: 'MEI LING',
-    lastName: 'TAN HUI ZHEN',
+    fullName: 'MEI LING TAN HUI ZHEN',
     dob: '14/07/1992',
     nric: 'S8912345A',
     phone: '98765432',
@@ -103,8 +101,7 @@ export const ACCOUNTS: Account[] = [
     authMethod: 'account',
     verified: true,
     salutation: 'MR',
-    firstName: 'RAVI',
-    lastName: 'KUMAR',
+    fullName: 'RAVI KUMAR',
     dob: '23/11/1978',
     nric: 'S7654321B',
     phone: '81234567',
@@ -124,8 +121,7 @@ export const ACCOUNTS: Account[] = [
     authMethod: 'account',
     verified: true,
     salutation: 'MRS',
-    firstName: 'AISYAH',
-    lastName: 'RAHMAN',
+    fullName: 'AISYAH RAHMAN',
     dob: '05/03/1985',
     nric: 'G4567890X',
     phone: '71234567',
@@ -146,8 +142,7 @@ export const ACCOUNTS: Account[] = [
     authMethod: 'singpass',
     verified: true,
     salutation: 'MDM',
-    firstName: 'GRACE',
-    lastName: 'SIM EN QI',
+    fullName: 'GRACE SIM EN QI',
     dob: '17/12/1971',
     nric: 'S2244668E',
     phone: '93304488',
@@ -167,8 +162,7 @@ export const ACCOUNTS: Account[] = [
     authMethod: 'singpass',
     verified: true,
     salutation: 'MS',
-    firstName: 'NADIA',
-    lastName: 'LIM HUI TING',
+    fullName: 'NADIA LIM HUI TING',
     dob: '09/09/1995',
     nric: 'T0011223J',
     phone: '92220000',
@@ -228,8 +222,7 @@ export function draftAccount(input: Partial<Account> & { email: string }): Accou
     // A fresh sign-up is a prospect until they verify with Singpass.
     verified: false,
     salutation: 'MR',
-    firstName: 'there',
-    lastName: '',
+    fullName: 'there',
     dob: '',
     nric: '',
     phone: '',
@@ -245,7 +238,7 @@ export function draftAccount(input: Partial<Account> & { email: string }): Accou
   }
 }
 
-export const fullName = (a: Account) => `${a.firstName} ${a.lastName}`.trim()
+export const fullName = (a: Account) => a.fullName.trim()
 
 /**
  * Names are stored exactly as entered — the profile form and MyInfo both
@@ -258,8 +251,11 @@ export const titleCaseName = (value: string) =>
     .toLowerCase()
     .replace(/(^|[\s'-])([a-z])/g, (_, sep: string, ch: string) => sep + ch.toUpperCase())
 
-export const initials = (a: Account) =>
-  `${a.firstName[0] ?? ''}${a.lastName[0] ?? ''}`.toUpperCase()
+/** First letters of the first two words of the full name — e.g. "GRACE SIM EN QI" → "GS". */
+export const initials = (a: Account) => {
+  const words = a.fullName.trim().split(/\s+/)
+  return `${words[0]?.[0] ?? ''}${words[1]?.[0] ?? ''}`.toUpperCase()
+}
 
 /* ─── Singpass ───────────────────────────────────────────────────
    What the Singpass App hands back after authentication. Grace holds
@@ -267,8 +263,7 @@ export const initials = (a: Account) =>
    the first-time path; afterwards she is a returning user. */
 export const SINGPASS_IDENTITY = {
   salutation: 'MDM',
-  firstName: 'GRACE',
-  lastName: 'SIM EN QI',
+  fullName: 'GRACE SIM EN QI',
   dob: '17/12/1971',
   nric: 'S2244668E',
   email: 'grace.sim@gmail.com',
