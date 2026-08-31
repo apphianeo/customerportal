@@ -30,7 +30,9 @@ export type PolicyDetailData = {
   policyNumber: string
   policyFields: Field[]
   policyholderFields: Field[]
-  insuredGroups: { title: string; fields: Field[] }[]
+  /** `self` marks a group whose insured person is the account holder — the page
+      fills its Name/NRIC/Date of birth from the signed-in account. */
+  insuredGroups: { title: string; fields: Field[]; self?: boolean }[]
   documents: DocumentRow[]
   payments: PaymentRow[]
   /** Total payment records. Pagination only shows when this exceeds 10 (one page). */
@@ -75,8 +77,10 @@ const PAYMENTS: PaymentRow[] = [
   { date: '20/02/2026', type: 'Credit card', premium: 'S$245.80', last4: '9111' },
 ]
 
+// The insured adult is the policyholder — filled from the account at render.
 const INSURED_ADULT = {
   title: 'Insured 1 (Adult)',
+  self: true,
   fields: [
     { label: 'Name', value: 'CHRIS WONG' },
     { label: 'NRIC/FIN', value: 'S1234567A' },
@@ -104,7 +108,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
       { label: 'Policy expiry date', value: '13/10/2026' },
       { label: 'Payment method', value: { kind: 'payment', last4: '9111' } },
       { label: 'Payment terms', value: 'Single Payment' },
-      { label: 'Premium amount', value: '$265.20' },
+      { label: 'Premium amount', value: 'S$265.20' },
       { label: 'Promo code', value: '-' },
       { label: 'Add-on', value: { kind: 'expandable', text: TRAVEL_ADD_ONS } },
     ],
@@ -128,9 +132,9 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
       { label: 'Product', value: 'UniCar' },
       { label: 'Policy no.', value: 'DHOPF160012132600' },
       { label: 'Plan', value: 'Comprehensive (Value)' },
-      { label: 'Policy start date', value: '18/04/2029' },
-      { label: 'Policy end date', value: '19/04/2026' },
-      { label: 'Premium amount', value: 'S$1350.21' },
+      { label: 'Policy start date', value: '01/10/2025' },
+      { label: 'Policy end date', value: '30/09/2026' },
+      { label: 'Premium amount', value: 'S$1,350.21' },
       { label: 'Payment method', value: { kind: 'payment', last4: '9111' } },
       { label: 'Payment terms', value: 'Single Payment' },
       { label: 'Promo code', value: '-' },
@@ -140,6 +144,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
     insuredGroups: [
       {
         title: 'Insured driver 1',
+        self: true,
         fields: [
           { label: 'Name', value: 'Chris Wong' },
           { label: 'NRIC/FIN', value: 'S1234567A' },
@@ -182,23 +187,23 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
       { label: 'Plan', value: 'Value' },
       { label: 'Helper type', value: 'New' },
       { label: 'Policy duration', value: '26 months' },
-      { label: 'Premium amount', value: 'S$1350.21' },
+      { label: 'Premium amount', value: 'S$1,350.21' },
       { label: 'Payment method', value: { kind: 'payment', last4: '9111' } },
       { label: 'Payment terms', value: 'Single Payment' },
       { label: 'Promo code', value: '-' },
       { label: 'Add-on', value: '-' },
-      { label: 'Policy start date', value: '18/04/2029' },
-      { label: 'Policy end date', value: '19/04/2026' },
+      { label: 'Policy start date', value: '20/06/2025' },
+      { label: 'Policy end date', value: '19/08/2027' },
     ],
     policyholderFields: POLICYHOLDER,
     insuredGroups: [
       {
         title: 'Details of helper',
         fields: [
-          { label: 'Name', value: 'JOHN DOE' },
-          { label: 'FIN', value: 'S1234567A' },
+          { label: 'Name', value: 'SITI NURHALIZA' },
+          { label: 'FIN', value: 'G7418529K' },
           { label: "Helper's age", value: '23 - 50 years old' },
-          { label: 'Date of birth', value: '12/02/1966' },
+          { label: 'Date of birth', value: '05/06/1992' },
           { label: 'Nationality', value: 'Indonesia' },
         ],
       },
@@ -223,12 +228,12 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
       { label: 'Plan', value: 'Value' },
       { label: 'Helper name', value: 'RINA DEWI' },
       { label: 'Work permit no.', value: 'W7654321N' },
-      { label: 'Security bond', value: '$5,000.00' },
-      { label: 'Policy start date', value: '12/11/2025' },
-      { label: 'Policy expiry date', value: '15/11/2025' },
+      { label: 'Security bond', value: 'S$5,000.00' },
+      { label: 'Policy start date', value: '01/11/2023' },
+      { label: 'Policy expiry date', value: '31/10/2025' },
       { label: 'Payment method', value: { kind: 'payment', last4: '9111' } },
       { label: 'Payment terms', value: 'Annual' },
-      { label: 'Premium amount', value: '$35.20' },
+      { label: 'Premium amount', value: 'S$385.00' },
       { label: 'Promo code', value: 'None' },
       { label: 'Add-on', value: 'None' },
     ],
@@ -264,13 +269,13 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
       { label: 'Plan', value: 'Premier' },
       { label: 'Property type', value: 'HDB — 4 Room' },
       { label: 'Property address', value: { kind: 'expandable', text: '1 ORCHARD RD, #02-01, SINGAPORE 238824' } },
-      { label: 'Sum insured (renovation)', value: '$100,000.00' },
-      { label: 'Sum insured (contents)', value: '$50,000.00' },
+      { label: 'Sum insured (renovation)', value: 'S$100,000.00' },
+      { label: 'Sum insured (contents)', value: 'S$50,000.00' },
       { label: 'Policy start date', value: '01/03/2026' },
       { label: 'Policy expiry date', value: '28/02/2027' },
       { label: 'Payment method', value: { kind: 'payment', last4: '9111' } },
       { label: 'Payment terms', value: 'Annual' },
-      { label: 'Premium amount', value: '$180.00' },
+      { label: 'Premium amount', value: 'S$180.00' },
       { label: 'Promo code', value: 'None' },
       { label: 'Add-on', value: 'None' },
     ],
@@ -304,13 +309,13 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
       { label: 'Policy no.', value: 'PNF320104124A26' },
       { label: 'Plan', value: 'Enhanced' },
       { label: 'Coverage type', value: 'Individual' },
-      { label: 'Accidental death benefit', value: '$200,000.00' },
-      { label: 'Medical expenses limit', value: '$10,000.00' },
+      { label: 'Accidental death benefit', value: 'S$200,000.00' },
+      { label: 'Medical expenses limit', value: 'S$10,000.00' },
       { label: 'Policy start date', value: '01/04/2026' },
       { label: 'Policy expiry date', value: '31/03/2027' },
       { label: 'Payment method', value: { kind: 'payment', last4: '9111' } },
       { label: 'Payment terms', value: 'Annual' },
-      { label: 'Premium amount', value: '$120.00' },
+      { label: 'Premium amount', value: 'S$120.00' },
       { label: 'Promo code', value: 'None' },
       { label: 'Add-on', value: 'None' },
     ],

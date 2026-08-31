@@ -289,6 +289,27 @@ function contactFromAccount(a: Account): Field[] {
   ]
 }
 
+/* For insured groups flagged `self` (the insured is the policyholder), fill the
+   identity fields from the account and leave the rest of the group untouched. */
+function applyAccountToInsured(
+  groups: PolicyDetailData['insuredGroups'],
+  account?: Account,
+): PolicyDetailData['insuredGroups'] {
+  if (!account) return groups
+  return groups.map(group => {
+    if (!group.self) return group
+    return {
+      ...group,
+      fields: group.fields.map(f => {
+        if (f.label === 'Name') return { ...f, value: account.fullName }
+        if (f.label === 'NRIC/FIN' || f.label === 'FIN') return { ...f, value: account.nric }
+        if (f.label === 'Date of birth') return { ...f, value: account.dob }
+        return f
+      }),
+    }
+  })
+}
+
 /* ─── Main page ──────────────────────────────────────────── */
 type Props = {
   slug?: string
@@ -303,6 +324,7 @@ export default function PolicyDetailPage({ slug, account, onNavigateToDashboard,
   // Identity blocks follow the signed-in customer, not the demo data.
   const policyholderFields = account ? policyholderFromAccount(account) : policy?.policyholderFields ?? []
   const contactFields = account ? contactFromAccount(account) : policy?.contactFields ?? []
+  const insuredGroups = policy ? applyAccountToInsured(policy.insuredGroups, account) : []
 
   function goToTab(key: TabKey) {
     setActiveTab(key)
@@ -429,7 +451,7 @@ export default function PolicyDetailPage({ slug, account, onNavigateToDashboard,
         </SectionCard>
 
         <SectionCard id="section-insured" title="Insured details">
-          {policy.insuredGroups.map(group => (
+          {insuredGroups.map(group => (
             <div key={group.title} className="flex flex-col gap-[12px] w-full">
               <p className="text-[16px] font-semibold text-[#212121] m-0">{group.title}</p>
               <FieldGrid fields={group.fields} />
