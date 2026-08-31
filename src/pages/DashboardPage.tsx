@@ -7,7 +7,8 @@ import { titleCaseName } from '../data/accounts'
 const GUEST_NAME = 'there'
 
 type Props = {
-  firstName?: string
+  /** The customer's full name — shown in the greeting. */
+  name?: string
   /** False → prospect dashboard: no policies matched this NRIC/FIN. */
   hasPolicies?: boolean
   onNavigateToPolicies?: () => void
@@ -16,13 +17,13 @@ type Props = {
 }
 
 export default function DashboardPage({
-  firstName = GUEST_NAME,
+  name = GUEST_NAME,
   hasPolicies = true,
   onNavigateToPolicies,
   onSelectPolicy,
   onNavigateToHelp,
 }: Props) {
-  const greetingName = firstName === GUEST_NAME ? GUEST_NAME : titleCaseName(firstName)
+  const greetingName = name === GUEST_NAME ? GUEST_NAME : titleCaseName(name)
 
   return (
     <div className="bg-bg-page min-h-full">

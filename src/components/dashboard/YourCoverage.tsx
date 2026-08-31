@@ -106,6 +106,18 @@ const POLICIES: PolicyDetail[] = [
   },
 ]
 
+/**
+ * The coverage period reads "start - end (duration)"; a policy's expiry is the
+ * end date, formatted D/M/YYYY. Returned as a timestamp so it can be sorted.
+ */
+function parseExpiry(coveragePeriod: string): number {
+  const end = coveragePeriod.split('-')[1] ?? ''
+  const match = end.match(/(\d+)\/(\d+)\/(\d+)/)
+  if (!match) return Infinity
+  const [, day, month, year] = match
+  return new Date(Number(year), Number(month) - 1, Number(day)).getTime()
+}
+
 type FilterOption = {
   key: FilterKey
   label: string
@@ -132,11 +144,34 @@ type Props = {
 export default function YourCoverage({ onViewPolicies, onSelectPolicy, hasPolicies = true }: Props) {
   const [activeFilter, setActiveFilter] = useState<FilterKey>('all')
 
-  // No policies on file → the header, counts and chips all read zero
-  const policies = hasPolicies ? POLICIES : []
+  // No policies on file → the header, counts and chips all read zero.
+  // Otherwise order the cards by expiration date, soonest first.
+  const policies = hasPolicies
+    ? [...POLICIES].sort((a, b) => parseExpiry(a.coveragePeriod) - parseExpiry(b.coveragePeriod))
+    : []
 
   const countFor = (key: FilterKey) =>
     key === 'all' ? policies.length : policies.filter(p => p.category === key).length
+
+  // Soonest expiry within a category — Infinity when it holds no policies.
+  const categoryExpiry = (key: FilterKey) => {
+    const inCategory = policies.filter(p => p.category === key)
+    return inCategory.length
+      ? Math.min(...inCategory.map(p => parseExpiry(p.coveragePeriod)))
+      : Infinity
+  }
+
+  // Category chips follow the same soonest-expiry order as the cards. Empty
+  // categories — and the no-policies case, where every category is empty — fall
+  // back to alphabetical. "All" always leads.
+  const orderedFilters = [
+    FILTERS[0],
+    ...FILTERS.slice(1).sort((a, b) => {
+      const ea = categoryExpiry(a.key)
+      const eb = categoryExpiry(b.key)
+      return ea !== eb ? ea - eb : a.label.localeCompare(b.label)
+    }),
+  ]
 
   const visible = activeFilter === 'all'
     ? policies
@@ -159,7 +194,7 @@ export default function YourCoverage({ onViewPolicies, onSelectPolicy, hasPolici
 
       {/* ── Filter pills — scrollable on mobile ── */}
       <div className="flex gap-[12px] overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
-        {FILTERS.map(({ key, label, icon }) => {
+        {orderedFilters.map(({ key, label, icon }) => {
           const count = countFor(key)
           const isActive = activeFilter === key
           const isEmpty = count === 0 && key !== 'all'

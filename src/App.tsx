@@ -9,13 +9,13 @@ import {
 } from 'react-router-dom'
 import './index.css'
 import DashboardLayout from './components/layout/DashboardLayout'
-import AuthFlow, { SingpassLogin, SingpassPrompt } from './pages/auth/AuthFlow'
+import AuthFlow from './pages/auth/AuthFlow'
 import DashboardPage from './pages/DashboardPage'
 import PoliciesPage from './pages/PoliciesPage'
 import PolicyDetailPage from './pages/PolicyDetailPage'
 import ManageAccountPage from './pages/ManageAccountPage'
 import HelpSupportPage from './pages/HelpSupportPage'
-import { isPolicyholder, verifyAccount, type Account } from './data/accounts'
+import { fullName, isPolicyholder, type Account } from './data/accounts'
 
 export type AuthMethod = 'singpass' | 'account'
 
@@ -23,23 +23,16 @@ export type AuthMethod = 'singpass' | 'account'
 const canSeePolicies = (account: Account) => account.verified && isPolicyholder(account.nric)
 
 /* ─── Route-aware page wrappers ───────────────────────────── */
-function DashboardRoute({ account, onStartVerify }: { account: Account; onStartVerify: () => void }) {
+function DashboardRoute({ account }: { account: Account }) {
   const navigate = useNavigate()
   return (
-    <>
-      <DashboardPage
-        firstName={account.firstName}
-        hasPolicies={canSeePolicies(account)}
-        onNavigateToPolicies={() => navigate('/policies')}
-        onSelectPolicy={slug => navigate(`/policies/${slug}`)}
-        onNavigateToHelp={() => navigate('/help')}
-      />
-      {/* Prospect prompt: an unverified account must verify with Singpass before
-          any policies can be matched and shown. Blocking by design — no dismiss. */}
-      {!account.verified && (
-        <SingpassPrompt onAuthenticate={onStartVerify} />
-      )}
-    </>
+    <DashboardPage
+      name={fullName(account)}
+      hasPolicies={canSeePolicies(account)}
+      onNavigateToPolicies={() => navigate('/policies')}
+      onSelectPolicy={slug => navigate(`/policies/${slug}`)}
+      onNavigateToHelp={() => navigate('/help')}
+    />
   )
 }
 
@@ -52,13 +45,6 @@ function PoliciesRoute({ account }: { account: Account }) {
       onNavigateToDashboard={() => navigate('/dashboard')}
     />
   )
-}
-
-/** Post-login identity check for a manual (unverified) account: just the
-    Singpass QR scan — no Myinfo consent screen, since we are only confirming
-    who they are, not pulling their profile. */
-function VerifyIdentity({ onVerified }: { onVerified: () => void }) {
-  return <SingpassLogin onScan={onVerified} />
 }
 
 function PolicyDetailRoute() {
@@ -107,8 +93,6 @@ function LoginRoute({ onAuthenticated }: { onAuthenticated: (account: Account) =
 function AppRoutes() {
   /** The signed-in account, or null when signed out. */
   const [account, setAccount] = useState<Account | null>(null)
-  /** True while an unverified account is completing the Singpass check. */
-  const [verifying, setVerifying] = useState(false)
 
   function authenticate(signedIn: Account) {
     setAccount(signedIn)
@@ -116,7 +100,6 @@ function AppRoutes() {
 
   function logout() {
     setAccount(null)
-    setVerifying(false)
   }
 
   if (!account) {
@@ -129,25 +112,10 @@ function AppRoutes() {
     )
   }
 
-  // Full-screen Singpass verification, launched from the prospect dashboard.
-  if (verifying) {
-    return (
-      <VerifyIdentity
-        onVerified={() => {
-          // Adopt the Singpass-verified identity (and verified flag) so the
-          // dashboard re-checks the policy match and unlocks active policies.
-          const verified = verifyAccount(account.email)
-          setAccount(verified ? { ...verified } : { ...account, verified: true })
-          setVerifying(false)
-        }}
-      />
-    )
-  }
-
   return (
     <Routes>
       <Route element={<DashboardLayout account={account} onLogout={logout} />}>
-        <Route path="/dashboard" element={<DashboardRoute account={account} onStartVerify={() => setVerifying(true)} />} />
+        <Route path="/dashboard" element={<DashboardRoute account={account} />} />
         <Route path="/policies" element={<PoliciesRoute account={account} />} />
         <Route path="/policies/:slug" element={<PolicyDetailRoute />} />
         <Route path="/account" element={<AccountRoute account={account} onLogout={logout} />} />

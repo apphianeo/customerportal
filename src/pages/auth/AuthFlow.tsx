@@ -1012,42 +1012,6 @@ function VerifyIdentity({ onBack, onContinue }: { onBack: () => void; onContinue
   )
 }
 
-/** Identity-verification dialog shown to an unverified account on the
-    dashboard. Blocking by design — there is no dismiss: the user either
-    verifies with Singpass or logs out. */
-export function SingpassPrompt({
-  onAuthenticate,
-  title = 'Verify identity',
-  subtitle = 'Verify your identity with Singpass to view your policies (if any). This is a one-time step to keep your account secure.',
-}: {
-  onAuthenticate: () => void
-  title?: string
-  subtitle?: string
-}) {
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-label={title}
-    >
-      <div className="bg-white rounded-[12px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] p-[24px] w-[500px] max-w-full flex flex-col gap-[24px]">
-        <div className="flex flex-col gap-[12px] w-full">
-          <h2 className="font-h2-title font-semibold text-[#212121] m-0">{title}</h2>
-          <p className="text-[16px] leading-[1.5] text-[#212121] m-0">{subtitle}</p>
-        </div>
-        <button
-          onClick={onAuthenticate}
-          aria-label="Verify with Singpass"
-          className="w-full h-[48px] bg-[#d93841] rounded-[8px] border-0 p-0 cursor-pointer flex items-center justify-center overflow-hidden"
-        >
-          <img src={singpassVerifyBtn} alt="" className="h-[40px] w-auto" />
-        </button>
-      </div>
-    </div>
-  )
-}
-
 /* ─── "No account linked" dialog ───────────────────────────────
    Shown on the landing when a Singpass or login-ID sign-in matches no
    account. Both variants offer the same next step — create an account with
