@@ -629,7 +629,6 @@ export function SingpassLogin({ onScan }: { onScan: () => void }) {
 const SINGPASS_FIELDS = [
   'Name',
   'NRIC/FIN',
-  'Email Address',
   'Mobile Number',
   'Date of Birth',
   'Registered Address',
