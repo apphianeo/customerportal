@@ -13,17 +13,13 @@ export type Field = { label: string; value: FieldValue }
 
 export type DocumentRow = {
   name: string
-  type: string
-  premium: string
-  last4: string
-  status: 'success' | 'rejected'
+  date: string
 }
 export type PaymentRow = {
   date: string
   type: string
   premium: string
   last4: string
-  status: 'success' | 'rejected'
 }
 
 export type PolicyDetailData = {
@@ -55,15 +51,13 @@ const POLICYHOLDER: Field[] = [
   { label: 'Name', value: 'CHRIS WONG' },
   { label: 'NRIC/FIN', value: 'S1234567A' },
   { label: 'Date of birth', value: '12/02/1966' },
-  { label: 'Email', value: 'chriswong@gmail.com' },
-  { label: 'Mobile number', value: '+65 91234567' },
-  { label: 'Address', value: { kind: 'expandable', text: '1 ORCHARD RD, #02-01, SINGAPORE 238824' } },
 ]
 
+// Email, mobile and address live here (moved out of policyholder details).
 const CONTACT: Field[] = [
   { label: 'Mobile number', value: '+65 91234567' },
   { label: 'Email address', value: 'chriswong@gmail.com' },
-  { label: 'Mailing address', value: { kind: 'expandable', text: '1 ORCHARD RD, #02-01, SINGAPORE 238824' } },
+  { label: 'Address', value: { kind: 'expandable', text: '1 ORCHARD RD, #02-01, SINGAPORE 238824' } },
 ]
 
 const AGENT: Field[] = [
@@ -73,16 +67,16 @@ const AGENT: Field[] = [
 ]
 
 const DOCUMENTS: DocumentRow[] = [
-  { name: 'Policy Schedule', type: 'Statement', premium: 'S$245.80', last4: '9111', status: 'success' },
-  { name: 'Endorsement', type: 'Statement', premium: 'S$1,250.00', last4: '9111', status: 'rejected' },
+  { name: 'Policy Schedule', date: '20/01/2026' },
+  { name: 'Endorsement', date: '20/01/2026' },
 ]
 
 const PAYMENTS: PaymentRow[] = [
-  { date: '20 Feb 2026', type: 'AXS', premium: 'S$245.80', last4: '9111', status: 'success' },
-  { date: '15 Jan 2026', type: 'AXS', premium: 'S$1,250.00', last4: '9111', status: 'rejected' },
-  { date: '8 Nov 2025', type: 'AXS', premium: 'S$1,250.00', last4: '9111', status: 'rejected' },
-  { date: '3 Jan 2025', type: 'AXS', premium: 'S$1,250.00', last4: '9111', status: 'rejected' },
-  { date: '22 Aug 2024', type: 'AXS', premium: 'S$1,250.00', last4: '9111', status: 'rejected' },
+  { date: '20/02/2026', type: 'Credit card', premium: 'S$245.80', last4: '9111' },
+  { date: '15/01/2026', type: 'Credit card', premium: 'S$1,250.00', last4: '9111' },
+  { date: '08/11/2025', type: 'Credit card', premium: 'S$1,250.00', last4: '9111' },
+  { date: '03/01/2025', type: 'Credit card', premium: 'S$1,250.00', last4: '9111' },
+  { date: '22/08/2024', type: 'Credit card', premium: 'S$1,250.00', last4: '9111' },
 ]
 
 const INSURED_ADULT = {

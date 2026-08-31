@@ -4,14 +4,26 @@ import { ChevronRightIcon, ChevronDownIcon, ChevronUpIcon } from '../components/
 import { getPolicyDetail, type Field, type FieldValue, type PolicyDetailData } from '../data/policyDetails'
 import type { PolicyStatus } from '../data/policies'
 
+/* Official Mastercard brand mark — two interlocking circles with the wordmark. */
 function MastercardIcon() {
   return (
-    <svg width="25" height="20" viewBox="0 0 152 108" fill="none" aria-hidden="true">
-      <rect width="152" height="108" rx="6" fill="white" />
-      <rect x="0.5" y="0.5" width="151" height="107" rx="5.5" stroke="black" strokeOpacity="0.09" />
-      <circle cx="60" cy="54" r="36" fill="#EB001B" />
-      <circle cx="92" cy="54" r="36" fill="#F79E1B" />
-      <path d="M76 27.4c7.3 5.5 12 14.1 12 23.8s-4.7 18.3-12 23.8c-7.3-5.5-12-14.1-12-23.8S68.7 32.9 76 27.4z" fill="#FF5F00" />
+    <svg width="34" height="23" viewBox="0 0 131 90" fill="none" role="img" aria-label="Mastercard">
+      <circle cx="48" cy="32" r="30" fill="#EB001B" />
+      <circle cx="83" cy="32" r="30" fill="#F79E1B" />
+      {/* Overlap of the two circles */}
+      <path d="M65.5 8a30 30 0 0 1 0 48 30 30 0 0 1 0-48Z" fill="#FF5F00" />
+      <text
+        x="65.5"
+        y="84"
+        textAnchor="middle"
+        fontFamily="Helvetica, Arial, sans-serif"
+        fontSize="20"
+        fontWeight="500"
+        letterSpacing="-0.5"
+        fill="#1A1A1A"
+      >
+        mastercard
+      </text>
     </svg>
   )
 }
@@ -19,9 +31,7 @@ function MastercardIcon() {
 function PaymentMethodValue({ last4 }: { last4: string }) {
   return (
     <span className="flex items-center gap-[8px]">
-      <span className="border border-[rgba(0,0,0,0.09)] rounded-[2px] px-[4px] py-[2px] flex items-center justify-center">
-        <MastercardIcon />
-      </span>
+      <MastercardIcon />
       {/* No size class — inherits 16px in the field grid, 14px inside table cells */}
       <span className="text-[#212121] leading-[1.5]">****{last4}</span>
     </span>
@@ -179,15 +189,6 @@ function DataTable({ columns, rows }: { columns: string[]; rows: React.ReactNode
   )
 }
 
-function StatusBadge({ status }: { status: 'success' | 'rejected' }) {
-  const styles = status === 'success' ? 'bg-[#ecfdf5] text-[#08754f]' : 'bg-[#fef2f2] text-[#dc2626]'
-  return (
-    <span className={`inline-flex items-center px-[8px] py-[4px] rounded-[24px] text-xs font-medium ${styles}`}>
-      {status === 'success' ? 'Success' : 'Rejected'}
-    </span>
-  )
-}
-
 function PolicyStatusTag({ status, label }: { status: PolicyStatus; label: string }) {
   const styles: Record<PolicyStatus, string> = {
     'in-force': 'bg-[#ecfdf5] text-[#08754f]',
@@ -258,17 +259,6 @@ const downloadIcon = (
     className="bg-transparent border-0 p-0 cursor-pointer flex items-center"
   >
     <DownloadOutlined style={{ fontSize: 16, color: '#6E6E6E' }} />
-  </button>
-)
-
-/* Failed payments have no receipt to download — disabled, and the cursor says so. */
-const downloadIconMuted = (
-  <button
-    disabled
-    aria-label="Download unavailable"
-    className="bg-transparent border-0 p-0 flex items-center cursor-not-allowed"
-  >
-    <DownloadOutlined style={{ fontSize: 16, color: '#BDBDBD' }} />
   </button>
 )
 
@@ -397,7 +387,7 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
         {/* ── Sections ── */}
         <SectionCard id="section-policy" title="Policy details">
           <FieldGrid fields={policy.policyFields} />
-          <p className="text-[14px] text-[#212121] leading-[1.5] m-0">
+          <p className="text-[14px] text-[#6e6e6e] leading-[1.5] m-0">
             If you'd like more information about policy, please refer to the{' '}
             <a href="#" className="text-text-secondary underline">policy wording</a>.
           </p>
@@ -418,14 +408,11 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
 
         <SectionCard id="section-documents" title="Documents">
           <DataTable
-            columns={['Document', 'Type', 'Premium', 'Payment Method', 'Status', 'Action']}
+            columns={['Document', 'Date', 'Action']}
             rows={policy.documents.map(d => [
               d.name,
-              d.type,
-              d.premium,
-              <PaymentMethodValue key="pm" last4={d.last4} />,
-              <StatusBadge key="st" status={d.status} />,
-              d.status === 'success' ? downloadIcon : downloadIconMuted,
+              d.date,
+              downloadIcon,
             ])}
           />
           <p className="text-[14px] text-[#949494] m-0">
@@ -435,14 +422,13 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
 
         <SectionCard id="section-payments" title="Payment">
           <DataTable
-            columns={['Transaction Date', 'Type', 'Payment Method', 'Premium', 'Status', 'Action']}
+            columns={['Transaction Date', 'Type', 'Payment Method', 'Premium', 'Action']}
             rows={policy.payments.map(p => [
               p.date,
               p.type,
               <PaymentMethodValue key="pm" last4={p.last4} />,
               p.premium,
-              <StatusBadge key="st" status={p.status} />,
-              p.status === 'success' ? downloadIcon : downloadIconMuted,
+              downloadIcon,
             ])}
           />
           {/* Count sits left; pagination is centred in the card at all widths */}
@@ -468,7 +454,7 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
           <FieldGrid fields={policy.agentFields} />
         </SectionCard>
 
-        <p className="text-[14px] text-[#212121] leading-[1.5] m-0">
+        <p className="text-[14px] text-[#6e6e6e] leading-[1.5] m-0">
           For any amendments to your policy, please contact us{' '}
           <a
             href="https://api.whatsapp.com/send/?phone=6580814843&text&type=phone_number&app_absent=0"
