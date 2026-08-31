@@ -33,7 +33,7 @@ export type PolicyDetailData = {
   insuredGroups: { title: string; fields: Field[] }[]
   documents: DocumentRow[]
   payments: PaymentRow[]
-  /** Total payment records — the table shows the first page of 5. */
+  /** Total payment records. Pagination only shows when this exceeds 10 (one page). */
   paymentsTotal: number
   contactFields: Field[]
   agentFields: Field[]
@@ -116,7 +116,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
     insuredGroups: [INSURED_ADULT],
     documents: DOCUMENTS,
     payments: PAYMENTS,
-    paymentsTotal: 10,
+    paymentsTotal: 5,
     contactFields: CONTACT,
     agentFields: AGENT,
   },
@@ -168,7 +168,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
     ],
     documents: DOCUMENTS,
     payments: PAYMENTS,
-    paymentsTotal: 10,
+    paymentsTotal: 5,
     contactFields: CONTACT,
     agentFields: AGENT,
   },
@@ -209,7 +209,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
     ],
     documents: DOCUMENTS,
     payments: PAYMENTS,
-    paymentsTotal: 10,
+    paymentsTotal: 5,
     contactFields: CONTACT,
     agentFields: AGENT,
   },
@@ -250,7 +250,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
     ],
     documents: DOCUMENTS,
     payments: PAYMENTS,
-    paymentsTotal: 10,
+    paymentsTotal: 5,
     contactFields: CONTACT,
     agentFields: AGENT,
   },
@@ -291,7 +291,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
     ],
     documents: DOCUMENTS,
     payments: PAYMENTS,
-    paymentsTotal: 10,
+    paymentsTotal: 5,
     contactFields: CONTACT,
     agentFields: AGENT,
   },
@@ -322,7 +322,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
     insuredGroups: [INSURED_ADULT],
     documents: DOCUMENTS,
     payments: PAYMENTS,
-    paymentsTotal: 10,
+    paymentsTotal: 5,
     contactFields: CONTACT,
     agentFields: AGENT,
   },

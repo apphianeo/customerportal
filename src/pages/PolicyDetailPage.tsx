@@ -431,15 +431,22 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
               downloadIcon,
             ])}
           />
-          {/* Count sits left; pagination is centred in the card at all widths */}
-          <div className="relative flex flex-col sm:block gap-[12px] items-stretch">
-            <p className="text-[14px] text-[#949494] m-0 text-left sm:absolute sm:left-0 sm:top-1/2 sm:-translate-y-1/2">
+          {/* Pagination only appears once the history spans more than one page
+              (10 rows per page); otherwise just the count is shown. */}
+          {policy.paymentsTotal > 10 ? (
+            <div className="relative flex flex-col sm:block gap-[12px] items-stretch">
+              <p className="text-[14px] text-[#949494] m-0 text-left sm:absolute sm:left-0 sm:top-1/2 sm:-translate-y-1/2">
+                Showing 1-{policy.payments.length} of {policy.paymentsTotal}
+              </p>
+              <div className="flex justify-center">
+                <Pagination />
+              </div>
+            </div>
+          ) : (
+            <p className="text-[14px] text-[#949494] m-0">
               Showing 1-{policy.payments.length} of {policy.paymentsTotal}
             </p>
-            <div className="flex justify-center">
-              <Pagination />
-            </div>
-          </div>
+          )}
         </SectionCard>
 
         <SectionCard
