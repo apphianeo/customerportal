@@ -149,8 +149,7 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
   // Personal — editable unless the profile was sourced from Singpass/MyInfo.
   // The NRIC additionally locks once verified (see nricLocked below).
   // Name and address fields are upper case throughout, seeded values included
-  const [first, setFirst] = useState(seed.firstName.toUpperCase())
-  const [last, setLast] = useState(seed.lastName.toUpperCase())
+  const [fullName, setFullName] = useState(`${seed.firstName} ${seed.lastName}`.trim().toUpperCase())
   const [dob, setDob] = useState(seed.dob)
   const [nric, setNric] = useState(seed.nric)
 
@@ -199,8 +198,7 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
   usePostalAutofill({ postal: mailPostal, address: mailAddr, setAddress: setMailAddr })
 
   function retrieveFromMyInfo() {
-    setFirst(SINGPASS_IDENTITY.firstName.toUpperCase())
-    setLast(SINGPASS_IDENTITY.lastName.toUpperCase())
+    setFullName(`${SINGPASS_IDENTITY.firstName} ${SINGPASS_IDENTITY.lastName}`.trim().toUpperCase())
     setDob(SINGPASS_IDENTITY.dob)
     setNric(SINGPASS_IDENTITY.nric)
     setResPostal(SINGPASS_IDENTITY.residentialPostal)
@@ -274,22 +272,14 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
         >
           <div className="flex flex-col gap-[16px] w-full">
             <span className="text-[14px] font-semibold text-[#212121] leading-[1.5]">Personal details</span>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
-              <Field
-                label="First name"
-                value={first}
-                onChange={v => setFirst(v.toUpperCase())}
-                disabled={locked}
-                autoCapitalize="characters"
-              />
-              <Field
-                label="Last name"
-                value={last}
-                onChange={v => setLast(v.toUpperCase())}
-                disabled={locked}
-                autoCapitalize="characters"
-              />
-            </div>
+            <Field
+              label="Full name"
+              value={fullName}
+              onChange={v => setFullName(v.toUpperCase())}
+              disabled={locked}
+              placeholder="Enter full name"
+              autoCapitalize="characters"
+            />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
               <DatePicker label="Date of birth" value={dob} onChange={setDob} disabled={locked} />
               <Field label="NRIC/FIN" value={nric} onChange={setNric} disabled={nricLocked} />

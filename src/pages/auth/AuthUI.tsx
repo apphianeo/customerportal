@@ -458,6 +458,8 @@ const MENU_GAP = 12
 const MENU_EDGE = 8
 /** Below this the list is not worth showing, so flipping wins over shrinking. */
 const MENU_MIN_HEIGHT = 160
+/** Fixed dropdown height — the list scrolls vertically inside it. */
+const MENU_HEIGHT = 320
 
 function CountrySelect({
   country,
@@ -472,7 +474,7 @@ function CountrySelect({
   const menuRef = useRef<HTMLDivElement>(null)
   const searchRef = useRef<HTMLInputElement>(null)
   /** Viewport coords — the menu is portalled out so cards cannot clip it. */
-  const [pos, setPos] = useState({ top: 0, bottom: 0, left: 0, width: 0, maxHeight: 240, up: false })
+  const [pos, setPos] = useState({ top: 0, bottom: 0, left: 0, width: 0, maxHeight: MENU_HEIGHT, up: false })
 
   const selected = COUNTRIES.find(c => c.code === country) ?? COUNTRIES[0]
   const matches = COUNTRIES.filter(c =>
@@ -489,9 +491,9 @@ function CountrySelect({
     const width = Math.min(field.width, window.innerWidth - MENU_EDGE * 2)
 
     // Drop down while the viewport has room for a usable list; otherwise flip
-    // above the field. Either way the height is capped to the space that is
-    // actually there, so the list scrolls inside itself rather than running
-    // off the bottom of the page and over the footer.
+    // above the field. The dropdown is a fixed 320px tall and the list scrolls
+    // inside it, but on a short viewport we still cap to the space that is
+    // actually there so it never runs off the page and over the footer.
     const spaceBelow = window.innerHeight - r.bottom - MENU_GAP - MENU_EDGE
     const spaceAbove = r.top - MENU_GAP - MENU_EDGE
     const up = spaceBelow < MENU_MIN_HEIGHT && spaceAbove > spaceBelow
@@ -503,7 +505,7 @@ function CountrySelect({
       bottom: window.innerHeight - r.top + MENU_GAP,
       left: Math.min(Math.max(MENU_EDGE, field.left), window.innerWidth - width - MENU_EDGE),
       width,
-      maxHeight: Math.max(MENU_MIN_HEIGHT, up ? spaceAbove : spaceBelow),
+      maxHeight: Math.min(MENU_HEIGHT, Math.max(MENU_MIN_HEIGHT, up ? spaceAbove : spaceBelow)),
       up,
     })
   }, [])
