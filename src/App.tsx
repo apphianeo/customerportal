@@ -47,12 +47,13 @@ function PoliciesRoute({ account }: { account: Account }) {
   )
 }
 
-function PolicyDetailRoute() {
+function PolicyDetailRoute({ account }: { account: Account }) {
   const navigate = useNavigate()
   const { slug } = useParams()
   return (
     <PolicyDetailPage
       slug={slug}
+      account={account}
       onNavigateToDashboard={() => navigate('/dashboard')}
       onNavigateToPolicies={() => navigate('/policies')}
     />
@@ -117,7 +118,7 @@ function AppRoutes() {
       <Route element={<DashboardLayout account={account} onLogout={logout} />}>
         <Route path="/dashboard" element={<DashboardRoute account={account} />} />
         <Route path="/policies" element={<PoliciesRoute account={account} />} />
-        <Route path="/policies/:slug" element={<PolicyDetailRoute />} />
+        <Route path="/policies/:slug" element={<PolicyDetailRoute account={account} />} />
         <Route path="/account" element={<AccountRoute account={account} onLogout={logout} />} />
         <Route path="/help" element={<HelpRoute />} />
       </Route>

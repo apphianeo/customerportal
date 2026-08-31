@@ -3,6 +3,7 @@ import { DownloadOutlined } from '@ant-design/icons'
 import { ChevronRightIcon, ChevronDownIcon, ChevronUpIcon } from '../components/icons'
 import { getPolicyDetail, type Field, type FieldValue, type PolicyDetailData } from '../data/policyDetails'
 import type { PolicyStatus } from '../data/policies'
+import type { Account } from '../data/accounts'
 
 /* Official Mastercard brand mark — two interlocking circles with the wordmark. */
 function MastercardIcon() {
@@ -262,16 +263,46 @@ const downloadIcon = (
   </button>
 )
 
+/* Compose the logged-in customer's address into a single line for display. */
+function accountAddress(a: Account): string {
+  return [a.residentialAddress, a.residentialUnit, a.residentialPostal ? `SINGAPORE ${a.residentialPostal}` : '']
+    .filter(Boolean)
+    .join(', ')
+}
+
+/* Policyholder + contact details belong to the signed-in customer, so they are
+   read from the account rather than the per-policy demo data. */
+function policyholderFromAccount(a: Account): Field[] {
+  return [
+    { label: 'Salutation', value: a.salutation },
+    { label: 'Name', value: a.fullName },
+    { label: 'NRIC/FIN', value: a.nric },
+    { label: 'Date of birth', value: a.dob },
+  ]
+}
+
+function contactFromAccount(a: Account): Field[] {
+  return [
+    { label: 'Mobile number', value: a.phone ? `+65 ${a.phone}` : '-' },
+    { label: 'Email address', value: a.email },
+    { label: 'Address', value: { kind: 'expandable', text: accountAddress(a) } },
+  ]
+}
+
 /* ─── Main page ──────────────────────────────────────────── */
 type Props = {
   slug?: string
+  account?: Account
   onNavigateToDashboard?: () => void
   onNavigateToPolicies?: () => void
 }
 
-export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNavigateToPolicies }: Props) {
+export default function PolicyDetailPage({ slug, account, onNavigateToDashboard, onNavigateToPolicies }: Props) {
   const [activeTab, setActiveTab] = useState<TabKey>('policy')
   const policy: PolicyDetailData | undefined = getPolicyDetail(slug)
+  // Identity blocks follow the signed-in customer, not the demo data.
+  const policyholderFields = account ? policyholderFromAccount(account) : policy?.policyholderFields ?? []
+  const contactFields = account ? contactFromAccount(account) : policy?.contactFields ?? []
 
   function goToTab(key: TabKey) {
     setActiveTab(key)
@@ -394,7 +425,7 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
         </SectionCard>
 
         <SectionCard id="section-policyholder" title="Policyholder details">
-          <FieldGrid fields={policy.policyholderFields} />
+          <FieldGrid fields={policyholderFields} />
         </SectionCard>
 
         <SectionCard id="section-insured" title="Insured details">
@@ -454,7 +485,7 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
           title="Contact details"
           subtitle="All policy documents will be sent to the contact information tied to this specific policy"
         >
-          <FieldGrid fields={policy.contactFields} />
+          <FieldGrid fields={contactFields} />
         </SectionCard>
 
         <SectionCard id="section-agent" title="Agent details">
@@ -465,6 +496,8 @@ export default function PolicyDetailPage({ slug, onNavigateToDashboard, onNaviga
           For any amendments to your policy, please contact us{' '}
           <a
             href="https://api.whatsapp.com/send/?phone=6580814843&text&type=phone_number&app_absent=0"
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-text-secondary underline"
           >
             here
