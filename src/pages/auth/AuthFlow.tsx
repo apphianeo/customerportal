@@ -86,6 +86,10 @@ type Screen =
   /** Both paths end here: set the login email + password, then verify by OTP. */
   | 'register-credentials'
   | 'register-otp'
+  /** Manual sign-ups verify their identity with Singpass before the account is
+      created — a full screen shown between the email OTP and the dashboard. */
+  | 'register-verify'
+  | 'register-verify-qr'
   | 'forgot'
   | 'reset'
 
@@ -104,8 +108,8 @@ export default function AuthFlow({
   /** Captured up front, then verified by Singpass. */
   const [nric, setNric] = useState('')
   const [dob, setDob] = useState('')
-  const [first, setFirst] = useState('')
-  const [last, setLast] = useState('')
+  /** One field on the form; split into first/last only when building the account. */
+  const [fullName, setFullName] = useState('')
   const [phone, setPhone] = useState('')
   const [postal, setPostal] = useState('')
   const [line, setLine] = useState('')
@@ -130,6 +134,9 @@ export default function AuthFlow({
 
   /** Existing account, or the profile Singpass just handed us. */
   function currentAccount(): Account {
+    // The form collects one "Full name" — split on the first space so the stored
+    // account keeps its first/last shape (greetings, initials, admin all read it).
+    const [firstName, ...restName] = fullName.trim().split(/\s+/)
     return (
       findAccount(email) ??
       draftAccount({
@@ -139,8 +146,8 @@ export default function AuthFlow({
         // Registering manually: only what the user typed. Singpass verifies who
         // they are, but the profile is theirs to fill in and edit later.
         authMethod: 'account',
-        firstName: first || 'there',
-        lastName: last,
+        firstName: firstName || 'there',
+        lastName: restName.join(' '),
         nric,
         dob,
         phone,
@@ -179,8 +186,7 @@ export default function AuthFlow({
   function onSingpassRegistered() {
     setNric(SINGPASS_IDENTITY.nric)
     setDob(SINGPASS_IDENTITY.dob)
-    setFirst(SINGPASS_IDENTITY.firstName)
-    setLast(SINGPASS_IDENTITY.lastName)
+    setFullName(`${SINGPASS_IDENTITY.firstName} ${SINGPASS_IDENTITY.lastName}`)
     setPhone(SINGPASS_IDENTITY.phone)
     setPostal(SINGPASS_IDENTITY.residentialPostal)
     setLine(SINGPASS_IDENTITY.residentialAddress)
@@ -238,10 +244,8 @@ export default function AuthFlow({
       return (
         <RegisterDetails
           singpass={singpassReg}
-          first={first}
-          setFirst={setFirst}
-          last={last}
-          setLast={setLast}
+          fullName={fullName}
+          setFullName={setFullName}
           nric={nric}
           setNric={setNric}
           dob={dob}
@@ -297,16 +301,39 @@ export default function AuthFlow({
           email={email}
           onBack={() => setScreen('register-credentials')}
           onVerify={() =>
-            finishRegistration(
-              singpassReg
-                ? {
-                    // Registered through Singpass — identity is verified.
-                    authMethod: 'singpass',
-                    verified: true,
-                    salutation: SINGPASS_IDENTITY.salutation,
-                  }
-                : {},
-            )
+            singpassReg
+              ? // Registered through Singpass — identity is already verified, so
+                // the account is created straight away.
+                finishRegistration({
+                  authMethod: 'singpass',
+                  verified: true,
+                  salutation: SINGPASS_IDENTITY.salutation,
+                })
+              : // Manual sign-up — must verify identity with Singpass first. The
+                // account is not created until that step completes.
+                setScreen('register-verify')
+          }
+        />
+      )
+    case 'register-verify':
+      return (
+        <VerifyIdentity
+          onBack={() => setScreen('register-credentials')}
+          onContinue={() => setScreen('register-verify-qr')}
+        />
+      )
+    case 'register-verify-qr':
+      // The identity check itself — Singpass's own QR page. Scanning verifies the
+      // person, and only then is the account actually created.
+      return (
+        <SingpassLogin
+          onScan={() =>
+            finishRegistration({
+              verified: true,
+              // Singpass returns the verified NRIC/FIN — adopt it so the new
+              // account matches any policies the holder has.
+              nric: SINGPASS_IDENTITY.nric,
+            })
           }
         />
       )
@@ -680,7 +707,7 @@ function RegisterChoose({
     <AuthShell onBack={onBack}>
       <AuthHeader
         title="Create Account"
-        subtitle="Speed up your sign up process by retrieving data from Myinfo using Singpass"
+        subtitle="Speed up your registration process by retrieving data from Myinfo using Singpass"
       />
       <div className="flex flex-col gap-6 w-full">
         <button
@@ -695,7 +722,7 @@ function RegisterChoose({
           <span className="text-[14px] text-[#949494]">OR</span>
           <span className="flex-1 h-px bg-[rgba(0,0,0,0.09)]" />
         </div>
-        <OutlineButton onClick={onManual}>Sign up manually</OutlineButton>
+        <OutlineButton onClick={onManual}>Register Manually</OutlineButton>
       </div>
       <div className="flex flex-col gap-3 w-full">
         <LegalLine />
@@ -712,10 +739,8 @@ function RegisterChoose({
    the person behind them and supplies the rest of the profile. */
 function RegisterDetails({
   singpass,
-  first,
-  setFirst,
-  last,
-  setLast,
+  fullName,
+  setFullName,
   nric,
   setNric,
   dob,
@@ -742,10 +767,8 @@ function RegisterDetails({
 }: {
   /** True when the form was auto-filled from Myinfo (a verified Singpass sign-up). */
   singpass: boolean
-  first: string
-  setFirst: (v: string) => void
-  last: string
-  setLast: (v: string) => void
+  fullName: string
+  setFullName: (v: string) => void
   nric: string
   setNric: (v: string) => void
   dob: string
@@ -790,8 +813,7 @@ function RegisterDetails({
   })
 
   // Unit number is optional — every other field on the form has to be filled.
-  const firstRequired = useRequired(first)
-  const lastRequired = useRequired(last)
+  const nameRequired = useRequired(fullName)
   const dobRequired = useRequired(dob)
   const postalRequired = useRequired(postal)
   const lineRequired = useRequired(line)
@@ -800,8 +822,7 @@ function RegisterDetails({
 
   function submit() {
     const checks = [
-      firstRequired,
-      lastRequired,
+      nameRequired,
       dobRequired,
       nricInline,
       phoneInline,
@@ -828,22 +849,13 @@ function RegisterDetails({
         {/* Personal details */}
         <div className="flex flex-col gap-6 w-full">
           <Field
-            label="First name"
-            value={first}
-            onChange={(v) => { setFirst(v.toUpperCase()); firstRequired.reset() }}
-            placeholder="Enter first name"
+            label="Full name"
+            value={fullName}
+            onChange={(v) => { setFullName(v.toUpperCase()); nameRequired.reset() }}
+            placeholder="Enter full name"
             autoCapitalize="characters"
             disabled={singpass}
-            error={firstRequired.error}
-          />
-          <Field
-            label="Last name"
-            value={last}
-            onChange={(v) => { setLast(v.toUpperCase()); lastRequired.reset() }}
-            placeholder="Enter last name"
-            autoCapitalize="characters"
-            disabled={singpass}
-            error={lastRequired.error}
+            error={nameRequired.error}
           />
           {/* No onBlur — opening the calendar blurs the input, which would
               flash "required" underneath the picker the user just opened. */}
@@ -969,12 +981,33 @@ function RegisterDetails({
 
         <PrimaryButton onClick={submit}>Continue</PrimaryButton>
       </div>
-      <div className="flex flex-col gap-3 w-full">
-        <LegalLine />
-        <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full m-0">
-          Already have an account? <LinkButton onClick={onLogin}>Log in</LinkButton>
-        </p>
-      </div>
+      {/* No legal line here — consent was given on the Create Account start screen */}
+      <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full m-0">
+        Already have an account? <LinkButton onClick={onLogin}>Log in</LinkButton>
+      </p>
+    </AuthShell>
+  )
+}
+
+/* ────────────── Create Account — verify identity (manual flow) ────
+   A manual sign-up proves who they are with Singpass before the account is
+   created. Shown full-screen between the email OTP step and the dashboard, so
+   verification happens up front rather than as a prompt on the dashboard.
+   Backing out here means no account is created. */
+function VerifyIdentity({ onBack, onContinue }: { onBack: () => void; onContinue: () => void }) {
+  return (
+    <AuthShell onBack={onBack}>
+      <AuthHeader
+        title="Verify identity"
+        subtitle="To comply with local regulations and protect against fraud, please verify your identity to view your policies"
+      />
+      <button
+        onClick={onContinue}
+        aria-label="Continue with Singpass"
+        className="w-full h-[52px] bg-[#d93841] rounded-[8px] border-0 p-0 cursor-pointer flex items-center justify-center overflow-hidden"
+      >
+        <img src={singpassVerifyBtn} alt="" className="h-[40px] w-auto" />
+      </button>
     </AuthShell>
   )
 }
@@ -1075,7 +1108,7 @@ function NoAccountModal({
           onClick={onSignupManually}
           className="w-full border border-[#005eb8] text-[#005eb8] bg-white px-[24px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-medium text-[16px] cursor-pointer"
         >
-          Sign up manually
+          Register Manually
         </button>
 
         <div className="flex flex-col gap-3 w-full">
@@ -1204,13 +1237,10 @@ function RegisterCredentials({
           Verify Email
         </PrimaryButton>
       </div>
-      {/* Two lines only, legal first — matches the Create Account design */}
-      <div className="flex flex-col gap-3 w-full">
-        <LegalLine />
-        <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full m-0">
-          Already have an account? <LinkButton onClick={onLogin}>Log in</LinkButton>
-        </p>
-      </div>
+      {/* No legal line here — consent was given on the Create Account start screen */}
+      <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full m-0">
+        Already have an account? <LinkButton onClick={onLogin}>Log in</LinkButton>
+      </p>
     </AuthShell>
   )
 }
