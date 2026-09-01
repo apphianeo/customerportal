@@ -261,9 +261,11 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
             <button
               onClick={() => setSingpassStep('login')}
               aria-label="Retrieve with Singpass"
-              className="shrink-0 h-[44px] px-[24px] bg-[#d93841] rounded-[8px] border-0 cursor-pointer flex items-center justify-center overflow-hidden"
+              className="shrink-0 bg-transparent border-0 p-0 cursor-pointer"
             >
-              <img src={singpassRetrieveBtn} alt="" className="h-[26px] w-auto" />
+              {/* Official Singpass button — the SVG is the complete button, so
+                  it needs no red wrapper of its own. */}
+              <img src={singpassRetrieveBtn} alt="" className="h-[40px] w-auto" />
             </button>
         </div>
 
