@@ -4,8 +4,9 @@ import successCircle from '../assets/icons/success-circle.svg'
 import ChangePasswordModal from '../components/ChangePasswordModal'
 import ChangeLoginIdModal from '../components/ChangeLoginIdModal'
 import DatePicker from '../components/DatePicker'
-import { ACCOUNTS, SINGPASS_IDENTITY, type Account } from '../data/accounts'
+import { ACCOUNTS, type Account } from '../data/accounts'
 import { PhoneField, SUPPORT_URL } from './auth/AuthUI'
+import { SingpassLogin, SingpassApprove } from './auth/AuthFlow'
 import { usePostalAutofill } from '../hooks/usePostalAutofill'
 import retrieveMyInfo from '../assets/retrieve-myinfo.png'
 import type { CountryCode } from 'libphonenumber-js'
@@ -177,6 +178,8 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
    * editable — even on an account that was created manually.
    */
   const [retrieved, setRetrieved] = useState(false)
+  /** Full-screen Singpass retrieve flow: QR login → MyInfo consent → back here. */
+  const [singpassStep, setSingpassStep] = useState<'login' | 'consent' | null>(null)
   /**
    * Personal details are read-only only when the profile itself came from
    * Singpass — a Singpass registration or a MyInfo retrieve. A manually entered
@@ -197,15 +200,17 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
   usePostalAutofill({ postal: resPostal, address: resAddr, setAddress: setResAddr })
   usePostalAutofill({ postal: mailPostal, address: mailAddr, setAddress: setMailAddr })
 
+  // MyInfo returns the customer's own verified profile — in this prototype that
+  // is the signed-in account's data. The retrieved fields become read-only.
   function retrieveFromMyInfo() {
-    setFullName(SINGPASS_IDENTITY.fullName.toUpperCase())
-    setDob(SINGPASS_IDENTITY.dob)
-    setNric(SINGPASS_IDENTITY.nric)
-    setResPostal(SINGPASS_IDENTITY.residentialPostal)
-    setResAddr(SINGPASS_IDENTITY.residentialAddress.toUpperCase())
-    setResUnit(SINGPASS_IDENTITY.residentialUnit.toUpperCase())
+    setFullName(seed.fullName.toUpperCase())
+    setDob(seed.dob)
+    setNric(seed.nric)
+    setResPostal(seed.residentialPostal)
+    setResAddr(seed.residentialAddress.toUpperCase())
+    setResUnit(seed.residentialUnit.toUpperCase())
     setRetrieved(true)
-    setToast('Details retrieved from MyInfo')
+    setToast('MyInfo successfully retrieved')
   }
 
   useEffect(() => {
@@ -254,7 +259,7 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
               )}
             </div>
             <button
-              onClick={retrieveFromMyInfo}
+              onClick={() => setSingpassStep('login')}
               className="shrink-0 bg-transparent border-0 p-0 cursor-pointer"
             >
               <img
@@ -412,6 +417,23 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
           onClose={() => setShowChangePw(false)}
           onSignIn={() => { setShowChangePw(false); onLogout?.() }}
         />
+      )}
+
+      {/* Singpass retrieve flow — full-screen, over the whole app: QR login,
+          then the MyInfo consent screen. "I Agree" fills the profile fields. */}
+      {singpassStep === 'login' && (
+        <div className="fixed inset-0 z-[100] overflow-auto">
+          <SingpassLogin onScan={() => setSingpassStep('consent')} />
+        </div>
+      )}
+      {singpassStep === 'consent' && (
+        <div className="fixed inset-0 z-[100] overflow-auto">
+          <SingpassApprove
+            fields={['Name', 'NRIC/FIN', 'Date of Birth', 'Registered Address']}
+            onCancel={() => setSingpassStep(null)}
+            onAgree={() => { retrieveFromMyInfo(); setSingpassStep(null) }}
+          />
+        </div>
       )}
     </div>
   )

@@ -634,7 +634,16 @@ const SINGPASS_FIELDS = [
   'Registered Address',
 ]
 
-export function SingpassApprove({ onCancel, onAgree }: { onCancel: () => void; onAgree: () => void }) {
+export function SingpassApprove({
+  onCancel,
+  onAgree,
+  fields = SINGPASS_FIELDS,
+}: {
+  onCancel: () => void
+  onAgree: () => void
+  /** Which MyInfo fields the consent screen lists (defaults to the sign-up set). */
+  fields?: string[]
+}) {
   return (
     <div className="min-h-screen w-full bg-[#f7f7f7] flex items-center justify-center p-6">
       <div className="w-[636px] max-w-full flex flex-col gap-[26px] items-center">
@@ -653,7 +662,7 @@ export function SingpassApprove({ onCancel, onAgree }: { onCancel: () => void; o
             </div>
           </div>
           <div className="bg-white p-[26px] text-[14.5px] text-[#212121]">
-            {SINGPASS_FIELDS.map((field) => (
+            {fields.map((field) => (
               <p key={field} className="leading-[2] m-0">
                 <span className="text-[#949494]">{'> '}</span>
                 {field}
