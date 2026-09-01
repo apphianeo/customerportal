@@ -8,7 +8,7 @@ import { ACCOUNTS, type Account } from '../data/accounts'
 import { PhoneField, SUPPORT_URL } from './auth/AuthUI'
 import { SingpassLogin, SingpassApprove } from './auth/AuthFlow'
 import { usePostalAutofill } from '../hooks/usePostalAutofill'
-import retrieveMyInfo from '../assets/retrieve-myinfo.png'
+import singpassRetrieveBtn from '../assets/singpass-retrieve-btn.svg'
 import type { CountryCode } from 'libphonenumber-js'
 
 /* ─── Field — editable or locked (grey) ─── */
@@ -260,13 +260,10 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
             </div>
             <button
               onClick={() => setSingpassStep('login')}
-              className="shrink-0 bg-transparent border-0 p-0 cursor-pointer"
+              aria-label="Retrieve with Singpass"
+              className="shrink-0 h-[44px] px-[24px] bg-[#d93841] rounded-[8px] border-0 cursor-pointer flex items-center justify-center overflow-hidden"
             >
-              <img
-                src={retrieveMyInfo}
-                alt="Retrieve MyInfo with Singpass"
-                className="w-[155px] h-[55px] object-contain"
-              />
+              <img src={singpassRetrieveBtn} alt="" className="h-[26px] w-auto" />
             </button>
         </div>
 

@@ -20,22 +20,24 @@ export default function NotificationBanner({ title, description, ctaLabel, onCta
 
   return (
     <div className="flex items-center drop-shadow-[0px_1px_2px_rgba(0,0,0,0.05)]">
-      {/* Left accent bar — flex items-center self-stretch per Figma spec */}
-      <div className="flex items-center self-stretch shrink-0">
-        <div
-          className={`w-[8px] h-full rounded-tl-[8px] rounded-bl-[8px] ${
-            info ? 'bg-gradient-to-r from-[#005eb8] to-[#5c55eb]' : 'bg-caution'
-          }`}
-        />
-      </div>
+      {/* Left accent bar — caution only; the info alert is a clean white card */}
+      {!info && (
+        <div className="flex items-center self-stretch shrink-0">
+          <div className="w-[8px] h-full rounded-tl-[8px] rounded-bl-[8px] bg-caution" />
+        </div>
+      )}
 
       {/* Content */}
-      <div className="flex-[1_0_0] bg-white border border-solid border-white px-4 py-3 rounded-tr-[8px] rounded-br-[8px] min-w-0">
+      <div
+        className={`flex-[1_0_0] bg-white border border-solid border-white px-4 py-3 min-w-0 ${
+          info ? 'rounded-[8px]' : 'rounded-tr-[8px] rounded-br-[8px]'
+        }`}
+      >
         <div className="flex gap-3 items-start w-full">
 
-          {/* Warning icon — 2px top pad aligns with first text line */}
+          {/* Alert icon — 2px top pad aligns with first text line */}
           <div className="flex items-center pt-[2px] shrink-0">
-            <span className={`size-4 flex items-center justify-center ${info ? 'text-[#005eb8]' : 'text-caution'}`}>
+            <span className={`size-4 flex items-center justify-center ${info ? 'text-[#1e40af]' : 'text-caution'}`}>
               {info
                 ? <InfoCircleFilled style={{ fontSize: 16 }} />
                 : <ExclamationCircleFilled style={{ fontSize: 16 }} />}

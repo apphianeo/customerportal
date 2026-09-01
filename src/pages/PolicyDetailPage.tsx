@@ -263,11 +263,15 @@ const downloadIcon = (
   </button>
 )
 
-/* Compose the logged-in customer's address into a single line for display. */
+/* Compose the customer's correspondence address into one line. Contact details
+   are where documents are sent, so use the mailing address when it differs from
+   the residential one. */
 function accountAddress(a: Account): string {
-  return [a.residentialAddress, a.residentialUnit, a.residentialPostal ? `SINGAPORE ${a.residentialPostal}` : '']
-    .filter(Boolean)
-    .join(', ')
+  const useMailing = !a.mailingSameAsResidential && Boolean(a.mailingAddress || a.mailingPostal)
+  const line = useMailing ? a.mailingAddress : a.residentialAddress
+  const unit = useMailing ? a.mailingUnit : a.residentialUnit
+  const postal = useMailing ? a.mailingPostal : a.residentialPostal
+  return [line, unit, postal ? `SINGAPORE ${postal}` : ''].filter(Boolean).join(', ')
 }
 
 /* Policyholder + contact details belong to the signed-in customer, so they are
