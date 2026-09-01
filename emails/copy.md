@@ -1,6 +1,6 @@
 # Email copy
 
-Every word in the six templates, in the order it appears. Taken from
+Every word in the eight templates, in the order it appears. Taken from
 *Customer Portal Figma & Templates*, the uploaded PDF, which is the source of
 truth for wording.
 
@@ -113,7 +113,44 @@ button, the help line, the sign-off, then the legal block below the card.
 
 ---
 
-## Legal block, all six
+## 7. Successful change of login ID · `07-login-id-changed.html`
+
+- **Subject:** Your UOI Customer Portal login ID has been changed
+- **Preheader:** Changed on {{change_datetime}}. Let us know if this was not you.
+
+| Slot | Copy |
+|---|---|
+| Heading | Successful change of login ID |
+| Salutation | Dear {{first_name}}, |
+| Body 1 | Your login ID (email address) for UOI Customer Portal has been changed from **{{old_login_id}}** to **{{new_login_id}}** on **{{change_datetime}}**. |
+| Body 2 | Use your new login ID the next time you sign in. |
+| Caution box | **Wasn't you?** Your account may be at risk. Call us now at [(+65) 6222 7733]. |
+| Help | If you need any help, feel free to reach out to our support team [here]. |
+| Sign-off | Regards,<br>United Overseas Insurance Limited |
+
+**Send this to the old address as well as the new one.** If someone else changed
+the login ID, the old address is the only one the customer still reaches.
+
+---
+
+## 8. Successful change of password · `08-password-changed.html`
+
+- **Subject:** Your UOI Customer Portal password has been changed
+- **Preheader:** Changed on {{change_datetime}}. Let us know if this was not you.
+
+| Slot | Copy |
+|---|---|
+| Heading | Successful change of password |
+| Salutation | Dear {{first_name}}, |
+| Body 1 | The password for your UOI Customer Portal account was changed on **{{change_datetime}}**. |
+| Body 2 | Use your new password the next time you sign in. |
+| Caution box | **Wasn't you?** Your account may be at risk. [Reset your password] now and call us at [(+65) 6222 7733]. |
+| Help | If you need any help, feel free to reach out to our support team [here]. |
+| Sign-off | Regards,<br>United Overseas Insurance Limited |
+
+---
+
+## Legal block, all eight
 
 Below the card on the page canvas, at 11px, the smallest type in the email.
 
@@ -125,7 +162,7 @@ Below the card on the page canvas, at 11px, the smallest type in the email.
 | Label | UOI EMAIL DISCLAIMER |
 | Disclaimer | Any person receiving this email and any attachment(s) contained, shall treat the information as confidential and not misuse, copy, disclose, distribute or retain the information in any way that amounts to a breach of confidentiality. If you are not the intended recipient, please delete all copies of this email from your computer system. As the integrity of this message cannot be guaranteed, neither UOI nor any entity in the UOB Group shall be responsible for the contents. Any opinion in this email may not necessarily represent the opinion of UOI or any entity in the UOB Group. |
 
-Edited once in `shell()` in `build.py`, so a change lands on all six at once.
+Edited once in `shell()` in `build.py`, so a change lands on all eight at once.
 
 ---
 
@@ -133,11 +170,12 @@ Edited once in `shell()` in `build.py`, so a change lands on all six at once.
 
 | Field | Used in |
 |---|---|
-| `{{first_name}}` | all six |
+| `{{first_name}}` | all eight |
 | `{{otp}}` | 1, 3, 4 (subject and body) |
-| `{{old_login_id}}` / `{{new_login_id}}` | 4 |
-| `{{reset_url}}` | 2 |
+| `{{old_login_id}}` / `{{new_login_id}}` | 4, 7 |
+| `{{reset_url}}` | 2, 8 |
 | `{{login_datetime}}` | 6 |
+| `{{change_datetime}}` | 7, 8 |
 
 Constants, not merge fields: `SUPPORT_URL` (WhatsApp), `PORTAL_URL`, `CHANGE_PW_URL`.
 

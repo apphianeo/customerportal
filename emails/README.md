@@ -1,6 +1,6 @@
 # UOI Customer Portal, email templates
 
-Six HTML email templates for the customer portal, built from the portal's own
+Eight HTML email templates for the customer portal, built from the portal's own
 design system so the email and the screen it leads to look like the same product.
 Copy comes from *Customer Portal Figma & Templates*, the uploaded PDF.
 
@@ -12,8 +12,10 @@ Copy comes from *Customer Portal Figma & Templates*, the uploaded PDF.
 | 4 | Change Login ID (email address) OTP | `04-change-login-id-otp.html` |
 | 5 | Welcome, successful sign up | `05-welcome.html` |
 | 6 | Sign-in after six months of inactivity | `06-inactivity-signin.html` |
+| 7 | Successful change of login ID | `07-login-id-changed.html` |
+| 8 | Successful change of password | `08-password-changed.html` |
 
-Open `preview.html` in a browser to see all six rendered at 600px with sample data.
+Open `preview.html` in a browser to see all eight rendered at 600px with sample data.
 
 Logo, one card, then the legal block at 11px on the canvas below it, with no
 rule between them.
@@ -135,11 +137,12 @@ per-template copy is in the `TEMPLATES` section near the bottom.
 
 | Field | Used in |
 |---|---|
-| `{{first_name}}` | all six |
+| `{{first_name}}` | all eight |
 | `{{otp}}` | 1, 3, 4 (subject + body) |
 | `{{login_datetime}}` | 6 |
-| `{{old_login_id}}` / `{{new_login_id}}` | 4 |
-| `{{reset_url}}` | 2 |
+| `{{change_datetime}}` | 7, 8 |
+| `{{old_login_id}}` / `{{new_login_id}}` | 4, 7 |
+| `{{reset_url}}` | 2, 8 |
 | `{{change_password_url}}` | 6 |
 
 Template 5's button links to `PORTAL_URL`; the `here` support link in all five
@@ -159,6 +162,9 @@ points at `SUPPORT_URL`, the same WhatsApp line the portal uses
   decision either way; templates 1, 3 and 4 currently do it.
 - **Reset link validity** is written as 30 minutes in template 2. Confirm against
   the backend token TTL.
+- **Template 7 must go to the old address too.** If someone else changed the login
+  ID, the old address is the only one the customer still reaches. Sending only to
+  the new address means a hijack is never seen.
 - **Row 5 of the spec table** ("Others") was cut off in the screenshot. Send me the
   remaining scenarios and they'll slot into the same shell.
 

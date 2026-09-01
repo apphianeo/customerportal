@@ -467,6 +467,48 @@ add(
 )
 
 
+# 7. Successful change of login ID
+add(
+    "07-login-id-changed.html",
+    "Your UOI Customer Portal login ID has been changed",
+    "Changed on {{change_datetime}}. Let us know if this was not you.",
+    "Successful change of login ID",
+    letter(
+        "Successful change of login ID",
+        ["Your login ID (email address) for UOI Customer Portal has been changed from "
+         "<strong style=\"color:%s;\">{{old_login_id}}</strong> to "
+         "<strong style=\"color:%s;\">{{new_login_id}}</strong> on "
+         "<strong style=\"color:%s;\">{{change_datetime}}</strong>."
+         % (T["text_primary"], T["text_primary"], T["text_primary"]),
+         "Use your new login ID the next time you sign in."],
+        middle=[notice("<strong>Wasn't you?</strong> Your account may be at risk. Call us "
+                       f'now at {link(SUPPORT_TEL_DISPLAY, "tel:" + SUPPORT_TEL)}.',
+                       "caution")],
+    ),
+    "Send to the old address as well as the new one. The old address is the only "
+    "one a hijacked account still reaches.",
+)
+
+# 8. Successful change of password
+add(
+    "08-password-changed.html",
+    "Your UOI Customer Portal password has been changed",
+    "Changed on {{change_datetime}}. Let us know if this was not you.",
+    "Successful change of password",
+    letter(
+        "Successful change of password",
+        ["The password for your UOI Customer Portal account was changed on "
+         "<strong style=\"color:%s;\">{{change_datetime}}</strong>." % T["text_primary"],
+         "Use your new password the next time you sign in."],
+        middle=[notice("<strong>Wasn't you?</strong> Your account may be at risk. "
+                       + link("Reset your password", RESET_URL) + " now and call us at "
+                       + link(SUPPORT_TEL_DISPLAY, "tel:" + SUPPORT_TEL) + ".",
+                       "caution")],
+    ),
+    "Confirms a change the customer may not have made, which is the whole point.",
+)
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Preview page
 # ─────────────────────────────────────────────────────────────────────────────
@@ -758,12 +800,13 @@ PREVIEW_SHELL = """<title>UOI Customer Portal Auth Emails</title>
   <header class="mast">
     <p class="eyebrow">Design proposal &middot; Customer Portal</p>
     <h1>Auth emails, rebuilt on the portal&rsquo;s own system</h1>
-    <p class="lede">Six templates for UOI Customer Portal: the four authentication
-      emails, the welcome, and the dormant-account sign-in notice. Same tokens, same
+    <p class="lede">Eight templates for UOI Customer Portal: the four authentication
+      emails, the welcome, the dormant-account sign-in notice, and two change
+      confirmations. Same tokens, same
       button, same card as the screens they lead to, so the email and the product stop
       looking like two different companies.</p>
     <dl class="facts">
-      <div><dt>Templates</dt><dd>6</dd></div>
+      <div><dt>Templates</dt><dd>8</dd></div>
       <div><dt>Width</dt><dd>600&#8202;px</dd></div>
       <div><dt>Typeface</dt><dd>Noto Sans</dd></div>
       <div><dt>Images required</dt><dd>Logo only</dd></div>
