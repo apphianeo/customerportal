@@ -6,8 +6,10 @@ truth for wording.
 
 `{{fields}}` are merge fields, replaced at send time.
 
-Every email shares the same shape: heading, salutation, body, an OTP block or
-button, the help line, the sign-off, then the legal block below the card.
+Every email shares the same shape: heading, salutation, body, an OTP block,
+button or caution box, the sign-off, then the legal block below the card.
+Templates 1 to 5 also carry the help line; 6, 7 and 8 close on the caution box,
+which already routes to support.
 
 ---
 
@@ -107,8 +109,7 @@ button, the help line, the sign-off, then the legal block below the card.
 | Salutation | Dear {{first_name}}, |
 | Body 1 | You signed in to your UOI Customer Portal account on **{{login_datetime}}**. It has been more than six months since your last visit, so we are letting you know. |
 | Body 2 | While you are here, it is worth checking that your contact details are current, so policy documents and renewal reminders reach you. |
-| Caution box | **Wasn't you?** Your account may be at risk. [Change your password] now. |
-| Help | If you need any help, feel free to reach out to our support team [here]. |
+| Caution box | **Wasn't you?** Your account may be at risk. [Reset your password] now and contact our support team [here]. |
 | Sign-off | Regards,<br>United Overseas Insurance Limited |
 
 ---
@@ -124,8 +125,7 @@ button, the help line, the sign-off, then the legal block below the card.
 | Salutation | Dear {{first_name}}, |
 | Body 1 | Your login ID (email address) for UOI Customer Portal has been changed from **{{old_login_id}}** to **{{new_login_id}}** on **{{change_datetime}}**. |
 | Body 2 | Use your new login ID the next time you sign in. |
-| Caution box | **Wasn't you?** Your account may be at risk. Call us now at [(+65) 6222 7733]. |
-| Help | If you need any help, feel free to reach out to our support team [here]. |
+| Caution box | **Wasn't you?** Your account may be at risk. Contact our support team [here]. |
 | Sign-off | Regards,<br>United Overseas Insurance Limited |
 
 **Send this to the old address as well as the new one.** If someone else changed
@@ -144,8 +144,7 @@ the login ID, the old address is the only one the customer still reaches.
 | Salutation | Dear {{first_name}}, |
 | Body 1 | The password for your UOI Customer Portal account was changed on **{{change_datetime}}**. |
 | Body 2 | Use your new password the next time you sign in. |
-| Caution box | **Wasn't you?** Your account may be at risk. [Reset your password] now and call us at [(+65) 6222 7733]. |
-| Help | If you need any help, feel free to reach out to our support team [here]. |
+| Caution box | **Wasn't you?** Your account may be at risk. [Reset your password] now and contact our support team [here]. |
 | Sign-off | Regards,<br>United Overseas Insurance Limited |
 
 ---

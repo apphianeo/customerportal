@@ -325,7 +325,6 @@ def shell(title, preheader, blocks, after_card=""):
 # Templates
 # ─────────────────────────────────────────────────────────────────────────────
 
-CHANGE_PW_URL = "{{change_password_url}}"
 RESET_URL = "{{reset_url}}"
 
 # Shared closing lines, identical across all six.
@@ -344,7 +343,7 @@ def add(filename, subject, preheader, title, blocks, notes):
     })
 
 
-def letter(heading_text, paragraphs, middle=None, tail=None):
+def letter(heading_text, paragraphs, middle=None, tail=None, help_line=True):
     """The shape every template shares: heading, salutation, body, an optional
     block in the middle, optional trailing paragraphs, help line, sign-off."""
     out = [heading(heading_text), spacer(16), salutation("Dear {{first_name}},")]
@@ -354,8 +353,9 @@ def letter(heading_text, paragraphs, middle=None, tail=None):
         out += [spacer(24)] + middle
     for para_text in (tail or []):
         out += [spacer(20), para(para_text, 16, T["text_secondary"])]
-    out += [spacer(20), para(HELP_LINE, 16, T["text_secondary"]),
-            spacer(24), signoff()]
+    if help_line:
+        out += [spacer(20), para(HELP_LINE, 16, T["text_secondary"])]
+    out += [spacer(24), signoff()]
     return out
 
 
@@ -459,8 +459,9 @@ add(
          "While you are here, it is worth checking that your contact details are "
          "current, so policy documents and renewal reminders reach you."],
         middle=[notice("<strong>Wasn't you?</strong> Your account may be at risk. "
-                       + link("Change your password", CHANGE_PW_URL) + " now.",
-                       "caution")],
+                       + link("Reset your password", RESET_URL) + " now and contact our "
+                       "support team " + link("here", SUPPORT_URL) + ".", "caution")],
+        help_line=False,
     ),
     "The trigger is a login, so the message that earns its place is the one that "
     "lets a customer catch a sign-in that was not theirs.",
@@ -481,9 +482,9 @@ add(
          "<strong style=\"color:%s;\">{{change_datetime}}</strong>."
          % (T["text_primary"], T["text_primary"], T["text_primary"]),
          "Use your new login ID the next time you sign in."],
-        middle=[notice("<strong>Wasn't you?</strong> Your account may be at risk. Call us "
-                       f'now at {link(SUPPORT_TEL_DISPLAY, "tel:" + SUPPORT_TEL)}.',
-                       "caution")],
+        middle=[notice("<strong>Wasn't you?</strong> Your account may be at risk. Contact "
+                       "our support team " + link("here", SUPPORT_URL) + ".", "caution")],
+        help_line=False,
     ),
     "Send to the old address as well as the new one. The old address is the only "
     "one a hijacked account still reaches.",
@@ -501,9 +502,9 @@ add(
          "<strong style=\"color:%s;\">{{change_datetime}}</strong>." % T["text_primary"],
          "Use your new password the next time you sign in."],
         middle=[notice("<strong>Wasn't you?</strong> Your account may be at risk. "
-                       + link("Reset your password", RESET_URL) + " now and call us at "
-                       + link(SUPPORT_TEL_DISPLAY, "tel:" + SUPPORT_TEL) + ".",
-                       "caution")],
+                       + link("Reset your password", RESET_URL) + " now and contact our "
+                       "support team " + link("here", SUPPORT_URL) + ".", "caution")],
+        help_line=False,
     ),
     "Confirms a change the customer may not have made, which is the whole point.",
 )

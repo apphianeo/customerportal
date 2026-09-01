@@ -72,10 +72,11 @@ to work out what matters:
 | 2 | `notice()` | tinted box, 8px radius | what to do if it was not you |
 | 3 | `fine()` | 13px, `#8D8D8D`, behind a hairline | security note, support |
 
-**8. Each email states what to do if it wasn't you.**
-Login OTP: change your password. Reset link: ignore it, nothing happens.
-Change Login ID: call us now, don't enter the code. This is the highest-value
-copy in a security email and the current template has none of it.
+**8. The three notice emails say what to do if it wasn't you.**
+Templates 6, 7 and 8 confirm something that already happened, so a caution box
+carries the recovery route and they close on it rather than repeating a help
+line underneath. Templates 1 to 5 keep the help line, since nothing has
+happened yet that the reader might need to undo.
 
 ---
 
@@ -143,11 +144,10 @@ per-template copy is in the `TEMPLATES` section near the bottom.
 | `{{change_datetime}}` | 7, 8 |
 | `{{old_login_id}}` / `{{new_login_id}}` | 4, 7 |
 | `{{reset_url}}` | 2, 8 |
-| `{{change_password_url}}` | 6 |
 
-Template 5's button links to `PORTAL_URL`; the `here` support link in all five
-points at `SUPPORT_URL`, the same WhatsApp line the portal uses
-(`AuthUI.tsx`). Both are constants, not merge fields.
+Template 5's button links to `PORTAL_URL`; every `here` support link points at
+`SUPPORT_URL`, the same WhatsApp line the portal uses (`AuthUI.tsx`). Both are
+constants, not merge fields.
 
 3. **Send a plain-text alternative.** Transactional mail without a `text/plain`
    part takes a spam-score hit. The code and the URL are all it needs to contain.
