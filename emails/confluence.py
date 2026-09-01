@@ -83,22 +83,13 @@ def body_lines(path):
 
 LEGAL = """This is an automatically generated email, please do not reply.
 
-Visit [United Overseas Insurance Limited (UOI)] to learn more about our privacy
-and security notice.
+Visit [www.uoi.com.sg] to learn more about our privacy and security notice.
 
-Copyright © 2026 United Overseas Insurance Limited Co Reg. No. 197100152R. All
-Rights Reserved.
+Copyright © 2026 United Overseas Insurance Limited Co Reg. No. 197100152R. All Rights Reserved.
 
 **UOI EMAIL DISCLAIMER**
 
-Any person receiving this email and any attachment(s) contained, shall treat the
-information as confidential and not misuse, copy, disclose, distribute or retain
-the information in any way that amounts to a breach of confidentiality. If you
-are not the intended recipient, please delete all copies of this email from your
-computer system. As the integrity of this message cannot be guaranteed, neither
-UOI nor any entity in the UOB Group shall be responsible for the contents. Any
-opinion in this email may not necessarily represent the opinion of UOI or any
-entity in the UOB Group."""
+Any person receiving this email and any attachment(s) contained, shall treat the information as confidential and not misuse, copy, disclose, distribute or retain the information in any way that amounts to a breach of confidentiality. If you are not the intended recipient, please delete all copies of this email from your computer system. As the integrity of this message cannot be guaranteed, neither UOI nor any entity in the UOB Group shall be responsible for the contents. Any opinion in this email may not necessarily represent the opinion of UOI or any entity in the UOB Group."""
 
 
 def main():
@@ -109,8 +100,8 @@ so this page and the templates cannot drift apart.
 
 **How to read this.** `{{fields}}` are merge fields, replaced at send time.
 `[square brackets]` mark link text; destinations are listed under each email.
-Every email closes with the same footer, given once at the bottom rather than
-repeated eleven times.
+Every email carries the same footer, repeated under each one so a section can be
+copied on its own.
 
 **Files.** Attach the matching `.html` to each section. Rendered PNGs are in
 `emails/previews/`.
@@ -146,6 +137,10 @@ repeated eleven times.
 | **Preheader** | {t['preheader']} |
 
 {body}
+
+**Footer**
+
+{LEGAL}
 """)
         if btn:
             out.append(f"**Button:** {btn.group(1).strip()}\n")
@@ -169,12 +164,6 @@ repeated eleven times.
                            for f, ns in sorted(fields.items()))
 
     out.append(f"""
-## Footer, on all eleven
-
-{LEGAL}
-
----
-
 ## Merge fields
 
 | Field | Used in |

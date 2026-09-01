@@ -290,9 +290,8 @@ def shell(title, preheader, blocks, after_card=""):
                              color:{T['text_secondary']};">
                     <p style="margin:0;">This is an automatically generated email, please do not reply.</p>
                     <p style="margin:8px 0 0 0;">Visit
-                      <a href="{UOI_URL}" style="color:{T['text_secondary']};">United Overseas
-                      Insurance Limited (UOI)</a> to learn more about our privacy and
-                      security notice.</p>
+                      <a href="{UOI_URL}" style="color:{T['text_secondary']};">www.uoi.com.sg</a>
+                      to learn more about our privacy and security notice.</p>
                     <p style="margin:8px 0 0 0;">{COPYRIGHT} {RIGHTS}</p>
                     <p style="margin:16px 0 0 0; font-weight:600; letter-spacing:0.04em;
                               color:{T['text_secondary']};">UOI EMAIL DISCLAIMER</p>
