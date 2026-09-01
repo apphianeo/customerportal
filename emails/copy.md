@@ -1,6 +1,6 @@
 # Email copy
 
-Every word in the eight templates, in the order it appears. Taken from
+Every word in the eleven templates, in the order it appears. Taken from
 *Customer Portal Figma & Templates*, the uploaded PDF, which is the source of
 truth for wording.
 
@@ -8,8 +8,9 @@ truth for wording.
 
 Every email shares the same shape: heading, salutation, body, an OTP block,
 button or caution box, the sign-off, then the legal block below the card.
-Templates 1 to 5 also carry the help line; 6, 7 and 8 close on the caution box,
-which already routes to support.
+Templates 1 to 5 and 11 carry the help line. Templates 6 to 10 close on their
+caution box, which already routes to support; template 11's notice does not, so
+it keeps the help line.
 
 ---
 
@@ -116,7 +117,7 @@ which already routes to support.
 
 ## 7. Successful change of login ID · `07-login-id-changed.html`
 
-- **Subject:** Your UOI Customer Portal login ID has been changed
+- **Subject:** Login ID changed successfully
 - **Preheader:** Changed on {{change_datetime}}. Let us know if this was not you.
 
 | Slot | Copy |
@@ -135,7 +136,7 @@ the login ID, the old address is the only one the customer still reaches.
 
 ## 8. Successful change of password · `08-password-changed.html`
 
-- **Subject:** Your UOI Customer Portal password has been changed
+- **Subject:** Password changed successfully
 - **Preheader:** Changed on {{change_datetime}}. Let us know if this was not you.
 
 | Slot | Copy |
@@ -149,7 +150,70 @@ the login ID, the old address is the only one the customer still reaches.
 
 ---
 
-## Legal block, all eight
+## 9. Successful change of contact details · `09-contact-details-changed.html`
+
+- **Subject:** Contact details changed successfully
+- **Preheader:** Changed on {{change_datetime}}. Let us know if this was not you.
+
+| Slot | Copy |
+|---|---|
+| Heading | Successful change of contact details |
+| Salutation | Dear {{first_name}}, |
+| Body 1 | The following details on your UOI Customer Portal account were changed on **{{change_datetime}}**: **{{changed_fields}}**. |
+| Body 2 | Policy documents and renewal reminders will go to your updated details from now on. |
+| Caution box | **Wasn't you?** Your account may be at risk. [Reset your password] now and contact our support team [here]. |
+| Sign-off | Regards,<br>United Overseas Insurance Limited |
+
+`{{changed_fields}}` is a plain phrase from the backend, e.g. "mobile number and
+mailing address". **If the mobile number changed, send an SMS to the old number
+too**, on the same principle as template 7 and the old email address.
+
+---
+
+## 10. Account locked after failed sign-in attempts · `10-account-locked.html`
+
+- **Subject:** Your UOI Customer Portal account has been locked
+- **Preheader:** Reset your password to unlock it.
+
+| Slot | Copy |
+|---|---|
+| Heading | Your account has been locked |
+| Salutation | Dear {{first_name}}, |
+| Body 1 | Your UOI Customer Portal account was locked on **{{lock_datetime}}** after several unsuccessful sign-in attempts. This is to protect your account. |
+| Body 2 | Reset your password to unlock it. |
+| Button | Reset password, href `{{reset_url}}` |
+| Caution box | **Wasn't you?** Someone may be trying to sign in to your account. Contact our support team [here]. |
+| Sign-off | Regards,<br>United Overseas Insurance Limited |
+
+The copy says nothing about how many attempts triggered the lock, or whether it
+lifts on its own. **If the lock expires automatically, add that as a third line**
+so people who would rather wait than reset know they can.
+
+---
+
+## 11. Registration attempted on an existing address · `11-existing-account.html`
+
+- **Subject:** You already have a UOI Customer Portal account
+- **Preheader:** No new account was created.
+
+| Slot | Copy |
+|---|---|
+| Heading | You already have an account |
+| Salutation | Dear {{first_name}}, |
+| Body 1 | Someone tried to create a UOI Customer Portal account using **{{login_id}}** on **{{attempt_datetime}}**. An account with this email address already exists, so no new account was created. |
+| Body 2 | If that was you, sign in with your existing details instead. |
+| Button | Sign in, href `PORTAL_URL` |
+| Info box | **Wasn't you?** Nothing has changed and no one has gained access to your account. You can safely ignore this email. |
+| Help | If you need any help, feel free to reach out to our support team [here]. |
+| Sign-off | Regards,<br>United Overseas Insurance Limited |
+
+The notice is **info blue, not caution amber**: a failed sign-up compromises
+nothing, so this email reassures rather than alarms. It is also what lets the
+sign-up screen stay silent about whether an address is registered.
+
+---
+
+## Legal block, all eleven
 
 Below the card on the page canvas, at 11px, the smallest type in the email.
 
@@ -161,7 +225,7 @@ Below the card on the page canvas, at 11px, the smallest type in the email.
 | Label | UOI EMAIL DISCLAIMER |
 | Disclaimer | Any person receiving this email and any attachment(s) contained, shall treat the information as confidential and not misuse, copy, disclose, distribute or retain the information in any way that amounts to a breach of confidentiality. If you are not the intended recipient, please delete all copies of this email from your computer system. As the integrity of this message cannot be guaranteed, neither UOI nor any entity in the UOB Group shall be responsible for the contents. Any opinion in this email may not necessarily represent the opinion of UOI or any entity in the UOB Group. |
 
-Edited once in `shell()` in `build.py`, so a change lands on all eight at once.
+Edited once in `shell()` in `build.py`, so a change lands on all eleven at once.
 
 ---
 
@@ -169,12 +233,16 @@ Edited once in `shell()` in `build.py`, so a change lands on all eight at once.
 
 | Field | Used in |
 |---|---|
-| `{{first_name}}` | all eight |
+| `{{first_name}}` | all eleven |
 | `{{otp}}` | 1, 3, 4 (subject and body) |
 | `{{old_login_id}}` / `{{new_login_id}}` | 4, 7 |
-| `{{reset_url}}` | 2, 8 |
+| `{{reset_url}}` | 2, 8, 9, 10 |
 | `{{login_datetime}}` | 6 |
-| `{{change_datetime}}` | 7, 8 |
+| `{{change_datetime}}` | 7, 8, 9 |
+| `{{changed_fields}}` | 9 |
+| `{{lock_datetime}}` | 10 |
+| `{{attempt_datetime}}` | 11 |
+| `{{login_id}}` | 11 |
 
 Constants, not merge fields: `SUPPORT_URL` (WhatsApp), `PORTAL_URL`, `CHANGE_PW_URL`.
 

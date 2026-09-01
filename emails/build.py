@@ -471,7 +471,7 @@ add(
 # 7. Successful change of login ID
 add(
     "07-login-id-changed.html",
-    "Your UOI Customer Portal login ID has been changed",
+    "Login ID changed successfully",
     "Changed on {{change_datetime}}. Let us know if this was not you.",
     "Successful change of login ID",
     letter(
@@ -493,7 +493,7 @@ add(
 # 8. Successful change of password
 add(
     "08-password-changed.html",
-    "Your UOI Customer Portal password has been changed",
+    "Password changed successfully",
     "Changed on {{change_datetime}}. Let us know if this was not you.",
     "Successful change of password",
     letter(
@@ -507,6 +507,78 @@ add(
         help_line=False,
     ),
     "Confirms a change the customer may not have made, which is the whole point.",
+)
+
+
+# 9. Successful change of contact details
+add(
+    "09-contact-details-changed.html",
+    "Contact details changed successfully",
+    "Changed on {{change_datetime}}. Let us know if this was not you.",
+    "Successful change of contact details",
+    letter(
+        "Successful change of contact details",
+        ["The following details on your UOI Customer Portal account were changed on "
+         "<strong style=\"color:%s;\">{{change_datetime}}</strong>: "
+         "<strong style=\"color:%s;\">{{changed_fields}}</strong>."
+         % (T["text_primary"], T["text_primary"]),
+         "Policy documents and renewal reminders will go to your updated details "
+         "from now on."],
+        middle=[notice("<strong>Wasn't you?</strong> Your account may be at risk. "
+                       + link("Reset your password", RESET_URL) + " now and contact our "
+                       "support team " + link("here", SUPPORT_URL) + ".", "caution")],
+        help_line=False,
+    ),
+    "A changed mobile number is as security-relevant as a changed email: it is the "
+    "number UOI calls, and likely a second factor.",
+)
+
+# 10. Account locked after failed sign-in attempts
+add(
+    "10-account-locked.html",
+    "Your UOI Customer Portal account has been locked",
+    "Reset your password to unlock it.",
+    "Your account has been locked",
+    letter(
+        "Your account has been locked",
+        ["Your UOI Customer Portal account was locked on "
+         "<strong style=\"color:%s;\">{{lock_datetime}}</strong> after several "
+         "unsuccessful sign-in attempts. This is to protect your account."
+         % T["text_primary"],
+         "Reset your password to unlock it."],
+        middle=[f'<div class="btn">{primary_button("Reset password", RESET_URL)}</div>',
+                spacer(24),
+                notice("<strong>Wasn't you?</strong> Someone may be trying to sign in to "
+                       "your account. Contact our support team "
+                       + link("here", SUPPORT_URL) + ".", "caution")],
+        help_line=False,
+    ),
+    "Without this the customer assumes the portal is broken and calls.",
+)
+
+# 11. Registration attempted on an address that already has an account
+add(
+    "11-existing-account.html",
+    "You already have a UOI Customer Portal account",
+    "No new account was created.",
+    "You already have an account",
+    letter(
+        "You already have an account",
+        ["Someone tried to create a UOI Customer Portal account using "
+         "<strong style=\"color:%s;\">{{login_id}}</strong> on "
+         "<strong style=\"color:%s;\">{{attempt_datetime}}</strong>. An account with "
+         "this email address already exists, so no new account was created."
+         % (T["text_primary"], T["text_primary"]),
+         "If that was you, sign in with your existing details instead."],
+        middle=[f'<div class="btn">{primary_button("Sign in", PORTAL_URL)}</div>',
+                spacer(24),
+                notice("<strong>Wasn't you?</strong> Nothing has changed and no one has "
+                       "gained access to your account. You can safely ignore this email.",
+                       "info")],
+    ),
+    "Goes to the address owner, so the sign-up screen never has to reveal whether an "
+    "address is registered. Reassures rather than alarms: a failed sign-up compromises "
+    "nothing, so the notice is info blue, not caution amber.",
 )
 
 
@@ -801,13 +873,12 @@ PREVIEW_SHELL = """<title>UOI Customer Portal Auth Emails</title>
   <header class="mast">
     <p class="eyebrow">Design proposal &middot; Customer Portal</p>
     <h1>Auth emails, rebuilt on the portal&rsquo;s own system</h1>
-    <p class="lede">Eight templates for UOI Customer Portal: the four authentication
-      emails, the welcome, the dormant-account sign-in notice, and two change
-      confirmations. Same tokens, same
+    <p class="lede">Eleven templates for UOI Customer Portal, covering sign-in,
+      registration and every change a customer can make to their own account. Same tokens, same
       button, same card as the screens they lead to, so the email and the product stop
       looking like two different companies.</p>
     <dl class="facts">
-      <div><dt>Templates</dt><dd>8</dd></div>
+      <div><dt>Templates</dt><dd>11</dd></div>
       <div><dt>Width</dt><dd>600&#8202;px</dd></div>
       <div><dt>Typeface</dt><dd>Noto Sans</dd></div>
       <div><dt>Images required</dt><dd>Logo only</dd></div>

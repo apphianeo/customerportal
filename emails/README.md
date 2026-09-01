@@ -1,6 +1,6 @@
 # UOI Customer Portal, email templates
 
-Eight HTML email templates for the customer portal, built from the portal's own
+Eleven HTML email templates for the customer portal, built from the portal's own
 design system so the email and the screen it leads to look like the same product.
 Copy comes from *Customer Portal Figma & Templates*, the uploaded PDF.
 
@@ -14,8 +14,11 @@ Copy comes from *Customer Portal Figma & Templates*, the uploaded PDF.
 | 6 | Sign-in after six months of inactivity | `06-inactivity-signin.html` |
 | 7 | Successful change of login ID | `07-login-id-changed.html` |
 | 8 | Successful change of password | `08-password-changed.html` |
+| 9 | Successful change of contact details | `09-contact-details-changed.html` |
+| 10 | Account locked after failed sign-in attempts | `10-account-locked.html` |
+| 11 | Registration attempted on an existing address | `11-existing-account.html` |
 
-Open `preview.html` in a browser to see all eight rendered at 600px with sample data.
+Open `preview.html` in a browser to see all eleven rendered at 600px with sample data.
 
 Logo, one card, then the legal block at 11px on the canvas below it, with no
 rule between them.
@@ -138,12 +141,16 @@ per-template copy is in the `TEMPLATES` section near the bottom.
 
 | Field | Used in |
 |---|---|
-| `{{first_name}}` | all eight |
+| `{{first_name}}` | all eleven |
 | `{{otp}}` | 1, 3, 4 (subject + body) |
 | `{{login_datetime}}` | 6 |
-| `{{change_datetime}}` | 7, 8 |
+| `{{change_datetime}}` | 7, 8, 9 |
+| `{{changed_fields}}` | 9 |
+| `{{lock_datetime}}` | 10 |
+| `{{attempt_datetime}}` | 11 |
+| `{{login_id}}` | 11 |
 | `{{old_login_id}}` / `{{new_login_id}}` | 4, 7 |
-| `{{reset_url}}` | 2, 8 |
+| `{{reset_url}}` | 2, 8, 9, 10 |
 
 Template 5's button links to `PORTAL_URL`; every `here` support link points at
 `SUPPORT_URL`, the same WhatsApp line the portal uses (`AuthUI.tsx`). Both are
@@ -162,6 +169,10 @@ constants, not merge fields.
   decision either way; templates 1, 3 and 4 currently do it.
 - **Reset link validity** is written as 30 minutes in template 2. Confirm against
   the backend token TTL.
+- **Does the account lock expire on its own?** Template 10 only offers a reset. If
+  the lock lifts after a set period, say so, and the copy needs a third line.
+- **Template 9 should trigger an SMS to the old mobile** when the mobile number is
+  what changed, for the same reason template 7 goes to the old email address.
 - **Template 7 must go to the old address too.** If someone else changed the login
   ID, the old address is the only one the customer still reaches. Sending only to
   the new address means a hijack is never seen.
