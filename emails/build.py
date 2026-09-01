@@ -153,8 +153,7 @@ def salutation(text):
 def signoff():
     return (f"""
               <p style="margin:0; font-family:{T['font']}; font-size:16px; line-height:1.5;
-                        color:{T['text_secondary']};">Regards,<br />United Overseas
-                        Insurance Limited</p>""")
+                        color:{T['text_secondary']};">Regards,<br />United Overseas Insurance Limited</p>""")
 
 
 def fine(lines):
@@ -336,10 +335,11 @@ OTP_VALIDITY = ("Code is valid for the next 3 minutes, after which you will need
 TEMPLATES = []
 
 
-def add(filename, subject, preheader, title, blocks, notes):
+def add(filename, subject, preheader, title, blocks, notes, section="", item=""):
     TEMPLATES.append({
         "file": filename, "subject": subject, "preheader": preheader,
         "title": title, "html": shell(title, preheader, blocks), "notes": notes,
+        "section": section, "item": item,
     })
 
 
@@ -373,6 +373,8 @@ add(
         tail=[OTP_VALIDITY],
     ),
     "OTP in the subject line so it is readable from the notification without opening the email.",
+    section="Login",
+    item="Login OTP",
 )
 
 # 2. Forget password, reset link
@@ -390,11 +392,13 @@ add(
               "request again."],
     ),
     "Link, not a code. A reset is a click-through, so don't make the user retype anything.",
+    section="Login",
+    item="Forget password, reset link",
 )
 
 # 3. Verify account OTP
 add(
-    "03-registration-otp.html",
+    "04-registration-otp.html",
     "{{otp}} is your UOI Customer Portal verification code",
     "Code is valid for the next 3 minutes.",
     "Verify your email address",
@@ -406,11 +410,13 @@ add(
         tail=[OTP_VALIDITY],
     ),
     "Verifies an address and nothing else. The welcome email does the selling.",
+    section="Account Registration",
+    item="Verify Account OTP",
 )
 
 # 4. Verify new login ID OTP
 add(
-    "04-change-login-id-otp.html",
+    "07-change-login-id-otp.html",
     "Confirm your new login ID",
     "Code is valid for the next 3 minutes.",
     "Confirm your new login ID",
@@ -424,11 +430,13 @@ add(
         tail=[OTP_VALIDITY],
     ),
     "States both addresses, so a hijack is obvious on sight.",
+    section="Post Registration",
+    item="Change of new login ID OTP",
 )
 
 # 5. Welcome, successful sign up
 add(
-    "05-welcome.html",
+    "06-welcome.html",
     "Welcome to UOI Customer Portal",
     "Your UOI Customer Portal account is ready.",
     "Welcome to UOI Customer Portal",
@@ -442,11 +450,13 @@ add(
         middle=[f'<div class="btn">{primary_button("Go to dashboard", PORTAL_URL)}</div>'],
     ),
     "The only one of the six that sells rather than authenticates.",
+    section="Post Registration",
+    item="Successful registration",
 )
 
 # 6. Sign-in after six months of inactivity
 add(
-    "06-inactivity-signin.html",
+    "11-inactivity-signin.html",
     "You signed in to UOI Customer Portal",
     "First sign-in in six months. Let us know if this was not you.",
     "You signed in to UOI Customer Portal",
@@ -465,12 +475,14 @@ add(
     ),
     "The trigger is a login, so the message that earns its place is the one that "
     "lets a customer catch a sign-in that was not theirs.",
+    section="Post Registration",
+    item="Email notification upon login after six months of inactivity",
 )
 
 
 # 7. Successful change of login ID
 add(
-    "07-login-id-changed.html",
+    "08-login-id-changed.html",
     "Login ID changed successfully",
     "Changed on {{change_datetime}}. Let us know if this was not you.",
     "Successful change of login ID",
@@ -488,11 +500,13 @@ add(
     ),
     "Send to the old address as well as the new one. The old address is the only "
     "one a hijacked account still reaches.",
+    section="Post Registration",
+    item="Successful change of login ID",
 )
 
 # 8. Successful change of password
 add(
-    "08-password-changed.html",
+    "09-password-changed.html",
     "Password changed successfully",
     "Changed on {{change_datetime}}. Let us know if this was not you.",
     "Successful change of password",
@@ -507,20 +521,22 @@ add(
         help_line=False,
     ),
     "Confirms a change the customer may not have made, which is the whole point.",
+    section="Post Registration",
+    item="Successful change of password",
 )
 
 
 # 9. Successful change of contact details
 add(
-    "09-contact-details-changed.html",
-    "Contact details changed successfully",
+    "10-contact-details-changed.html",
+    "Contact number changed successfully",
     "Changed on {{change_datetime}}. Let us know if this was not you.",
     "Successful change of contact details",
     letter(
         "Successful change of contact details",
         ["The following details on your UOI Customer Portal account were changed on "
          "<strong style=\"color:%s;\">{{change_datetime}}</strong>: "
-         "<strong style=\"color:%s;\">{{changed_fields}}</strong>."
+         "<strong style=\"color:%s;\">{{change_fields}}</strong>."
          % (T["text_primary"], T["text_primary"]),
          "Policy documents and renewal reminders will go to your updated details "
          "from now on."],
@@ -531,12 +547,14 @@ add(
     ),
     "A changed mobile number is as security-relevant as a changed email: it is the "
     "number UOI calls, and likely a second factor.",
+    section="Post Registration",
+    item="Successful change of contact details",
 )
 
 # 10. Account locked after failed sign-in attempts
 add(
-    "10-account-locked.html",
-    "Your UOI Customer Portal account has been locked",
+    "03-account-locked.html",
+    "Your UOI Customer Portal has been locked",
     "Reset your password to unlock it.",
     "Your account has been locked",
     letter(
@@ -554,11 +572,13 @@ add(
         help_line=False,
     ),
     "Without this the customer assumes the portal is broken and calls.",
+    section="Login",
+    item="Account locked",
 )
 
 # 11. Registration attempted on an address that already has an account
 add(
-    "11-existing-account.html",
+    "05-existing-account.html",
     "You already have a UOI Customer Portal account",
     "No new account was created.",
     "You already have an account",
@@ -570,7 +590,7 @@ add(
          "this email address already exists, so no new account was created."
          % (T["text_primary"], T["text_primary"]),
          "If that was you, sign in with your existing details instead."],
-        middle=[f'<div class="btn">{primary_button("Sign in", PORTAL_URL)}</div>',
+        middle=[f'<div class="btn">{primary_button("Go to dashboard", PORTAL_URL)}</div>',
                 spacer(24),
                 notice("<strong>Wasn't you?</strong> Nothing has changed and no one has "
                        "gained access to your account. You can safely ignore this email.",
@@ -579,8 +599,20 @@ add(
     "Goes to the address owner, so the sign-up screen never has to reveal whether an "
     "address is registered. Reassures rather than alarms: a failed sign-up compromises "
     "nothing, so the notice is info blue, not caution amber.",
+    item="You already have an account",
 )
 
+
+
+
+# The document's running order, which is not the order the templates are defined in.
+ORDER = [
+    "01-login-otp.html", "02-forgot-password-reset.html", "03-account-locked.html",
+    "04-registration-otp.html", "05-existing-account.html", "06-welcome.html",
+    "07-change-login-id-otp.html", "08-login-id-changed.html", "09-password-changed.html",
+    "10-contact-details-changed.html", "11-inactivity-signin.html",
+]
+TEMPLATES.sort(key=lambda t: ORDER.index(t["file"]))
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Preview page

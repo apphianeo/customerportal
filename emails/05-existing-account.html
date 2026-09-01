@@ -6,7 +6,7 @@
   <meta name="x-apple-disable-message-reformatting" />
   <meta name="color-scheme" content="light only" />
   <meta name="supported-color-schemes" content="light only" />
-  <title>You signed in to UOI Customer Portal</title>
+  <title>You already have an account</title>
   <!-- LOGO IS INLINED AS A DATA URI, FOR REVIEW ONLY. Gmail and Outlook strip these. Before sending, host assets/uoi-logo.png and rebuild: EMAIL_LOGO_URL=https://your.host/uoi-logo.png python3 emails/build.py -->
   <!--[if mso]>
   <xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml>
@@ -34,7 +34,7 @@
 <body style="margin:0; padding:0; background-color:#F6F8FC;">
   <!-- Preheader: the grey line the inbox shows next to the subject -->
   <div style="display:none; max-height:0; overflow:hidden; mso-hide:all;
-              font-size:1px; line-height:1px; color:#F6F8FC; opacity:0;">First sign-in in six months. Let us know if this was not you.
+              font-size:1px; line-height:1px; color:#F6F8FC; opacity:0;">No new account was created.
     &#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;
   </div>
 
@@ -66,7 +66,7 @@
 
               <h1 class="h1" style="margin:0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:26px;
                         line-height:1.25; font-weight:700; letter-spacing:-0.01em;
-                        color:#212121;">Welcome back</h1>
+                        color:#212121;">You already have an account</h1>
 
               <div style="height:16px; line-height:16px; font-size:0;">&nbsp;</div>
 
@@ -76,28 +76,49 @@
               <div style="height:14px; line-height:14px; font-size:0;">&nbsp;</div>
 
               <p style="margin:0px 0 0 0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:16px;
-                        line-height:1.5; color:#6E6E6E;">You signed in to your UOI Customer Portal account on <strong style="color:#212121;">{{login_datetime}}</strong>. It has been more than six months since your last visit, so we are letting you know.</p>
+                        line-height:1.5; color:#6E6E6E;">Someone tried to create a UOI Customer Portal account using <strong style="color:#212121;">{{login_id}}</strong> on <strong style="color:#212121;">{{attempt_datetime}}</strong>. An account with this email address already exists, so no new account was created.</p>
 
               <div style="height:14px; line-height:14px; font-size:0;">&nbsp;</div>
 
               <p style="margin:0px 0 0 0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:16px;
-                        line-height:1.5; color:#6E6E6E;">While you are here, it is worth checking that your contact details are current, so policy documents and renewal reminders reach you.</p>
+                        line-height:1.5; color:#6E6E6E;">If that was you, sign in with your existing details instead.</p>
+
+              <div style="height:24px; line-height:24px; font-size:0;">&nbsp;</div>
+<div class="btn">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td align="center" bgcolor="#005EB8"
+                      style="border-radius:8px;">
+                    <!--[if mso]>&nbsp;<![endif]-->
+                    <a href="https://portal.uoi.com.sg"
+                       style="display:inline-block; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:16px;
+                              line-height:1.5; font-weight:500; color:#FFFFFF;
+                              text-decoration:none; padding:12px 32px;
+                              border-radius:8px;">Go to dashboard</a>
+                    <!--[if mso]>&nbsp;<![endif]-->
+                  </td>
+                </tr>
+              </table></div>
 
               <div style="height:24px; line-height:24px; font-size:0;">&nbsp;</div>
 
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="background-color:#FFF8EC; border-radius:8px;
+                  <td style="background-color:#EFF6FF; border-radius:8px;
                              padding:14px 16px; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:14px;
-                             line-height:1.5; color:#212121;"><strong>Wasn't you?</strong> Your account may be at risk. <a href="{{reset_url}}" style="color:#0D6EFD; text-decoration:underline;">Reset your password</a> now and contact our support team <a href="https://api.whatsapp.com/send/?phone=6580814843&amp;text&amp;type=phone_number&amp;app_absent=0" style="color:#0D6EFD; text-decoration:underline;">here</a>.</td>
+                             line-height:1.5; color:#212121;"><strong>Wasn't you?</strong> Nothing has changed and no one has gained access to your account. You can safely ignore this email.</td>
                 </tr>
               </table>
+
+              <div style="height:20px; line-height:20px; font-size:0;">&nbsp;</div>
+
+              <p style="margin:0px 0 0 0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:16px;
+                        line-height:1.5; color:#6E6E6E;">If you need any help, feel free to reach out to our support team <a href="https://api.whatsapp.com/send/?phone=6580814843&amp;text&amp;type=phone_number&amp;app_absent=0" style="color:#0D6EFD; text-decoration:underline;">here</a>.</p>
 
               <div style="height:24px; line-height:24px; font-size:0;">&nbsp;</div>
 
               <p style="margin:0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:16px; line-height:1.5;
-                        color:#6E6E6E;">Regards,<br />United Overseas
-                        Insurance Limited</p>
+                        color:#6E6E6E;">Regards,<br />United Overseas Insurance Limited</p>
                   </td>
                 </tr>
               </table>

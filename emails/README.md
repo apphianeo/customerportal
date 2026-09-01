@@ -2,21 +2,23 @@
 
 Eleven HTML email templates for the customer portal, built from the portal's own
 design system so the email and the screen it leads to look like the same product.
-Copy comes from *Customer Portal Figma & Templates*, the uploaded PDF.
+Copy and running order come from *Customer Portal Figma & Templates*, the
+confirmed PDF. `emails/confluence.md` carries the same copy in a form that pastes
+straight into Confluence.
 
 | # | Scenario | File |
 |---|----------|------|
 | 1 | Login OTP | `01-login-otp.html` |
-| 2 | Login, forgot password reset link | `02-forgot-password-reset.html` |
-| 3 | Manual account registration OTP | `03-registration-otp.html` |
-| 4 | Change Login ID (email address) OTP | `04-change-login-id-otp.html` |
-| 5 | Welcome, successful sign up | `05-welcome.html` |
-| 6 | Sign-in after six months of inactivity | `06-inactivity-signin.html` |
-| 7 | Successful change of login ID | `07-login-id-changed.html` |
-| 8 | Successful change of password | `08-password-changed.html` |
-| 9 | Successful change of contact details | `09-contact-details-changed.html` |
-| 10 | Account locked after failed sign-in attempts | `10-account-locked.html` |
-| 11 | Registration attempted on an existing address | `11-existing-account.html` |
+| 2 | Forget password, reset link | `02-forgot-password-reset.html` |
+| 3 | Account locked | `03-account-locked.html` |
+| 4 | Verify Account OTP | `04-registration-otp.html` |
+| 5 | You already have an account | `05-existing-account.html` |
+| 6 | Successful registration | `06-welcome.html` |
+| 7 | Change of new login ID OTP | `07-change-login-id-otp.html` |
+| 8 | Successful change of login ID | `08-login-id-changed.html` |
+| 9 | Successful change of password | `09-password-changed.html` |
+| 10 | Successful change of contact details | `10-contact-details-changed.html` |
+| 11 | Sign-in after six months of inactivity | `11-inactivity-signin.html` |
 
 Open `preview.html` in a browser to see all eleven rendered at 600px with sample data.
 
@@ -111,10 +113,11 @@ Two deliberate deviations, both forced by the medium:
 
 ## Editing and building
 
-Templates are generated so the shell stays identical across all four:
+Templates are generated so the shell stays identical across all eleven:
 
 ```bash
-python3 emails/build.py     # writes the 4 templates + preview.html
+python3 emails/build.py       # writes the 11 templates + preview.html
+python3 emails/confluence.py  # writes confluence.md from those templates
 ```
 
 Edit `build.py`, not the HTML files. They are overwritten on every build.
@@ -145,7 +148,7 @@ per-template copy is in the `TEMPLATES` section near the bottom.
 | `{{otp}}` | 1, 3, 4 (subject + body) |
 | `{{login_datetime}}` | 6 |
 | `{{change_datetime}}` | 7, 8, 9 |
-| `{{changed_fields}}` | 9 |
+| `{{change_fields}}` | 10 |
 | `{{lock_datetime}}` | 10 |
 | `{{attempt_datetime}}` | 11 |
 | `{{login_id}}` | 11 |

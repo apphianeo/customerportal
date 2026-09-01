@@ -6,7 +6,7 @@
   <meta name="x-apple-disable-message-reformatting" />
   <meta name="color-scheme" content="light only" />
   <meta name="supported-color-schemes" content="light only" />
-  <title>You already have an account</title>
+  <title>Verify your email address</title>
   <!-- LOGO IS INLINED AS A DATA URI, FOR REVIEW ONLY. Gmail and Outlook strip these. Before sending, host assets/uoi-logo.png and rebuild: EMAIL_LOGO_URL=https://your.host/uoi-logo.png python3 emails/build.py -->
   <!--[if mso]>
   <xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml>
@@ -34,7 +34,7 @@
 <body style="margin:0; padding:0; background-color:#F6F8FC;">
   <!-- Preheader: the grey line the inbox shows next to the subject -->
   <div style="display:none; max-height:0; overflow:hidden; mso-hide:all;
-              font-size:1px; line-height:1px; color:#F6F8FC; opacity:0;">No new account was created.
+              font-size:1px; line-height:1px; color:#F6F8FC; opacity:0;">Code is valid for the next 3 minutes.
     &#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;
   </div>
 
@@ -66,7 +66,7 @@
 
               <h1 class="h1" style="margin:0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:26px;
                         line-height:1.25; font-weight:700; letter-spacing:-0.01em;
-                        color:#212121;">You already have an account</h1>
+                        color:#212121;">Verify your email address</h1>
 
               <div style="height:16px; line-height:16px; font-size:0;">&nbsp;</div>
 
@@ -76,39 +76,28 @@
               <div style="height:14px; line-height:14px; font-size:0;">&nbsp;</div>
 
               <p style="margin:0px 0 0 0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:16px;
-                        line-height:1.5; color:#6E6E6E;">Someone tried to create a UOI Customer Portal account using <strong style="color:#212121;">{{login_id}}</strong> on <strong style="color:#212121;">{{attempt_datetime}}</strong>. An account with this email address already exists, so no new account was created.</p>
-
-              <div style="height:14px; line-height:14px; font-size:0;">&nbsp;</div>
-
-              <p style="margin:0px 0 0 0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:16px;
-                        line-height:1.5; color:#6E6E6E;">If that was you, sign in with your existing details instead.</p>
-
-              <div style="height:24px; line-height:24px; font-size:0;">&nbsp;</div>
-<div class="btn">
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td align="center" bgcolor="#005EB8"
-                      style="border-radius:8px;">
-                    <!--[if mso]>&nbsp;<![endif]-->
-                    <a href="https://portal.uoi.com.sg"
-                       style="display:inline-block; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:16px;
-                              line-height:1.5; font-weight:500; color:#FFFFFF;
-                              text-decoration:none; padding:12px 32px;
-                              border-radius:8px;">Sign in</a>
-                    <!--[if mso]>&nbsp;<![endif]-->
-                  </td>
-                </tr>
-              </table></div>
+                        line-height:1.5; color:#6E6E6E;">Welcome to UOI Customer Portal. Please enter this One-Time Password (OTP) to verify and finish setting up your account.</p>
 
               <div style="height:24px; line-height:24px; font-size:0;">&nbsp;</div>
 
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="background-color:#EFF6FF; border-radius:8px;
-                             padding:14px 16px; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:14px;
-                             line-height:1.5; color:#212121;"><strong>Wasn't you?</strong> Nothing has changed and no one has gained access to your account. You can safely ignore this email.</td>
+                  <td align="center"
+                      style="background-color:#F6F8FC; border-radius:8px;
+                             padding:24px 16px 26px 16px;">
+                    <div style="font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:13px; line-height:1.4;
+                                color:#6E6E6E; padding-bottom:10px;">Your OTP</div>
+                    <div class="code" style="font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:38px; line-height:1.1;
+                                font-weight:700; color:#212121;
+                                letter-spacing:9px; text-indent:9px; white-space:nowrap;">{{otp}}</div>
+                  </td>
                 </tr>
               </table>
+
+              <div style="height:20px; line-height:20px; font-size:0;">&nbsp;</div>
+
+              <p style="margin:0px 0 0 0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:16px;
+                        line-height:1.5; color:#6E6E6E;">Code is valid for the next 3 minutes, after which you will need to request a new OTP.</p>
 
               <div style="height:20px; line-height:20px; font-size:0;">&nbsp;</div>
 
@@ -118,8 +107,7 @@
               <div style="height:24px; line-height:24px; font-size:0;">&nbsp;</div>
 
               <p style="margin:0; font-family:'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif; font-size:16px; line-height:1.5;
-                        color:#6E6E6E;">Regards,<br />United Overseas
-                        Insurance Limited</p>
+                        color:#6E6E6E;">Regards,<br />United Overseas Insurance Limited</p>
                   </td>
                 </tr>
               </table>
