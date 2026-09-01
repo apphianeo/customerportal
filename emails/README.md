@@ -35,7 +35,7 @@ element and carries no information. On a phone it pushes the OTP, the only thing
 the reader actually wants, below the fold. It has been replaced by a 4px bar in
 the portal's primary blue: brand presence is instant, and the code sits in the
 first screenful. As a bonus, most corporate mail clients block images by default,
-so a photo-led email currently arrives as a grey box; this one doesn't depend on
+so a photo-led email currently arrives as a grey box; this one does not depend on
 images at all.
 
 **2. The code is an object, not a sentence.**
@@ -48,14 +48,14 @@ own. Code and validity are one thing to read, not two.
 **3. Expiry is stated once and stated correctly.**
 The spec table says 3 minutes; the current email says 5. The templates use 3
 minutes throughout. Set it from one config value on the backend so the copy and
-the token can't drift apart again.
+the token cannot drift apart again.
 
 **4. The yellow highlighter is gone.**
 Highlighting on "OTP" reads as an unfinished Word document. Emphasis now comes
 from type scale and the plate, which is what the portal does.
 
 **5. Copy cut by roughly half.**
-Before: *"To ensure secure access to your UOIConnect account, we've generated a
+Before: *"To ensure secure access to your UOIConnect account, we have generated a
 One-Time Password (OTP) for you. Please enter this OTP on the portal login page
 to proceed."* After: *"Enter this code to finish signing in to UOI Customer Portal."*
 Nobody reads a transactional email; they scan it for one thing.
@@ -77,7 +77,7 @@ to work out what matters:
 | 2 | `notice()` | tinted box, 8px radius | what to do if it was not you |
 | 3 | `fine()` | 13px, `#8D8D8D`, behind a hairline | security note, support |
 
-**8. The three notice emails say what to do if it wasn't you.**
+**8. The three notice emails say what to do if it was not you.**
 Templates 6, 7 and 8 confirm something that already happened, so a caution box
 carries the recovery route and they close on it rather than repeating a help
 line underneath. Templates 1 to 5 keep the help line, since nothing has
@@ -180,7 +180,7 @@ constants, not merge fields.
   ID, the old address is the only one the customer still reaches. Sending only to
   the new address means a hijack is never seen.
 - **Row 5 of the spec table** ("Others") was cut off in the screenshot. Send me the
-  remaining scenarios and they'll slot into the same shell.
+  remaining scenarios and they will slot into the same shell.
 
 ### QA before launch
 

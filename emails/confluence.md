@@ -125,7 +125,7 @@ Reset your password to unlock it.
 
 [Reset password]
 
-**Wasn't you?** Someone may be trying to sign in to your account. Contact our support team [here].
+**Was this not you?** Someone may be trying to sign in to your account. Contact our support team [here].
 
 Regards,
 
@@ -222,7 +222,7 @@ If that was you, sign in with your existing details instead.
 
 [Go to dashboard]
 
-**Wasn't you?** Nothing has changed and no one has gained access to your account. You can safely ignore this email.
+**Was this not you?** Nothing has changed and no one has gained access to your account. You can safely ignore this email.
 
 If you need any help, feel free to reach out to our support team [here].
 
@@ -363,7 +363,7 @@ Your login ID (email address) for UOI Customer Portal has been changed from **{{
 
 Use your new login ID the next time you sign in.
 
-**Wasn't you?** Your account may be at risk. Contact our support team [here].
+**Was this not you?** Your account may be at risk. Contact our support team [here].
 
 Regards,
 
@@ -405,7 +405,7 @@ The password for your UOI Customer Portal account was changed on **{{change_date
 
 Use your new password the next time you sign in.
 
-**Wasn't you?** Your account may be at risk. [Reset your password] now and contact our support team [here].
+**Was this not you?** Your account may be at risk. [Reset your password] now and contact our support team [here].
 
 Regards,
 
@@ -448,7 +448,7 @@ The following details on your UOI Customer Portal account were changed on **{{ch
 
 Policy documents and renewal reminders will go to your updated details from now on.
 
-**Wasn't you?** Your account may be at risk. [Reset your password] now and contact our support team [here].
+**Was this not you?** Your account may be at risk. [Reset your password] now and contact our support team [here].
 
 Regards,
 
@@ -491,7 +491,7 @@ You signed in to your UOI Customer Portal account on **{{login_datetime}}**. It 
 
 While you are here, it is worth checking that your contact details are current, so policy documents and renewal reminders reach you.
 
-**Wasn't you?** Your account may be at risk. [Reset your password] now and contact our support team [here].
+**Was this not you?** Your account may be at risk. [Reset your password] now and contact our support team [here].
 
 Regards,
 

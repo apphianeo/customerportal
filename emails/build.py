@@ -390,7 +390,7 @@ add(
         tail=["Link is valid for the next 30 minutes, after which you will need to "
               "request again."],
     ),
-    "Link, not a code. A reset is a click-through, so don't make the user retype anything.",
+    "Link, not a code. A reset is a click-through, so the user does not have to retype anything.",
     section="Login",
     item="Forget password, reset link",
 )
@@ -467,7 +467,7 @@ add(
          % T["text_primary"],
          "While you are here, it is worth checking that your contact details are "
          "current, so policy documents and renewal reminders reach you."],
-        middle=[notice("<strong>Wasn't you?</strong> Your account may be at risk. "
+        middle=[notice("<strong>Was this not you?</strong> Your account may be at risk. "
                        + link("Reset your password", RESET_URL) + " now and contact our "
                        "support team " + link("here", SUPPORT_URL) + ".", "caution")],
         help_line=False,
@@ -493,7 +493,7 @@ add(
          "<strong style=\"color:%s;\">{{change_datetime}}</strong>."
          % (T["text_primary"], T["text_primary"], T["text_primary"]),
          "Use your new login ID the next time you sign in."],
-        middle=[notice("<strong>Wasn't you?</strong> Your account may be at risk. Contact "
+        middle=[notice("<strong>Was this not you?</strong> Your account may be at risk. Contact "
                        "our support team " + link("here", SUPPORT_URL) + ".", "caution")],
         help_line=False,
     ),
@@ -514,7 +514,7 @@ add(
         ["The password for your UOI Customer Portal account was changed on "
          "<strong style=\"color:%s;\">{{change_datetime}}</strong>." % T["text_primary"],
          "Use your new password the next time you sign in."],
-        middle=[notice("<strong>Wasn't you?</strong> Your account may be at risk. "
+        middle=[notice("<strong>Was this not you?</strong> Your account may be at risk. "
                        + link("Reset your password", RESET_URL) + " now and contact our "
                        "support team " + link("here", SUPPORT_URL) + ".", "caution")],
         help_line=False,
@@ -539,7 +539,7 @@ add(
          % (T["text_primary"], T["text_primary"]),
          "Policy documents and renewal reminders will go to your updated details "
          "from now on."],
-        middle=[notice("<strong>Wasn't you?</strong> Your account may be at risk. "
+        middle=[notice("<strong>Was this not you?</strong> Your account may be at risk. "
                        + link("Reset your password", RESET_URL) + " now and contact our "
                        "support team " + link("here", SUPPORT_URL) + ".", "caution")],
         help_line=False,
@@ -565,7 +565,7 @@ add(
          "Reset your password to unlock it."],
         middle=[f'<div class="btn">{primary_button("Reset password", RESET_URL)}</div>',
                 spacer(24),
-                notice("<strong>Wasn't you?</strong> Someone may be trying to sign in to "
+                notice("<strong>Was this not you?</strong> Someone may be trying to sign in to "
                        "your account. Contact our support team "
                        + link("here", SUPPORT_URL) + ".", "caution")],
         help_line=False,
@@ -591,7 +591,7 @@ add(
          "If that was you, sign in with your existing details instead."],
         middle=[f'<div class="btn">{primary_button("Go to dashboard", PORTAL_URL)}</div>',
                 spacer(24),
-                notice("<strong>Wasn't you?</strong> Nothing has changed and no one has "
+                notice("<strong>Was this not you?</strong> Nothing has changed and no one has "
                        "gained access to your account. You can safely ignore this email.",
                        "info")],
     ),
@@ -667,18 +667,18 @@ CHANGES = [
      "photo-led version currently arrives as a grey box; this one degrades to the "
      "brand name and stays fully readable."),
     ("The code is an object, not a sentence",
-     "<code>Your OTP: 946683</code> inside a paragraph doesn\u2019t scan. The code now sits "
+     "<code>Your OTP: 946683</code> inside a paragraph does not scan. The code now sits "
      "in a plate that reuses the portal\u2019s OTP input treatment, at 34px with wide "
      "tracking, with its expiry inside the same plate. One thing to read, not two."),
     ("One expiry, stated correctly",
      "The spec table says 3 minutes; the current email says 5. Templates use 3 "
-     "throughout. Drive it from one backend value so copy and token can\u2019t drift "
+     "throughout. Drive it from one backend value so copy and token cannot drift "
      "apart again."),
     ("The yellow highlighter is gone",
      "Highlighting on \u201cOTP\u201d reads as an unfinished Word document. Emphasis comes "
      "from type scale and the plate, which is what the portal already does."),
     ("Copy cut by roughly half",
-     "Before: <em>\u201cTo ensure secure access to your UOIConnect account, we\u2019ve "
+     "Before: <em>\u201cTo ensure secure access to your UOIConnect account, we have "
      "generated a One-Time Password (OTP) for you. Please enter this OTP on the portal "
      "login page to proceed.\u201d</em> After: <em>\u201cEnter this code to finish signing in "
      "to UOI Customer Portal.\u201d</em>"),
@@ -687,9 +687,9 @@ CHANGES = [
      "legal block, which sits below the card at 11px, the smallest type in the email, "
      "so it reads as document chrome rather than message content. The support route "
      "moved inside the card as closing fine print at 13px."),
-    ("Every email says what to do if it wasn\u2019t you",
+    ("Every email says what to do if it was not you",
      "Login: change your password. Reset: ignore it, nothing happens. Change login "
-     "ID: call us now, don\u2019t enter the code. The highest-value copy in a security "
+     "ID: call us now, do not enter the code. The highest-value copy in a security "
      "email, and the current template has none of it."),
 ]
 
