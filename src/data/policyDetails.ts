@@ -126,7 +126,7 @@ export const POLICY_DETAILS: PolicyDetailData[] = [
     slug: 'unicar',
     name: 'UniCar',
     status: 'renewal-due',
-    statusLabel: 'Renewal due in 30 days',
+    statusLabel: 'Renewal due in 60 days',
     policyNumber: 'DHOPF160012132600',
     policyFields: [
       { label: 'Product', value: 'UniCar' },

@@ -11,12 +11,20 @@ type Props = {
   /** caution = amber, for something the user must act on. info = brand
       gradient, for a standing note about the page. */
   tone?: 'caution' | 'info'
+  /** Controlled dismissal — when provided, the parent owns the dismissed state
+      (e.g. to keep it dismissed for the whole session). Falls back to local
+      state when omitted. */
+  dismissed?: boolean
+  onDismiss?: () => void
 }
 
-export default function NotificationBanner({ title, description, ctaLabel, onCtaClick, tone = 'caution' }: Props) {
+export default function NotificationBanner({ title, description, ctaLabel, onCtaClick, tone = 'caution', dismissed, onDismiss }: Props) {
   const info = tone === 'info'
-  const [dismissed, setDismissed] = useState(false)
-  if (dismissed) return null
+  const [localDismissed, setLocalDismissed] = useState(false)
+  const controlled = dismissed !== undefined
+  const isDismissed = controlled ? dismissed : localDismissed
+  const dismiss = controlled ? (onDismiss ?? (() => {})) : () => setLocalDismissed(true)
+  if (isDismissed) return null
 
   return (
     <div className="flex items-center drop-shadow-[0px_1px_2px_rgba(0,0,0,0.05)]">
@@ -63,7 +71,7 @@ export default function NotificationBanner({ title, description, ctaLabel, onCta
 
           {/* Dismiss */}
           <button
-            onClick={() => setDismissed(true)}
+            onClick={dismiss}
             aria-label="Dismiss notification"
             className="shrink-0 size-4 flex items-center justify-center bg-transparent border-0 cursor-pointer p-0"
           >

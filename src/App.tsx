@@ -36,13 +36,23 @@ function DashboardRoute({ account }: { account: Account }) {
   )
 }
 
-function PoliciesRoute({ account }: { account: Account }) {
+function PoliciesRoute({
+  account,
+  bannerDismissed,
+  onDismissBanner,
+}: {
+  account: Account
+  bannerDismissed: boolean
+  onDismissBanner: () => void
+}) {
   const navigate = useNavigate()
   return (
     <PoliciesPage
       hasPolicies={canSeePolicies(account)}
       onSelectPolicy={slug => navigate(`/policies/${slug}`)}
       onNavigateToDashboard={() => navigate('/dashboard')}
+      bannerDismissed={bannerDismissed}
+      onDismissBanner={onDismissBanner}
     />
   )
 }
@@ -94,9 +104,13 @@ function LoginRoute({ onAuthenticated }: { onAuthenticated: (account: Account) =
 function AppRoutes() {
   /** The signed-in account, or null when signed out. */
   const [account, setAccount] = useState<Account | null>(null)
+  /** Policies-page notice: dismissing hides it for the rest of the session but
+      it returns on the next sign-in, so the flag is reset on each login. */
+  const [policiesBannerDismissed, setPoliciesBannerDismissed] = useState(false)
 
   function authenticate(signedIn: Account) {
     setAccount(signedIn)
+    setPoliciesBannerDismissed(false)
   }
 
   function logout() {
@@ -117,7 +131,16 @@ function AppRoutes() {
     <Routes>
       <Route element={<DashboardLayout account={account} onLogout={logout} />}>
         <Route path="/dashboard" element={<DashboardRoute account={account} />} />
-        <Route path="/policies" element={<PoliciesRoute account={account} />} />
+        <Route
+          path="/policies"
+          element={
+            <PoliciesRoute
+              account={account}
+              bannerDismissed={policiesBannerDismissed}
+              onDismissBanner={() => setPoliciesBannerDismissed(true)}
+            />
+          }
+        />
         <Route path="/policies/:slug" element={<PolicyDetailRoute account={account} />} />
         <Route path="/account" element={<AccountRoute account={account} onLogout={logout} />} />
         <Route path="/help" element={<HelpRoute />} />

@@ -308,6 +308,7 @@ function applyAccountToInsured(
         if (f.label === 'Name') return { ...f, value: account.fullName }
         if (f.label === 'NRIC/FIN' || f.label === 'FIN') return { ...f, value: account.nric }
         if (f.label === 'Date of birth') return { ...f, value: account.dob }
+        if (f.label === 'Gender') return { ...f, value: account.gender }
         return f
       }),
     }

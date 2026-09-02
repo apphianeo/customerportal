@@ -129,9 +129,12 @@ type Props = {
   hasPolicies?: boolean
   onNavigateToDashboard?: () => void
   onSelectPolicy?: (slug: string) => void
+  /** Session-scoped dismissal of the standing notice, owned by the app. */
+  bannerDismissed?: boolean
+  onDismissBanner?: () => void
 }
 
-export default function PoliciesPage({ onSelectPolicy, onNavigateToDashboard, hasPolicies = true }: Props) {
+export default function PoliciesPage({ onSelectPolicy, onNavigateToDashboard, hasPolicies = true, bannerDismissed, onDismissBanner }: Props) {
   const [activeFilter, setActiveFilter] = useState<FilterKey>('all')
 
   // No policies on file → counts and chips all read zero
@@ -151,6 +154,8 @@ export default function PoliciesPage({ onSelectPolicy, onNavigateToDashboard, ha
         {/* ── Standing note: the portal is not the system of record ── */}
         <NotificationBanner
           tone="info"
+          dismissed={bannerDismissed}
+          onDismiss={onDismissBanner}
           title="Policy information displayed in this portal may not reflect all recent changes made to your policy"
           description={
             <>

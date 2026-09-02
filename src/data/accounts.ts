@@ -22,6 +22,7 @@ export type Account = {
   salutation: string
   /** The customer's full name, stored as a single field. */
   fullName: string
+  gender: 'Male' | 'Female'
   dob: string
   /** Collected at the profile step; matches the holder to their policies. */
   nric: string
@@ -62,6 +63,7 @@ export const ACCOUNTS: Account[] = [
     verified: true,
     salutation: 'MR',
     fullName: 'CHRIS WONG JUN JIE',
+    gender: 'Male',
     dob: '01/01/1989',
     nric: 'S1234567D',
     phone: '91234567',
@@ -82,6 +84,7 @@ export const ACCOUNTS: Account[] = [
     verified: true,
     salutation: 'MS',
     fullName: 'MEI LING TAN HUI ZHEN',
+    gender: 'Female',
     dob: '14/07/1992',
     nric: 'S8912345A',
     phone: '98765432',
@@ -102,6 +105,7 @@ export const ACCOUNTS: Account[] = [
     verified: true,
     salutation: 'MR',
     fullName: 'RAVI KUMAR',
+    gender: 'Male',
     dob: '23/11/1978',
     nric: 'S7654321B',
     phone: '81234567',
@@ -122,6 +126,7 @@ export const ACCOUNTS: Account[] = [
     verified: true,
     salutation: 'MRS',
     fullName: 'AISYAH RAHMAN',
+    gender: 'Female',
     dob: '05/03/1985',
     nric: 'G4567890X',
     phone: '71234567',
@@ -143,6 +148,7 @@ export const ACCOUNTS: Account[] = [
     verified: true,
     salutation: 'MDM',
     fullName: 'GRACE SIM EN QI',
+    gender: 'Female',
     dob: '17/12/1971',
     nric: 'S2244668E',
     phone: '93304488',
@@ -163,6 +169,7 @@ export const ACCOUNTS: Account[] = [
     verified: true,
     salutation: 'MS',
     fullName: 'NADIA LIM HUI TING',
+    gender: 'Female',
     dob: '09/09/1995',
     nric: 'T0011223J',
     phone: '92220000',
@@ -223,6 +230,7 @@ export function draftAccount(input: Partial<Account> & { email: string }): Accou
     verified: false,
     salutation: 'MR',
     fullName: 'there',
+    gender: 'Male',
     dob: '',
     nric: '',
     phone: '',
@@ -264,6 +272,7 @@ export const initials = (a: Account) => {
 export const SINGPASS_IDENTITY = {
   salutation: 'MDM',
   fullName: 'GRACE SIM EN QI',
+  gender: 'Female' as const,
   dob: '17/12/1971',
   nric: 'S2244668E',
   email: 'grace.sim@gmail.com',

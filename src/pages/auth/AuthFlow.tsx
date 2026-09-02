@@ -304,6 +304,7 @@ export default function AuthFlow({
                   authMethod: 'singpass',
                   verified: true,
                   salutation: SINGPASS_IDENTITY.salutation,
+                  gender: SINGPASS_IDENTITY.gender,
                 })
               : // Manual sign-up — must verify identity with Singpass first. The
                 // account is not created until that step completes.

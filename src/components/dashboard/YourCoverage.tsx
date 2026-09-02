@@ -79,7 +79,7 @@ const POLICIES: PolicyDetail[] = [
     name: 'UniCar',
     policyNo: 'PNF320104124A23',
     status: 'renewal-due',
-    statusLabel: 'Renewal due in 30 days',
+    statusLabel: 'Renewal due in 60 days',
     coveragePeriod: '02/01/2026 - 01/01/2027 (12 Months)',
     category: 'motor',
     detailSlug: 'unicar',
