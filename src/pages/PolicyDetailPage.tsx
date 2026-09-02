@@ -361,6 +361,31 @@ export default function PolicyDetailPage({ slug, account, onNavigateToDashboard,
       <div className="bg-bg-page pt-[24px] md:pt-[32px] px-4">
         <div className="w-full max-w-[980px] mx-auto flex flex-col gap-[32px]">
 
+        {/* Endorsement notice — page-level banner, shown only for a policy
+            currently being endorsed */}
+        {policy.slug === 'unicar' && (
+          <NotificationBanner
+            tone="info"
+            title="Policy endorsement detected"
+            description={
+              <>
+                Recent changes may not appear here yet. Please refer to your latest policy documents
+                for the most accurate and up-to-date information. If you need assistance or have any
+                questions, please contact us{' '}
+                <a
+                  href={SUPPORT_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-text-secondary underline"
+                >
+                  here
+                </a>
+                .
+              </>
+            }
+          />
+        )}
+
         {/* ── Breadcrumbs ── */}
         <div className="flex items-center gap-[4px] flex-wrap">
           <button onClick={onNavigateToDashboard} className="text-[12px] text-[#949494] leading-[1.4] bg-transparent border-0 p-0 cursor-pointer">
@@ -443,30 +468,6 @@ export default function PolicyDetailPage({ slug, account, onNavigateToDashboard,
       {/* ── Section cards ── */}
       <div className="px-4 pb-8">
         <div className="w-full max-w-[980px] mx-auto flex flex-col gap-[24px]">
-
-        {/* Endorsement notice — shown only for a policy currently being endorsed */}
-        {policy.slug === 'unicar' && (
-          <NotificationBanner
-            tone="info"
-            title="Policy endorsement detected"
-            description={
-              <>
-                Recent changes may not appear here yet. Please refer to your latest policy documents
-                for the most accurate and up-to-date information. If you need assistance or have any
-                questions, please contact us{' '}
-                <a
-                  href={SUPPORT_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-text-secondary underline"
-                >
-                  here
-                </a>
-                .
-              </>
-            }
-          />
-        )}
 
         {/* ── Sections ── */}
         <SectionCard id="section-policy" title="Policy details">
