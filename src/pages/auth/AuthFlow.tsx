@@ -941,11 +941,12 @@ function RegisterDetails({
             autoCapitalize="characters"
             disabled={singpass}
           />
+          {/* Editable even on a Singpass sign-up: MyInfo supplies the residential
+              address, but the mailing address is the user's to set. */}
           <ConsentCheckbox
             checked={mailingSame}
             onChange={setMailingSame}
             label="Mailing address same as residential"
-            disabled={singpass}
           />
         </div>
 
