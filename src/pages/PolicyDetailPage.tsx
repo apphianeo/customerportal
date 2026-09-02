@@ -4,6 +4,8 @@ import { ChevronRightIcon, ChevronDownIcon, ChevronUpIcon } from '../components/
 import { getPolicyDetail, type Field, type FieldValue, type PolicyDetailData } from '../data/policyDetails'
 import type { PolicyStatus } from '../data/policies'
 import type { Account } from '../data/accounts'
+import NotificationBanner from '../components/dashboard/NotificationBanner'
+import { SUPPORT_URL } from './auth/AuthUI'
 
 /* Official Mastercard brand mark — two interlocking circles with the wordmark. */
 function MastercardIcon() {
@@ -441,6 +443,30 @@ export default function PolicyDetailPage({ slug, account, onNavigateToDashboard,
       {/* ── Section cards ── */}
       <div className="px-4 pb-8">
         <div className="w-full max-w-[980px] mx-auto flex flex-col gap-[24px]">
+
+        {/* Endorsement notice — shown only for a policy currently being endorsed */}
+        {policy.slug === 'unicar' && (
+          <NotificationBanner
+            tone="info"
+            title="Policy endorsement detected"
+            description={
+              <>
+                Recent changes may not appear here yet. Please refer to your latest policy documents
+                for the most accurate and up-to-date information. If you need assistance or have any
+                questions, please contact us{' '}
+                <a
+                  href={SUPPORT_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-text-secondary underline"
+                >
+                  here
+                </a>
+                .
+              </>
+            }
+          />
+        )}
 
         {/* ── Sections ── */}
         <SectionCard id="section-policy" title="Policy details">

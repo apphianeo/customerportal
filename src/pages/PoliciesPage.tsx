@@ -1,6 +1,4 @@
 import { useState } from 'react'
-import NotificationBanner from '../components/dashboard/NotificationBanner'
-import { SUPPORT_URL } from './auth/AuthUI'
 import { CartIcon, ChevronRightIcon } from '../components/icons'
 import iconMotor      from '../assets/icon-motor.svg'
 import iconTravel     from '../assets/icon-travel.svg'
@@ -129,12 +127,9 @@ type Props = {
   hasPolicies?: boolean
   onNavigateToDashboard?: () => void
   onSelectPolicy?: (slug: string) => void
-  /** Session-scoped dismissal of the standing notice, owned by the app. */
-  bannerDismissed?: boolean
-  onDismissBanner?: () => void
 }
 
-export default function PoliciesPage({ onSelectPolicy, onNavigateToDashboard, hasPolicies = true, bannerDismissed, onDismissBanner }: Props) {
+export default function PoliciesPage({ onSelectPolicy, onNavigateToDashboard, hasPolicies = true }: Props) {
   const [activeFilter, setActiveFilter] = useState<FilterKey>('all')
 
   // No policies on file → counts and chips all read zero
@@ -150,29 +145,6 @@ export default function PoliciesPage({ onSelectPolicy, onNavigateToDashboard, ha
   return (
     <div className="bg-bg-page min-h-full">
       <div className="screen-container flex flex-col gap-[32px]">
-
-        {/* ── Standing note: the portal is not the system of record ── */}
-        <NotificationBanner
-          tone="info"
-          dismissed={bannerDismissed}
-          onDismiss={onDismissBanner}
-          title="Policy information displayed in this portal may not reflect all recent changes made to your policy"
-          description={
-            <>
-              Please refer to your latest policy documents for the most accurate and up-to-date
-              information. If you need assistance or have any questions, please contact us{' '}
-              <a
-                href={SUPPORT_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-text-secondary underline"
-              >
-                here
-              </a>
-              .
-            </>
-          }
-        />
 
         {/* ── Breadcrumbs ── */}
         <div className="flex items-center gap-[4px]">
