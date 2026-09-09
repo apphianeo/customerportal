@@ -73,10 +73,10 @@ function RewardCard({ reward }: { reward: Reward }) {
       href={reward.href}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex w-full bg-white rounded-[8px] shadow-card overflow-hidden text-left cursor-pointer no-underline hover:shadow-pop transition-shadow"
+      className="flex w-full h-[193px] bg-white rounded-[8px] shadow-card overflow-hidden text-left cursor-pointer no-underline hover:shadow-pop transition-shadow"
     >
-      {/* Image */}
-      <div className="w-[120px] shrink-0 self-stretch">
+      {/* Image — fixed 120px column, cropped to fill the card height (per Figma) */}
+      <div className="w-[120px] shrink-0 h-full">
         <img src={reward.image} alt="" className="w-full h-full object-cover" />
       </div>
 
@@ -85,15 +85,15 @@ function RewardCard({ reward }: { reward: Reward }) {
         <span className="self-start text-[12px] font-medium text-[#1e40af] bg-bg-info px-[8px] py-[4px] rounded-pill leading-[1.4]">
           {reward.category}
         </span>
-        <div className="flex flex-col gap-1">
-          <p className="text-base font-medium text-text-primary leading-relaxed m-0">
+        <div className="flex flex-col gap-1 min-w-0">
+          <p className="text-base font-medium text-text-primary leading-relaxed m-0 line-clamp-1">
             {reward.title}
           </p>
-          <p className="text-sm text-text-secondary leading-relaxed m-0">
+          <p className="text-sm text-text-secondary leading-relaxed m-0 line-clamp-3">
             {reward.description}
           </p>
         </div>
-        <span className="flex items-center gap-1 text-sm font-medium text-primary">
+        <span className="flex items-center gap-1 text-sm font-medium text-primary mt-auto">
           {reward.ctaLabel}
           <ArrowForwardIcon size={16} />
         </span>
