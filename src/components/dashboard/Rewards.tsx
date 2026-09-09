@@ -1,7 +1,6 @@
 import { ArrowForwardIcon } from '../icons'
 import imgKith     from '../../assets/rewards/kith.png'
 import imgBath     from '../../assets/rewards/bath.png'
-import imgHeymax   from '../../assets/rewards/heymax.png'
 import imgWellness from '../../assets/rewards/wellness.png'
 
 type Reward = {
@@ -11,40 +10,40 @@ type Reward = {
   description: string
   ctaLabel: string
   image: string
+  /** Opened in a new tab when the card is clicked. */
+  href: string
 }
 
 const REWARDS: Reward[] = [
   {
-    id: 'kith',
-    category: 'Dining',
-    title: '10% off KITH by Casa Products',
-    description: 'Enter promo code UOIKITH10 at checkout on www.kith.sg to enjoy',
+    id: 'casa',
+    category: 'Lifestyle',
+    title: '10% off CASA products',
+    description:
+      'Simply enter UOIFRIENDS10 to receive 10% off selected CASA products sitewide. Excludes Ferroli products and spare parts.',
     ctaLabel: 'Shop Now',
     image: imgKith,
+    href: 'https://shop.casa.sg/',
   },
   {
-    id: 'bath',
+    id: 'dental',
     category: 'Wellness',
-    title: '10% off Capybara Bathing',
-    description: 'Enter promo code UOIBATH10 at checkout on www.bath.sg to enjoy',
-    ctaLabel: 'Shop Now',
-    image: imgBath,
-  },
-  {
-    id: 'heymax',
-    category: 'Cashback',
-    title: '$5 Credit Reward for HEYMAX New User',
-    description: 'Enter promo code UOIHEYMAX5 during registration to enjoy $5 credit',
-    ctaLabel: 'Claim Now',
-    image: imgHeymax,
-  },
-  {
-    id: 'wellness-talk',
-    category: 'Wellness',
-    title: 'Complimentary Wellness Talk',
-    description: 'Enjoy a complimentary wellness talk (worth $80), limited slots available',
-    ctaLabel: 'Register Now',
+    title: 'Dental care from S$109',
+    description:
+      'Simply show your UOI Customer Portal account to enjoy exclusive dental care rates at Khoo Teck Puat Hospital.',
+    ctaLabel: 'View More',
     image: imgWellness,
+    href: '/rewards/dental-care.pdf',
+  },
+  {
+    id: 'sports-screening',
+    category: 'Wellness',
+    title: 'Sports and fitness screening',
+    description:
+      'Simply show your UOI Customer Portal account to enjoy exclusive screening packages at Khoo Teck Puat Hospital.',
+    ctaLabel: 'View More',
+    image: imgBath,
+    href: '/rewards/sports-screening.pdf',
   },
 ]
 
@@ -70,7 +69,12 @@ export default function Rewards() {
 /* ─── Reward card ────────────────────────────────────────── */
 function RewardCard({ reward }: { reward: Reward }) {
   return (
-    <button className="flex w-full bg-white rounded-[8px] shadow-card overflow-hidden text-left cursor-pointer border-0 hover:shadow-pop transition-shadow">
+    <a
+      href={reward.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex w-full bg-white rounded-[8px] shadow-card overflow-hidden text-left cursor-pointer no-underline hover:shadow-pop transition-shadow"
+    >
       {/* Image */}
       <div className="w-[120px] shrink-0 self-stretch">
         <img src={reward.image} alt="" className="w-full h-full object-cover" />
@@ -94,6 +98,6 @@ function RewardCard({ reward }: { reward: Reward }) {
           <ArrowForwardIcon size={16} />
         </span>
       </div>
-    </button>
+    </a>
   )
 }

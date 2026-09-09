@@ -205,52 +205,14 @@ function PolicyStatusTag({ status, label }: { status: PolicyStatus; label: strin
   )
 }
 
-/* ─── Pagination — page 1 of 2, matching the design ─── */
-function Pagination() {
-  const [page, setPage] = useState(1)
-  return (
-    <div className="flex items-center gap-[12px]">
-      <button
-        onClick={() => setPage(p => Math.max(1, p - 1))}
-        disabled={page === 1}
-        aria-label="Previous page"
-        className="size-[40px] flex items-center justify-center bg-transparent border-0 cursor-pointer disabled:cursor-not-allowed rotate-180"
-      >
-        <ChevronRightIcon size={16} style={{ color: page === 1 ? '#BDBDBD' : '#6E6E6E' }} />
-      </button>
-      {[1, 2].map(n => (
-        <button
-          key={n}
-          onClick={() => setPage(n)}
-          className={[
-            'size-[40px] rounded-[8px] text-[14px] cursor-pointer border-0',
-            page === n ? 'bg-[#005eb8] text-white font-medium' : 'bg-transparent text-[#212121]',
-          ].join(' ')}
-        >
-          {n}
-        </button>
-      ))}
-      <button
-        onClick={() => setPage(p => Math.min(2, p + 1))}
-        disabled={page === 2}
-        aria-label="Next page"
-        className="size-[40px] flex items-center justify-center bg-transparent border-0 cursor-pointer disabled:cursor-not-allowed"
-      >
-        <ChevronRightIcon size={16} style={{ color: page === 2 ? '#BDBDBD' : '#6E6E6E' }} />
-      </button>
-    </div>
-  )
-}
-
 /* ─── Tabs ───────────────────────────────────────────────── */
-type TabKey = 'policy' | 'policyholder' | 'insured' | 'documents' | 'payments' | 'contact' | 'agent'
+type TabKey = 'policy' | 'policyholder' | 'insured' | 'documents' | 'contact' | 'agent'
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'policy',       label: 'Policy details' },
   { key: 'policyholder', label: 'Policyholder details' },
   { key: 'insured',      label: 'Insured details' },
   { key: 'documents',    label: 'Documents' },
-  { key: 'payments',     label: 'Payments' },
   { key: 'contact',      label: 'Contact details' },
   { key: 'agent',        label: 'Agent details' },
 ]
@@ -503,35 +465,6 @@ export default function PolicyDetailPage({ slug, account, onNavigateToDashboard,
           <p className="text-[14px] text-[#949494] m-0">
             Showing 1-{policy.documents.length} of {policy.documents.length}
           </p>
-        </SectionCard>
-
-        <SectionCard id="section-payments" title="Payment">
-          <DataTable
-            columns={['Transaction Date', 'Type', 'Payment Method', 'Premium', 'Action']}
-            rows={policy.payments.map(p => [
-              p.date,
-              p.type,
-              <PaymentMethodValue key="pm" last4={p.last4} />,
-              p.premium,
-              downloadIcon,
-            ])}
-          />
-          {/* Pagination only appears once the history spans more than one page
-              (10 rows per page); otherwise just the count is shown. */}
-          {policy.paymentsTotal > 10 ? (
-            <div className="relative flex flex-col sm:block gap-[12px] items-stretch">
-              <p className="text-[14px] text-[#949494] m-0 text-left sm:absolute sm:left-0 sm:top-1/2 sm:-translate-y-1/2">
-                Showing 1-{policy.payments.length} of {policy.paymentsTotal}
-              </p>
-              <div className="flex justify-center">
-                <Pagination />
-              </div>
-            </div>
-          ) : (
-            <p className="text-[14px] text-[#949494] m-0">
-              Showing 1-{policy.payments.length} of {policy.paymentsTotal}
-            </p>
-          )}
         </SectionCard>
 
         <SectionCard
