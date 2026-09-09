@@ -10,6 +10,8 @@ type Reward = {
   description: string
   ctaLabel: string
   image: string
+  /** object-position for the cropped image (defaults to centre). */
+  imgPosition?: string
   /** Opened in a new tab when the card is clicked. */
   href: string
 }
@@ -33,6 +35,7 @@ const REWARDS: Reward[] = [
       'Simply show your UOI Customer Portal account to enjoy exclusive dental care rates at Khoo Teck Puat Hospital.',
     ctaLabel: 'View More',
     image: imgDental,
+    imgPosition: 'object-[70%_center]',
     href: '/rewards/dental-care.pdf',
   },
   {
@@ -73,11 +76,11 @@ function RewardCard({ reward }: { reward: Reward }) {
       href={reward.href}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex w-full h-[193px] bg-white rounded-[8px] shadow-card overflow-hidden text-left cursor-pointer no-underline hover:shadow-pop transition-shadow"
+      className="flex w-full bg-white rounded-[8px] shadow-card overflow-hidden text-left cursor-pointer no-underline hover:shadow-pop transition-shadow"
     >
       {/* Image — fixed 120px column, cropped to fill the card height (per Figma) */}
-      <div className="w-[120px] shrink-0 h-full">
-        <img src={reward.image} alt="" className="w-full h-full object-cover" />
+      <div className="w-[120px] shrink-0 self-stretch">
+        <img src={reward.image} alt="" className={`w-full h-full object-cover ${reward.imgPosition ?? ''}`} />
       </div>
 
       {/* Content — fixed 16/12/4/12/16 rhythm per Figma */}
