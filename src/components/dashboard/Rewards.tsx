@@ -80,20 +80,21 @@ function RewardCard({ reward }: { reward: Reward }) {
         <img src={reward.image} alt="" className="w-full h-full object-cover" />
       </div>
 
-      {/* Content */}
+      {/* Content — fixed 16/12/4/12/16 rhythm per Figma */}
       <div className="flex flex-col gap-3 p-4 flex-1 min-w-0">
         <span className="self-start text-[12px] font-medium text-[#1e40af] bg-bg-info px-[8px] py-[4px] rounded-pill leading-[1.4]">
           {reward.category}
         </span>
         <div className="flex flex-col gap-1 min-w-0">
-          <p className="text-base font-medium text-text-primary leading-relaxed m-0 line-clamp-1">
+          <p className="text-base font-medium text-text-primary leading-[1.5] m-0 line-clamp-1">
             {reward.title}
           </p>
-          <p className="text-sm text-text-secondary leading-relaxed m-0 line-clamp-3">
+          {/* Reserve three lines so the CTA sits at the same spot on every card */}
+          <p className="text-sm text-text-secondary leading-[1.5] m-0 line-clamp-3 min-h-[63px]">
             {reward.description}
           </p>
         </div>
-        <span className="flex items-center gap-1 text-sm font-medium text-primary mt-auto">
+        <span className="flex items-center gap-1 text-sm font-medium text-primary">
           {reward.ctaLabel}
           <ArrowForwardIcon size={16} />
         </span>
