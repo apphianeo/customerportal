@@ -1,7 +1,7 @@
 import { ArrowForwardIcon } from '../icons'
-import imgKith     from '../../assets/rewards/kith.png'
-import imgBath     from '../../assets/rewards/bath.png'
-import imgWellness from '../../assets/rewards/wellness.png'
+import imgCasa   from '../../assets/rewards/casa.webp'
+import imgDental from '../../assets/rewards/dental.jpg'
+import imgSports from '../../assets/rewards/sportsscreening.jpg'
 
 type Reward = {
   id: string
@@ -22,7 +22,7 @@ const REWARDS: Reward[] = [
     description:
       'Simply enter UOIFRIENDS10 to receive 10% off selected CASA products sitewide. Excludes Ferroli products and spare parts.',
     ctaLabel: 'Shop Now',
-    image: imgKith,
+    image: imgCasa,
     href: 'https://shop.casa.sg/',
   },
   {
@@ -32,7 +32,7 @@ const REWARDS: Reward[] = [
     description:
       'Simply show your UOI Customer Portal account to enjoy exclusive dental care rates at Khoo Teck Puat Hospital.',
     ctaLabel: 'View More',
-    image: imgWellness,
+    image: imgDental,
     href: '/rewards/dental-care.pdf',
   },
   {
@@ -42,7 +42,7 @@ const REWARDS: Reward[] = [
     description:
       'Simply show your UOI Customer Portal account to enjoy exclusive screening packages at Khoo Teck Puat Hospital.',
     ctaLabel: 'View More',
-    image: imgBath,
+    image: imgSports,
     href: '/rewards/sports-screening.pdf',
   },
 ]
