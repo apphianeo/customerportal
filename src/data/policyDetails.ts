@@ -69,7 +69,7 @@ const AGENT: Field[] = [
 ]
 
 const DOCUMENTS: DocumentRow[] = [
-  { name: 'Policy Schedule', date: '20/01/2026' },
+  { name: 'Payment receipt', date: '20/01/2026' },
   { name: 'Endorsement', date: '20/01/2026' },
 ]
 
