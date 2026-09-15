@@ -24,7 +24,7 @@ export const POLICIES: PolicyData[] = [
     name: 'UniCar',
     policyNo: 'PNF320104124A23',
     status: 'renewal-due',
-    statusLabel: 'Renewal due in 60 days',
+    statusLabel: 'Renewal due soon',
     category: 'motor',
     insuredPerson: 'Chris Wong',
     coveragePeriod: '13/02/2025 - 13/02/2026 (12 Months)',

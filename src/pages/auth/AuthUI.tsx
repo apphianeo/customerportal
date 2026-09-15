@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { Check, ChevronDown, ChevronLeft, ChevronUp, Delete, Eye, EyeOff } from 'lucide-react'
+import { ChevronLeft, Delete, Eye, EyeOff } from 'lucide-react'
 import DatePicker from '../../components/DatePicker'
 import uoiLogo from '../../assets/uoi-logo.svg'
 import authHero from '../../assets/auth-hero.png'
@@ -10,8 +10,6 @@ import infoIcon from '../../assets/icons/info.svg'
 import closeIcon from '../../assets/icons/close.svg'
 import FooterShort from '../../components/layout/FooterShort'
 import { useIsTouch } from '../../hooks/useIsTouch'
-import { COUNTRIES } from './validation'
-import type { CountryCode } from 'libphonenumber-js'
 
 /* ── Split-screen shell: form panel + hero image + footer ── */
 export function AuthShell({
@@ -31,7 +29,7 @@ export function AuthShell({
   const [showToast, setShowToast] = useState(true)
   useEffect(() => {
     if (!toast) return
-    const id = setTimeout(() => setShowToast(false), 3000)
+    const id = setTimeout(() => setShowToast(false), 5000)
     return () => clearTimeout(id)
   }, [toast])
   const toastVisible = Boolean(toast) && showToast
@@ -461,181 +459,11 @@ export function DateField({
   return <DatePicker label={label} value={value} onChange={onChange} error={error} disabled={disabled} />
 }
 
-/* ── Country code dropdown — searchable, keyboard accessible ── */
-const MENU_GAP = 12
-const MENU_EDGE = 8
-/** Below this the list is not worth showing, so flipping wins over shrinking. */
-const MENU_MIN_HEIGHT = 160
-/** Fixed dropdown height — the list scrolls vertically inside it. */
-const MENU_HEIGHT = 320
-
-function CountrySelect({
-  country,
-  onChange,
-}: {
-  country: CountryCode
-  onChange: (c: CountryCode) => void
-}) {
-  const [open, setOpen] = useState(false)
-  const [query, setQuery] = useState('')
-  const ref = useRef<HTMLDivElement>(null)
-  const menuRef = useRef<HTMLDivElement>(null)
-  const searchRef = useRef<HTMLInputElement>(null)
-  /** Viewport coords — the menu is portalled out so cards cannot clip it. */
-  const [pos, setPos] = useState({ top: 0, bottom: 0, left: 0, width: 0, maxHeight: MENU_HEIGHT, up: false })
-
-  const selected = COUNTRIES.find(c => c.code === country) ?? COUNTRIES[0]
-  const matches = COUNTRIES.filter(c =>
-    `${c.label} ${c.dial}`.toLowerCase().includes(query.trim().toLowerCase()),
-  )
-
-  const place = useCallback(() => {
-    const anchor = ref.current
-    if (!anchor) return
-    const r = anchor.getBoundingClientRect()
-    // Span the whole phone field — dial code plus number — rather than a fixed
-    // width, which overhung the field on a narrow phone.
-    const field = (anchor.parentElement ?? anchor).getBoundingClientRect()
-    const width = Math.min(field.width, window.innerWidth - MENU_EDGE * 2)
-
-    // Drop down while the viewport has room for a usable list; otherwise flip
-    // above the field. The dropdown is a fixed 320px tall and the list scrolls
-    // inside it, but on a short viewport we still cap to the space that is
-    // actually there so it never runs off the page and over the footer.
-    const spaceBelow = window.innerHeight - r.bottom - MENU_GAP - MENU_EDGE
-    const spaceAbove = r.top - MENU_GAP - MENU_EDGE
-    const up = spaceBelow < MENU_MIN_HEIGHT && spaceAbove > spaceBelow
-
-    setPos({
-      top: r.bottom + MENU_GAP,
-      // Anchored from the bottom when flipped, so it grows upwards without
-      // having to be measured first.
-      bottom: window.innerHeight - r.top + MENU_GAP,
-      left: Math.min(Math.max(MENU_EDGE, field.left), window.innerWidth - width - MENU_EDGE),
-      width,
-      maxHeight: Math.min(MENU_HEIGHT, Math.max(MENU_MIN_HEIGHT, up ? spaceAbove : spaceBelow)),
-      up,
-    })
-  }, [])
-
-  useLayoutEffect(() => {
-    if (!open) return
-    place()
-    window.addEventListener('scroll', place, true)
-    window.addEventListener('resize', place)
-    return () => {
-      window.removeEventListener('scroll', place, true)
-      window.removeEventListener('resize', place)
-    }
-  }, [open, place])
-
-  useEffect(() => {
-    if (!open) return
-    searchRef.current?.focus()
-    function handleClick(e: MouseEvent) {
-      const t = e.target as Node
-      if (ref.current?.contains(t) || menuRef.current?.contains(t)) return
-      setOpen(false)
-    }
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') setOpen(false)
-    }
-    document.addEventListener('mousedown', handleClick)
-    document.addEventListener('keydown', handleKey)
-    return () => {
-      document.removeEventListener('mousedown', handleClick)
-      document.removeEventListener('keydown', handleKey)
-    }
-  }, [open])
-
-  function pick(code: CountryCode) {
-    onChange(code)
-    setQuery('')
-    setOpen(false)
-  }
-
-  return (
-    <div ref={ref} className="relative shrink-0">
-      <button
-        type="button"
-        aria-label="Country code"
-        aria-expanded={open}
-        aria-haspopup="listbox"
-        onClick={() => setOpen(o => !o)}
-        className={`bg-white rounded-[8px] px-[16px] py-[12px] w-[93px] flex items-center gap-2 text-[16px] text-[#212121] leading-[1.5] cursor-pointer outline-none border ${
-          open
-            ? 'border-[#005eb8] shadow-[0px_0px_0px_3px_rgba(0,94,184,0.2)]'
-            : 'border-[rgba(0,0,0,0.09)]'
-        }`}
-      >
-        <span className="flex-1 text-left">{selected.dial}</span>
-        {open
-          ? <ChevronUp size={16} className="shrink-0 text-[#212121]" aria-hidden="true" />
-          : <ChevronDown size={16} className="shrink-0 text-[#212121]" aria-hidden="true" />}
-      </button>
-
-      {open && createPortal(
-        <div
-          ref={menuRef}
-          role="listbox"
-          aria-label="Country code"
-          style={{
-            position: 'fixed',
-            left: pos.left,
-            width: pos.width,
-            maxHeight: pos.maxHeight,
-            ...(pos.up ? { bottom: pos.bottom } : { top: pos.top }),
-          }}
-          className="z-[100] flex flex-col bg-white rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] border border-[rgba(0,0,0,0.09)] overflow-hidden"
-        >
-          <input
-            ref={searchRef}
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            placeholder="Search"
-            aria-label="Search country"
-            className="w-full shrink-0 px-[12px] py-[12px] text-[16px] text-[#212121] leading-[1.5] outline-none placeholder:text-[#949494] border-b border-[rgba(0,0,0,0.09)]"
-          />
-          <div className="flex-1 min-h-0 overflow-y-auto">
-            {matches.length === 0 ? (
-              <p className="px-[12px] py-[12px] text-[16px] text-[#949494] leading-[1.5] m-0">
-                No matches
-              </p>
-            ) : (
-              matches.map(c => {
-                const isSelected = c.code === country
-                return (
-                  <button
-                    key={c.code}
-                    type="button"
-                    role="option"
-                    aria-selected={isSelected}
-                    onClick={() => pick(c.code)}
-                    className={`w-full flex items-center gap-[10px] px-[12px] py-[12px] bg-white border-0 cursor-pointer text-left text-[16px] leading-[1.5] hover:bg-[#f6f6f6] ${
-                      isSelected ? 'text-[#005eb8] font-medium' : 'text-[#212121]'
-                    }`}
-                  >
-                    <span className="flex-1 min-w-0">{c.label} ({c.dial})</span>
-                    {isSelected && <Check size={24} className="shrink-0" aria-hidden="true" />}
-                  </button>
-                )
-              })
-            )}
-          </div>
-        </div>,
-        document.body,
-      )}
-    </div>
-  )
-}
-
-/* ── Phone number field — country code drives validation ── */
+/* ── Phone number field — Singapore only, so the dial code is fixed ── */
 export function PhoneField({
   label,
   value,
   onChange,
-  country,
-  onCountryChange,
   error,
   onBlur,
   placeholder = 'Enter phone number',
@@ -643,8 +471,6 @@ export function PhoneField({
   label: string
   value: string
   onChange: (v: string) => void
-  country: CountryCode
-  onCountryChange: (c: CountryCode) => void
   error?: string
   onBlur?: () => void
   placeholder?: string
@@ -653,13 +479,19 @@ export function PhoneField({
     <div className="flex flex-col gap-3 w-full">
       <span className="text-[14px] font-normal leading-[1.5] text-[#212121]">{label}</span>
       <div className="flex gap-2 w-full">
-        <CountrySelect country={country} onChange={onCountryChange} />
+        {/* Fixed +65 — numbers are Singapore only, so the code is a disabled box */}
+        <div
+          aria-hidden="true"
+          className="shrink-0 w-[60px] flex items-center justify-center bg-[#f5f5f5] border border-[rgba(0,0,0,0.09)] rounded-[8px] py-[12px] text-[16px] leading-[1.5] text-[#bdbdbd]"
+        >
+          +65
+        </div>
         <input
           type="tel"
           inputMode="numeric"
           value={value}
           placeholder={placeholder}
-          /* No fixed length — each country's own digit range is enforced on validate */
+          /* No fixed length — the SG digit range is enforced on validate */
           onChange={(e) => onChange(e.target.value.replace(/[^\d]/g, '').slice(0, 15))}
           onBlur={onBlur}
           className={`${inputBase} ${borderClasses(error)}`}

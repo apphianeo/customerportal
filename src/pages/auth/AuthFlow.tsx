@@ -18,7 +18,6 @@ import {
   registerAccount,
   type Account,
 } from '../../data/accounts'
-import type { CountryCode } from 'libphonenumber-js'
 import {
   MESSAGES,
   PASSWORD_RULES,
@@ -795,7 +794,6 @@ function RegisterDetails({
   onNext: () => void
   onLogin: () => void
 }) {
-  const [country, setCountry] = useState<CountryCode>('SG')
   /** Set on submit when the NRIC/FIN already belongs to an account. */
   const [nricTaken, setNricTaken] = useState(false)
 
@@ -810,7 +808,7 @@ function RegisterDetails({
   })
   const phoneInline = useInlineValidation({
     value: phone,
-    validate: v => validatePhone(v, country),
+    validate: v => validatePhone(v, 'SG'),
     requiredMessage: MESSAGES.required,
   })
 
@@ -896,8 +894,6 @@ function RegisterDetails({
             value={phone}
             onChange={(v) => { setPhone(v); phoneInline.reset() }}
             onBlur={phoneInline.onBlur}
-            country={country}
-            onCountryChange={setCountry}
             error={phoneInline.error}
             placeholder="Enter Mobile number"
           />

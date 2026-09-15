@@ -9,7 +9,6 @@ import { PhoneField, SUPPORT_URL } from './auth/AuthUI'
 import { SingpassLogin, SingpassApprove } from './auth/AuthFlow'
 import { usePostalAutofill } from '../hooks/usePostalAutofill'
 import singpassRetrieveBtn from '../assets/singpass-retrieve-btn.svg'
-import type { CountryCode } from 'libphonenumber-js'
 
 /* ─── Field — editable or locked (grey) ─── */
 function Field({
@@ -165,7 +164,6 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
 
   // Contact
   const [contact, setContact] = useState(seed.phone)
-  const [country, setCountry] = useState<CountryCode>('SG')
   const [email, setEmail] = useState(seed.email)
   const [consent, setConsent] = useState(true)
 
@@ -215,7 +213,7 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
 
   useEffect(() => {
     if (!toast) return
-    const t = setTimeout(() => setToast(null), 3000)
+    const t = setTimeout(() => setToast(null), 5000)
     return () => clearTimeout(t)
   }, [toast])
 
@@ -380,8 +378,6 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
               label="Mobile number"
               value={contact}
               onChange={setContact}
-              country={country}
-              onCountryChange={setCountry}
               placeholder="Enter Mobile number"
             />
             <Field label="Email address" value={email} onChange={setEmail} />
