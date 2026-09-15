@@ -3,7 +3,6 @@ import { Check, ChevronDown } from 'lucide-react'
 import singpassLoginBtn from '../../assets/singpass-login-btn.svg'
 import singpassRetrieveBtn from '../../assets/singpass-retrieve-btn.svg'
 import singpassVerifyBtn from '../../assets/singpass-verify-btn.svg'
-import closeIcon from '../../assets/icons/close.svg'
 import singpassLogo from '../../assets/singpass-logo.png'
 import uoiLogo from '../../assets/uoi-logo.svg'
 import { useDebouncedValue } from '../../hooks/useDebouncedValue'
@@ -122,10 +121,11 @@ export default function AuthFlow({
   /** True when the current registration came in through Singpass (→ verified). */
   const [singpassReg, setSingpassReg] = useState(false)
   /**
-   * A sign-in that matched no account. Which identifier was tried drives the
-   * dialog's title; both offer the same next step — create an account.
+   * A sign-in that matched no account routes to the Create Account screen with
+   * this red banner explaining why; dismissed with its close control or by
+   * navigating away. Which identifier was tried drives only the wording.
    */
-  const [noAccount, setNoAccount] = useState<null | 'singpass' | 'loginId'>(null)
+  const [registerNotice, setRegisterNotice] = useState<string | null>(null)
 
   function goLogin(toast?: string) {
     setLoginToast(toast ?? null)
@@ -164,15 +164,15 @@ export default function AuthFlow({
   }
 
   /** Singpass login — authenticate an existing account only. Never creates
-      credentials: an identity with no account returns to the landing with the
-      "no account linked" dialog, which directs the user to register. */
+      credentials: an identity with no account is sent to the Create Account
+      screen with a banner directing the user to register. */
   function onSingpassLogin() {
     const existing = findAccountByNric(SINGPASS_IDENTITY.nric)
     if (existing) {
       onAuthenticated(existing)
     } else {
-      setScreen('landing')
-      setNoAccount('singpass')
+      setRegisterNotice('No account found with Singpass, please register below')
+      setScreen('register-choose')
     }
   }
 
@@ -202,20 +202,7 @@ export default function AuthFlow({
     setScreen('singpass-register-qr')
   }
 
-  return (
-    <>
-      {renderScreen()}
-      {noAccount && (
-        <NoAccountModal
-          variant={noAccount}
-          onClose={() => setNoAccount(null)}
-          onRetrieveSingpass={() => { setNoAccount(null); startSingpassRegister() }}
-          onSignupManually={() => { setNoAccount(null); setSingpassReg(false); setScreen('register-details') }}
-          onLogin={() => setNoAccount(null)}
-        />
-      )}
-    </>
-  )
+  return renderScreen()
 
   function renderScreen() {
   switch (screen) {
@@ -230,10 +217,12 @@ export default function AuthFlow({
     case 'register-choose':
       return (
         <RegisterChoose
+          notice={registerNotice}
+          onDismissNotice={() => setRegisterNotice(null)}
           onRetrieve={startSingpassRegister}
           onManual={() => { setSingpassReg(false); setScreen('register-details') }}
-          onBack={() => setScreen('landing')}
-          onLogin={() => setScreen('landing')}
+          onBack={() => { setRegisterNotice(null); setScreen('landing') }}
+          onLogin={() => { setRegisterNotice(null); setScreen('landing') }}
         />
       )
     case 'register-details':
@@ -364,8 +353,11 @@ export default function AuthFlow({
           onSingpass={startSingpassLogin}
           onLogin={() => setScreen('login-otp')}
           onForgot={() => setScreen('forgot')}
-          onRegister={() => setScreen('register-choose')}
-          onNoAccount={() => setNoAccount('loginId')}
+          onRegister={() => { setRegisterNotice(null); setScreen('register-choose') }}
+          onNoAccount={() => {
+            setRegisterNotice('No account found with login ID, please register below')
+            setScreen('register-choose')
+          }}
         />
       )
   }
@@ -392,7 +384,7 @@ function LoginLanding({
   onLogin: () => void
   onForgot: () => void
   onRegister: () => void
-  /** No account matched the login ID — hand off to the "no account" dialog. */
+  /** No account matched the login ID — route to Create Account with a banner. */
   onNoAccount: () => void
 }) {
   const [password, setPassword] = useState('')
@@ -417,9 +409,9 @@ function LoginLanding({
     if (!emailInline.isValid || !passwordRequired.isValid) return
     const result = attemptLogin(email, password)
     if (!result.ok) {
-      // A missing account is the "no account linked" case — direct the user to
-      // register via the dialog rather than an inline field error. A wrong
-      // password stays inline.
+      // A missing account is the "no account" case — send the user to the
+      // Create Account screen with a banner rather than an inline field error.
+      // A wrong password stays inline.
       if (result.field === 'email') {
         setEmailSubmitError('')
         onNoAccount()
@@ -698,18 +690,23 @@ export function SingpassApprove({
    Retrieve the profile from Myinfo via Singpass (verified), or sign up by
    filling the form manually (unverified until they later verify). */
 function RegisterChoose({
+  notice,
+  onDismissNotice,
   onRetrieve,
   onManual,
   onBack,
   onLogin,
 }: {
+  /** A red banner shown when the user arrived here from a failed sign-in. */
+  notice: string | null
+  onDismissNotice: () => void
   onRetrieve: () => void
   onManual: () => void
   onBack: () => void
   onLogin: () => void
 }) {
   return (
-    <AuthShell onBack={onBack}>
+    <AuthShell onBack={onBack} notice={notice ?? undefined} onDismissNotice={onDismissNotice}>
       <AuthHeader
         title="Create Account"
         subtitle="Speed up your registration process by retrieving data from Myinfo using Singpass"
@@ -1015,80 +1012,6 @@ function VerifyIdentity({ onBack, onContinue }: { onBack: () => void; onContinue
         <img src={singpassVerifyBtn} alt="" className="h-[40px] w-auto" />
       </button>
     </AuthShell>
-  )
-}
-
-/* ─── "No account linked" dialog ───────────────────────────────
-   Shown on the landing when a Singpass or login-ID sign-in matches no
-   account. Both variants offer the same next step — create an account with
-   Singpass MyInfo or manually — and differ only in the title. */
-function NoAccountModal({
-  variant,
-  onClose,
-  onRetrieveSingpass,
-  onSignupManually,
-  onLogin,
-}: {
-  variant: 'singpass' | 'loginId'
-  onClose: () => void
-  onRetrieveSingpass: () => void
-  onSignupManually: () => void
-  onLogin: () => void
-}) {
-  const title = variant === 'singpass'
-    ? 'No account linked to Singpass'
-    : 'No account linked to login ID'
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
-      <div
-        onClick={e => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-label={title}
-        className="relative bg-white rounded-[12px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] p-[24px] w-[500px] max-w-full flex flex-col gap-[24px]"
-      >
-        <div className="flex flex-col gap-[12px] w-full">
-          <div className="flex items-start gap-[8px] w-full">
-            <h2 className="flex-1 min-w-0 font-h2-title font-semibold text-[#212121] m-0">{title}</h2>
-            <button onClick={onClose} aria-label="Close" className="shrink-0 bg-transparent border-0 p-0 cursor-pointer">
-              <img src={closeIcon} alt="" className="w-[20px] h-[20px]" />
-            </button>
-          </div>
-          <p className="text-[16px] leading-[1.5] text-[#212121] m-0">
-            Create an account using Singpass MyInfo or manually
-          </p>
-        </div>
-
-        {/* Create an account via Singpass MyInfo (Retrieve) */}
-        <button
-          onClick={onRetrieveSingpass}
-          aria-label="Create an account with Singpass"
-          className="w-full h-[48px] bg-[#d93841] rounded-[8px] border-0 p-0 cursor-pointer flex items-center justify-center overflow-hidden"
-        >
-          <img src={singpassRetrieveBtn} alt="" className="h-[40px] w-auto" />
-        </button>
-
-        <div className="flex items-center gap-4 w-full">
-          <span className="flex-1 h-px bg-[rgba(0,0,0,0.09)]" />
-          <span className="text-[14px] text-[#949494]">OR</span>
-          <span className="flex-1 h-px bg-[rgba(0,0,0,0.09)]" />
-        </div>
-
-        <button
-          onClick={onSignupManually}
-          className="w-full border border-[#005eb8] text-[#005eb8] bg-white px-[24px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-medium text-[16px] cursor-pointer"
-        >
-          Register Manually
-        </button>
-
-        <div className="flex flex-col gap-3 w-full">
-          <LegalLine />
-          <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full m-0">
-            Already have an account? <LinkButton onClick={onLogin}>Log in</LinkButton>
-          </p>
-        </div>
-      </div>
-    </div>
   )
 }
 

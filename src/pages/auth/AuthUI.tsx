@@ -7,6 +7,7 @@ import authHero from '../../assets/auth-hero.png'
 import successCircle from '../../assets/icons/success-circle.svg'
 import errorNotice from '../../assets/icons/error-notice.svg'
 import infoIcon from '../../assets/icons/info.svg'
+import closeIcon from '../../assets/icons/close.svg'
 import FooterShort from '../../components/layout/FooterShort'
 import { useIsTouch } from '../../hooks/useIsTouch'
 import { COUNTRIES } from './validation'
@@ -17,10 +18,15 @@ export function AuthShell({
   children,
   onBack,
   toast,
+  notice,
+  onDismissNotice,
 }: {
   children: ReactNode
   onBack?: () => void
   toast?: string
+  /** A dismissible red error banner shown in the top row (e.g. "no account found"). */
+  notice?: string
+  onDismissNotice?: () => void
 }) {
   const [showToast, setShowToast] = useState(true)
   useEffect(() => {
@@ -41,8 +47,8 @@ export function AuthShell({
               'linear-gradient(90deg, rgba(0,94,184,0.06) 0%, rgba(92,85,235,0.06) 100%), linear-gradient(#fff,#fff)',
           }}
         >
-          {/* Top row: Back (left) + toast (centered), in normal flow so it never overlaps content */}
-          {(onBack || toastVisible) && (
+          {/* Top row: Back (left) + toast/notice (centered), in normal flow so it never overlaps content */}
+          {(onBack || toastVisible || notice) && (
             <div className="relative flex items-center justify-center w-full min-h-[24px] shrink-0 pt-8">
               {onBack && (
                 <button
@@ -53,7 +59,9 @@ export function AuthShell({
                   Back
                 </button>
               )}
-              {toastVisible && <SuccessToast>{toast}</SuccessToast>}
+              {notice
+                ? <ErrorNotice onDismiss={onDismissNotice}>{notice}</ErrorNotice>
+                : toastVisible && <SuccessToast>{toast}</SuccessToast>}
             </div>
           )}
           {/* Content: centered when it fits (my-auto), scrolls with top/bottom padding when tall */}
@@ -875,6 +883,25 @@ export function SuccessToast({ children }: { children: ReactNode }) {
     <div className="flex items-center gap-2 bg-[#ecfdf5] rounded-[8px] px-[16px] py-[12px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)]">
       <img src={successCircle} alt="" className="w-4 h-4 shrink-0" />
       <span className="text-[14px] leading-[1.5] text-[#212121] whitespace-nowrap">{children}</span>
+    </div>
+  )
+}
+
+/** Dismissible red error banner — mirrors SuccessToast, with a close control. */
+export function ErrorNotice({ children, onDismiss }: { children: ReactNode; onDismiss?: () => void }) {
+  return (
+    <div className="flex items-center gap-2 bg-[#fef2f2] rounded-[8px] px-[16px] py-[12px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)]">
+      <img src={errorNotice} alt="" className="w-4 h-4 shrink-0" />
+      <span className="text-[14px] leading-[1.5] text-[#212121]">{children}</span>
+      {onDismiss && (
+        <button
+          onClick={onDismiss}
+          aria-label="Dismiss"
+          className="shrink-0 bg-transparent border-0 p-0 cursor-pointer leading-none"
+        >
+          <img src={closeIcon} alt="" className="w-4 h-4" />
+        </button>
+      )}
     </div>
   )
 }
