@@ -899,7 +899,7 @@ export function ErrorNotice({ children, onDismiss }: { children: ReactNode; onDi
           aria-label="Dismiss"
           className="shrink-0 bg-transparent border-0 p-0 cursor-pointer leading-none"
         >
-          <img src={closeIcon} alt="" className="w-4 h-4" />
+          <img src={closeIcon} alt="" className="block w-[16px] h-[16px] shrink-0" />
         </button>
       )}
     </div>
