@@ -290,12 +290,13 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
 
           <div className="flex flex-col gap-[16px] w-full">
             <span className="text-[14px] font-semibold text-[#212121] leading-[1.5]">Residential address</span>
+            {/* Address stays editable on every registration type — Singpass locks
+                only the identity fields (name, DOB, NRIC), never the address. */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px] w-full">
               <Field
                 label="Postal code"
                 value={resPostal}
                 onChange={setResPostal}
-                disabled={locked}
                 inputMode="numeric"
                 maxLength={6}
               />
@@ -303,7 +304,6 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
                 label="Address"
                 value={resAddr}
                 onChange={v => setResAddr(v.toUpperCase())}
-                disabled={locked}
                 autoCapitalize="characters"
               />
             </div>
@@ -313,7 +313,6 @@ export default function ManageAccountPage({ onNavigateToDashboard, onLogout, aut
                 label="Unit number"
                 value={resUnit}
                 onChange={v => setResUnit(v.toUpperCase())}
-                disabled={locked}
                 autoCapitalize="characters"
               />
             </div>
