@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Check, ChevronDown } from 'lucide-react'
 import singpassLoginBtn from '../../assets/singpass-login-btn.svg'
-import singpassRetrieveBtn from '../../assets/singpass-retrieve-btn.svg'
+import singpassWordmark from '../../assets/singpass-wordmark.svg'
 import singpassVerifyBtn from '../../assets/singpass-verify-btn.svg'
 import singpassLogo from '../../assets/singpass-logo.png'
 import uoiLogo from '../../assets/uoi-logo.svg'
@@ -713,10 +713,11 @@ function RegisterChoose({
       <div className="flex flex-col gap-6 w-full">
         <button
           onClick={onRetrieve}
-          aria-label="Retrieve with Singpass"
-          className="w-full h-[52px] bg-[#d93841] rounded-[8px] border-0 p-0 cursor-pointer flex items-center justify-center overflow-hidden"
+          aria-label="Register with Singpass"
+          className="w-full h-[52px] bg-[#d93841] rounded-[8px] border-0 px-4 cursor-pointer flex items-center justify-center gap-[6px]"
         >
-          <img src={singpassRetrieveBtn} alt="" className="h-[40px] w-auto" />
+          <span className="text-white text-[16px] font-semibold leading-none">Register with</span>
+          <img src={singpassWordmark} alt="singpass" className="h-[15px] w-auto" />
         </button>
         <div className="flex items-center gap-4 w-full">
           <span className="flex-1 h-px bg-[rgba(0,0,0,0.09)]" />
