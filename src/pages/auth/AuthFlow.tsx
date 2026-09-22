@@ -998,16 +998,20 @@ function VerifyIdentity({ onBack, onContinue }: { onBack: () => void; onContinue
   return (
     <AuthShell onBack={onBack}>
       <AuthHeader
-        title="Verify identity"
-        subtitle="To comply with local regulations and protect against fraud, please verify your identity to view your policies"
+        title="Verify your identity"
+        subtitle="To protect your information, identity verification is required before you can access your account"
       />
-      <button
-        onClick={onContinue}
-        aria-label="Continue with Singpass"
-        className="w-full h-[52px] bg-[#d93841] rounded-[8px] border-0 p-0 cursor-pointer flex items-center justify-center overflow-hidden"
-      >
-        <img src={singpassVerifyBtn} alt="" className="h-[40px] w-auto" />
-      </button>
+      <div className="flex flex-col gap-4 w-full">
+        <button
+          onClick={onContinue}
+          aria-label="Continue with Singpass"
+          className="w-full h-[52px] bg-[#d93841] rounded-[8px] border-0 p-0 cursor-pointer flex items-center justify-center overflow-hidden"
+        >
+          <img src={singpassVerifyBtn} alt="" className="h-[40px] w-auto" />
+        </button>
+        {/* Manual sign-ups who cannot use Singpass are routed to WhatsApp support */}
+        <SupportLine lead="Prefer not to use Singpass?" />
+      </div>
     </AuthShell>
   )
 }

@@ -123,11 +123,11 @@ export function LegalLine() {
   )
 }
 
-/** Support link — opens WhatsApp in a new tab. */
-export function SupportLine() {
+/** Support link — opens WhatsApp in a new tab. The lead-in varies by screen. */
+export function SupportLine({ lead = 'Having trouble?' }: { lead?: string } = {}) {
   return (
     <p className="text-[14px] leading-[1.5] text-[#6e6e6e] text-center w-full m-0">
-      Having trouble?{' '}
+      {lead}{' '}
       <a href={SUPPORT_URL} target="_blank" rel="noopener noreferrer" className="text-text-secondary underline">
         Contact our support team
       </a>

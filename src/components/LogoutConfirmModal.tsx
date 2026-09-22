@@ -37,7 +37,7 @@ export default function LogoutConfirmModal({
             </button>
           </div>
           <p className="text-[16px] leading-[1.5] text-[#212121] m-0">
-            You will be logged out on all active devices
+            You will be logged out immediately
           </p>
         </div>
 
