@@ -519,6 +519,96 @@ Any person receiving this email and any attachment(s) contained, shall treat the
 ---
 
 
+## Account Status
+
+### 12. Account reactivated
+
+| | |
+|---|---|
+| **File** | `12-account-reactivated.html` |
+| **Subject** | Your UOI Customer Portal account has been reactivated |
+| **Preheader** | You can now sign in again. |
+
+Your account has been reactivated
+
+Dear {{first_name}},
+
+Your UOI Customer Portal account has been reactivated by an administrator. You can now sign in and access your policies as before.
+
+[Sign in]
+
+If you need any help, feel free to reach out to our support team [here].
+
+Regards,
+
+United Overseas Insurance Limited
+
+**Footer**
+
+This is an automatically generated email, please do not reply.
+
+Visit [www.uoi.com.sg] to learn more about our privacy and security notice.
+
+Copyright © 2026 United Overseas Insurance Limited Co Reg. No. 197100152R. All Rights Reserved.
+
+**UOI EMAIL DISCLAIMER**
+
+Any person receiving this email and any attachment(s) contained, shall treat the information as confidential and not misuse, copy, disclose, distribute or retain the information in any way that amounts to a breach of confidentiality. If you are not the intended recipient, please delete all copies of this email from your computer system. As the integrity of this message cannot be guaranteed, neither UOI nor any entity in the UOB Group shall be responsible for the contents. Any opinion in this email may not necessarily represent the opinion of UOI or any entity in the UOB Group.
+
+**Button:** Sign in
+
+**Links**
+
+| Text | Destination |
+|---|---|
+| Sign in | `https://portal.uoi.com.sg` |
+| here | `https://api.whatsapp.com/send/?phone=6580814843&text&type=phone_number&app_absent=0` |
+
+---
+
+### 13. Account deactivated
+
+| | |
+|---|---|
+| **File** | `13-account-deactivated.html` |
+| **Subject** | Your UOI Customer Portal account has been deactivated |
+| **Preheader** | You will not be able to sign in until it is reactivated. |
+
+Your account has been deactivated
+
+Dear {{first_name}},
+
+Your UOI Customer Portal account has been deactivated. You will not be able to sign in until an administrator reactivates it.
+
+Your policies and personal data remain unchanged.
+
+If you need any help, feel free to reach out to our support team [here].
+
+Regards,
+
+United Overseas Insurance Limited
+
+**Footer**
+
+This is an automatically generated email, please do not reply.
+
+Visit [www.uoi.com.sg] to learn more about our privacy and security notice.
+
+Copyright © 2026 United Overseas Insurance Limited Co Reg. No. 197100152R. All Rights Reserved.
+
+**UOI EMAIL DISCLAIMER**
+
+Any person receiving this email and any attachment(s) contained, shall treat the information as confidential and not misuse, copy, disclose, distribute or retain the information in any way that amounts to a breach of confidentiality. If you are not the intended recipient, please delete all copies of this email from your computer system. As the integrity of this message cannot be guaranteed, neither UOI nor any entity in the UOB Group shall be responsible for the contents. Any opinion in this email may not necessarily represent the opinion of UOI or any entity in the UOB Group.
+
+**Links**
+
+| Text | Destination |
+|---|---|
+| here | `https://api.whatsapp.com/send/?phone=6580814843&text&type=phone_number&app_absent=0` |
+
+---
+
+
 ## Merge fields
 
 | Field | Used in |
@@ -526,7 +616,7 @@ Any person receiving this email and any attachment(s) contained, shall treat the
 | `{{attempt_datetime}}` | 5 |
 | `{{change_datetime}}` | 8, 9, 10 |
 | `{{change_fields}}` | 10 |
-| `{{first_name}}` | 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 |
+| `{{first_name}}` | 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 |
 | `{{lock_datetime}}` | 3 |
 | `{{login_datetime}}` | 11 |
 | `{{login_id}}` | 5 |

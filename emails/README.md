@@ -1,6 +1,6 @@
 # UOI Customer Portal, email templates
 
-Eleven HTML email templates for the customer portal, built from the portal's own
+Thirteen HTML email templates for the customer portal, built from the portal's own
 design system so the email and the screen it leads to look like the same product.
 Copy and running order come from *Customer Portal Figma & Templates*, the
 confirmed PDF. `emails/confluence.md` carries the same copy in a form that pastes
@@ -19,8 +19,10 @@ straight into Confluence.
 | 9 | Successful change of password | `09-password-changed.html` |
 | 10 | Successful change of contact details | `10-contact-details-changed.html` |
 | 11 | Sign-in after six months of inactivity | `11-inactivity-signin.html` |
+| 12 | Account reactivated | `12-account-reactivated.html` |
+| 13 | Account deactivated | `13-account-deactivated.html` |
 
-Open `preview.html` in a browser to see all eleven rendered at 600px with sample data.
+Open `preview.html` in a browser to see all thirteen rendered at 600px with sample data.
 
 Logo, one card, then the legal block at 11px on the canvas below it, with no
 rule between them.
@@ -113,7 +115,7 @@ Two deliberate deviations, both forced by the medium:
 
 ## Editing and building
 
-Templates are generated so the shell stays identical across all eleven:
+Templates are generated so the shell stays identical across all thirteen:
 
 ```bash
 python3 emails/build.py       # writes the 11 templates + preview.html
@@ -144,7 +146,7 @@ per-template copy is in the `TEMPLATES` section near the bottom.
 
 | Field | Used in |
 |---|---|
-| `{{first_name}}` | all eleven |
+| `{{first_name}}` | all thirteen |
 | `{{otp}}` | 1, 3, 4 (subject + body) |
 | `{{login_datetime}}` | 6 |
 | `{{change_datetime}}` | 7, 8, 9 |

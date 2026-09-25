@@ -605,11 +605,49 @@ add(
 
 
 # The document's running order, which is not the order the templates are defined in.
+# 12. Account reactivated by an administrator
+add(
+    "12-account-reactivated.html",
+    "Your UOI Customer Portal account has been reactivated",
+    "You can now sign in again.",
+    "Your account has been reactivated",
+    letter(
+        "Your account has been reactivated",
+        ["Your UOI Customer Portal account has been reactivated by an administrator. "
+         "You can now sign in and access your policies as before."],
+        middle=[f'<div class="btn">{primary_button("Sign in", PORTAL_URL)}</div>'],
+    ),
+    "Admin-initiated, so it reads as good news and keeps the help line rather than a "
+    "caution box.",
+    section="Account Status",
+    item="Account reactivated",
+)
+
+# 13. Account deactivated by an administrator
+add(
+    "13-account-deactivated.html",
+    "Your UOI Customer Portal account has been deactivated",
+    "You will not be able to sign in until it is reactivated.",
+    "Your account has been deactivated",
+    letter(
+        "Your account has been deactivated",
+        ["Your UOI Customer Portal account has been deactivated. You will not be able "
+         "to sign in until an administrator reactivates it.",
+         "Your policies and personal data remain unchanged."],
+    ),
+    "No button, since the account cannot be signed in to. Reassures that policies and "
+    "data are untouched, and keeps the help line as the only route forward.",
+    section="Account Status",
+    item="Account deactivated",
+)
+
+
 ORDER = [
     "01-login-otp.html", "02-forgot-password-reset.html", "03-account-locked.html",
     "04-registration-otp.html", "05-existing-account.html", "06-welcome.html",
     "07-change-login-id-otp.html", "08-login-id-changed.html", "09-password-changed.html",
     "10-contact-details-changed.html", "11-inactivity-signin.html",
+    "12-account-reactivated.html", "13-account-deactivated.html",
 ]
 TEMPLATES.sort(key=lambda t: ORDER.index(t["file"]))
 
@@ -904,12 +942,13 @@ PREVIEW_SHELL = """<title>UOI Customer Portal Auth Emails</title>
   <header class="mast">
     <p class="eyebrow">Design proposal &middot; Customer Portal</p>
     <h1>Auth emails, rebuilt on the portal&rsquo;s own system</h1>
-    <p class="lede">Eleven templates for UOI Customer Portal, covering sign-in,
-      registration and every change a customer can make to their own account. Same tokens, same
+    <p class="lede">Thirteen templates for UOI Customer Portal, covering sign-in,
+      registration, every change a customer can make to their own account, and the
+      two admin-driven account-status changes. Same tokens, same
       button, same card as the screens they lead to, so the email and the product stop
       looking like two different companies.</p>
     <dl class="facts">
-      <div><dt>Templates</dt><dd>11</dd></div>
+      <div><dt>Templates</dt><dd>13</dd></div>
       <div><dt>Width</dt><dd>600&#8202;px</dd></div>
       <div><dt>Typeface</dt><dd>Noto Sans</dd></div>
       <div><dt>Images required</dt><dd>Logo only</dd></div>
